@@ -10,7 +10,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 //import { getActiveChildNavigationOptions } from 'react-navigation';
-import MiniCard from './src/screen/MiniCard';
+import MiniCard from './MiniCard';
 
 interface Props {
   children: React.ReactNode;
