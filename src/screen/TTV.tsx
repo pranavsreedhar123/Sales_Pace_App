@@ -1,3 +1,4 @@
+import { Button } from 'native-base';
 import React from 'react';
 import {
   StyleSheet,
@@ -7,7 +8,7 @@ import {
   Alert,
   Dimensions,
   FlatList,
-  ActivityIndicator,
+  ActivityIndicator, 
 } from 'react-native';
 //import { getActiveChildNavigationOptions } from 'react-navigation';
 import MiniCard from './MiniCard';
@@ -76,8 +77,7 @@ class TTV extends React.Component<Props, State> {
           index++;
         }
       }
-    }
-    
+    } 
     let i = 0;
     for (let filteredData of this.state.filterMiniData) {
       await fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${filteredData.snippet.channelId}&key=AIzaSyBZ3PGw-NX1QRy8uvKKsgUOhVtdwGqk_sw`)
@@ -94,42 +94,63 @@ class TTV extends React.Component<Props, State> {
       this.state.subView[i] = this.state.statistics[0].statistics.viewCount;
       i++;
     }
-    
-    /* SORTING ALGORITHM: SORTING BY SUBSCRIBERS --> NEEDS TO BE CHECKED */
 
-    /*let n = this.state.subView.length;
-    for(let i = 0; i < n; i+=2) {
-      console.log(this.state.subView[i] + " " + this.state.subView[i+1] + " " + this.state.filterMiniData[i/2].snippet.channelTitle);
-    }
+    this.setState({filterData: this.state.filterMiniData});
+  }
+  filterSubscriber() {
+    /* SORTING ALGORITHM: SORTING BY SUBSCRIBERS  */
+    let subs = this.state.subView;
+    let n = this.state.subView.length;
     for (let i = 0; i < n; i += 2) {
       let min = i;
       for (let j = i + 2; j < n; j += 2) {
-        if (this.state.subView[j] < this.state.subView[min]) {
+        if (subs[j] < subs[min]) {
           min = j;
         }
       }
       if (min != i) {
-        let subTmp = this.state.subView[i];
+        let subTmp = subs[i];
         let dataTmp = this.state.filterMiniData[i / 2];
-        let viewTmp = this.state.subView[i + 1];
-        console.log(subTmp + " " + dataTmp + " " + viewTmp);
-        this.state.subView[i] = this.state.subView[min];
+        let viewTmp = subs[i + 1];
+        subs[i] = subs[min];
         this.state.filterMiniData[i / 2] = this.state.filterMiniData[min / 2];
-        this.state.subView[i + 1] = this.state.subView[min + 1];
-        this.state.subView[min] = subTmp;
+        subs[i + 1] = subs[min + 1];
+        subs[min] = subTmp;
         this.state.filterMiniData[min / 2] = dataTmp;
-        this.state.subView[min + 1] = viewTmp;
+        subs[min + 1] = viewTmp;
       }
-    }*/
-
-
-    /* TESTING PURPOSES */ 
-    /*for(let i = 0; i < n; i+=2) {
-      console.log(this.state.subView[i] + " " + this.state.subView[i+1] + " " + this.state.filterMiniData[i/2].snippet.channelTitle);
-    }*/
-
-    this.setState({filterData: this.state.filterMiniData});
+    }
+    this.setState({subView: subs});
   }
+  filterView() {
+    /* SORTING ALGORITHM: SORTING BY VIEWCOUNT  */
+    let view = this.state.subView;
+    let n = this.state.subView.length;
+    for (let i = 1; i < n; i += 2) {
+      let min = i;
+      for (let j = i + 2; j < n; j += 2) {
+        if (view[j] < view[min]) {
+          min = j;
+        }
+      }
+      if (min != i) {
+        let viewTmp = view[i];
+        let dataTmp = this.state.filterMiniData[i / 2];
+        let subTmp = view[i - 1];
+        view[i] = view[min];
+        this.state.filterMiniData[i / 2] = this.state.filterMiniData[min / 2];
+        view[i - 1] = view[min - 1];
+        view[min] = viewTmp;
+        this.state.filterMiniData[min / 2] = dataTmp;
+        view[min - 1] = subTmp;
+      }
+    }
+    this.setState({subView: view});
+
+
+    // this.state.subView = {0, 0, 0, 0, 0, 0, 0, 0};
+  }
+
  
   render() {
     return (
@@ -145,6 +166,27 @@ class TTV extends React.Component<Props, State> {
             Search
           </Text>
         </View>
+        <View
+          style={{
+            flexDirection: 'row',
+          }}>
+          <Text
+            style={{
+              paddingRight: 10,
+              paddingLeft: 18,
+              fontSize: 14,
+              fontWeight: 'bold',
+            }}>
+            Filter by:
+          </Text>
+          <Text style={styles.textButton} onPress={() => this.filterSubscriber()}>
+            Subscribers
+          </Text>
+          <Text style={styles.textButton} onPress={() => this.filterView()}>
+            View Count
+          </Text>
+        </View>
+
         {this.state.loading ? <ActivityIndicator style={{marginTop:Dimensions.get('window').height/84}} size="large" color="red"/>: null}
 
         {/* FLATLIST WHICH TAKES TWO DATA SOURCES: THE CHANNELS (FilterData) + SUBSCRIBERS/VIEW COUNT (subView) returns MINICARD OBJECT*/}
@@ -176,11 +218,12 @@ const styles = StyleSheet.create({
     padding: 50,
     paddingHorizontal: 15,
     paddingRight: 0,
+    paddingBottom: 10,
     flexDirection: 'row',
     marginTop: Dimensions.get('window').height / 17,
     width: Dimensions.get('window').width,
     backgroundColor: '#FFF',
-    height: '15%',
+    height: '10%',
   },
   tinyLogo: {
     width: Dimensions.get('window').width / 3,
@@ -207,6 +250,16 @@ const styles = StyleSheet.create({
     color: 'white',
     backgroundColor: 'blue',
     width: Dimensions.get('window').width * 0.2,
+  },
+  textButton: {
+    fontSize: 14,
+    padding: 5,
+    fontWeight: 'bold',
+    paddingTop: 0,
+    marginLeft: Dimensions.get('window').width/100,
+    color: 'white',
+    backgroundColor: 'red',
+    width: Dimensions.get('window').width * 0.24,
   },
   input: {
     width: '70%',
