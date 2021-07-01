@@ -59,6 +59,7 @@ export const TopVloggerScreen = (): JSX.Element => {
       let uniqueYTChannels = Helpers.getUniqueArray(tempDataArray, 'channelId');
 
       let YTChannelDatawithCounts: YTChannelItem[] = [];
+
       await Promise.all(
         uniqueYTChannels?.map(async (channel: any) => {
           let channelStat = await getChannelStatistics(
@@ -108,6 +109,7 @@ export const TopVloggerScreen = (): JSX.Element => {
   const filterView = () => {
     setSortedBySubscribersData([]);
     let sortedYTChannelByViews = Helpers.sortArrayByKey(miniCardData, 'views');
+
     setMiniCardData(sortedYTChannelByViews);
     setSortedByViewsData(sortedYTChannelByViews);
   };
