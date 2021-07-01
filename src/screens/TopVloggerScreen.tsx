@@ -7,7 +7,9 @@ import {
   Dimensions,
   FlatList,
   StyleSheet,
+  Alert,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/AntDesign';
 import MiniCard from './MiniCard';
 import {Helpers} from '../utils/Helpers';
 import {YT_CHANNEL_DATA} from '../utils/Constant';
@@ -17,6 +19,7 @@ import {
   getYouTubeChannelsAPI,
   getYTChannelsSnippetAPI,
 } from '../services/youTubeAPIs';
+Icon.loadFont();
 
 export const TopVloggerScreen = (): JSX.Element => {
   const [videoSearchText, setVideoSearchText] = useState('');
@@ -28,14 +31,16 @@ export const TopVloggerScreen = (): JSX.Element => {
     [],
   );
   const [miniCardData, setMiniCardData] = useState<YTChannelItem[]>([]);
+  const [filterOptionStatus, setFilterOptionStatus] = useState(false);
 
   const fetchYTChannels = async () => {
+    setFilterOptionStatus(false);
     setIsLoading(true);
-
     try {
       let YouTubeChannels = await getYouTubeChannelsAPI(videoSearchText);
 
       setIsLoading(false);
+      setFilterOptionStatus(true);
       let tempDataArray: YTChannelItem[] = YouTubeChannels?.items.map(
         (yTChannelData: YTChannelItem) => {
           return {
@@ -114,6 +119,15 @@ export const TopVloggerScreen = (): JSX.Element => {
     [],
   );
 
+  const filterOption = () => {
+    Alert.alert('Filter Options', 'Select an option', [
+      {
+        text: 'Subscriber',
+        onPress: () => filterSubscriber(),
+      },
+      {text: 'View Count', onPress: () => filterView()},
+    ]);
+  };
   const filterSubscriber = React.useCallback(() => {
     setSortedByViewsData([]);
     let sortedYTChannelBySubscribers = Helpers.sortArrayByKey(
@@ -147,6 +161,12 @@ export const TopVloggerScreen = (): JSX.Element => {
             value={videoSearchText}
             onChangeText={text => setVideoSearchText(text)}
           />
+          {/* <Icon
+            name="search1"
+            size={30}
+            color="#900"
+            onPress={() => fetchYTChannels()}
+          /> */}
           <Text style={styles.text} onPress={() => fetchYTChannels()}>
             Search
           </Text>
@@ -155,21 +175,36 @@ export const TopVloggerScreen = (): JSX.Element => {
           style={{
             flexDirection: 'row',
           }}>
-          <Text
+          {filterOptionStatus && (
+            <Text
+              style={{
+                paddingRight: 10,
+                paddingLeft: 18,
+                fontSize: 14,
+                fontWeight: 'bold',
+                color: 'blue',
+              }}
+              onPress={() => filterOption()}>
+              Click here for filter options:
+            </Text>
+          )}
+          {/* <Text
             style={{
               paddingRight: 10,
               paddingLeft: 18,
               fontSize: 14,
               fontWeight: 'bold',
-            }}>
-            Filter by:
-          </Text>
-          <Text style={styles.textButton} onPress={() => filterSubscriber()}>
+              color: 'blue',
+            }}
+            onPress={() => filterOption()}>
+            Click here for filter options:
+          </Text> */}
+          {/* <Text style={styles.textButton} onPress={() => filterSubscriber()}>
             Subscribers
           </Text>
           <Text style={styles.textButton} onPress={() => filterView()}>
             View Count
-          </Text>
+          </Text> */}
         </View>
 
         {/* FLATLIST WHICH TAKES TWO DATA SOURCES: THE CHANNELS (FilterData) + SUBSCRIBERS/VIEW COUNT (subView) returns MINICARD OBJECT*/}
