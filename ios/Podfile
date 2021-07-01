@@ -12,6 +12,8 @@ target 'Sales_Pace_App' do
     :hermes_enabled => false
   )
 
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+
   target 'Sales_Pace_AppTests' do
     inherit! :complete
     # Pods for testing

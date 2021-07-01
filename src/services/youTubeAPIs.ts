@@ -26,3 +26,12 @@ export async function getYTChannelsStatsticsAPI(
 
   return apiYouTubeChannelStatistics;
 }
+export async function getYTChannelsSnippetAPI(channelId: string): Promise<any> {
+  const apiYouTubeChannelSnippet: any = await apiClient(
+    `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${channelId}&key=AIzaSyBZ3PGw-NX1QRy8uvKKsgUOhVtdwGqk_sw`,
+    {
+      method: 'GET',
+    },
+  );
+  return apiYouTubeChannelSnippet;
+}

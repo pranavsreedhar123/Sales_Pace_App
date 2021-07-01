@@ -7,7 +7,10 @@ import {
   Dimensions,
   FlatList,
   StyleSheet,
+  Alert,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/AntDesign';
+import Icon1 from 'react-native-vector-icons/FontAwesome';
 import MiniCard from './MiniCard';
 import {Helpers} from '../utils/Helpers';
 import {YT_CHANNEL_DATA} from '../utils/Constant';
@@ -15,7 +18,10 @@ import {YTChannelItem} from '../types/YTChannel';
 import {
   getYTChannelsStatsticsAPI,
   getYouTubeChannelsAPI,
+  getYTChannelsSnippetAPI,
 } from '../services/youTubeAPIs';
+Icon.loadFont();
+Icon1.loadFont();
 
 export const TopVloggerScreen = (): JSX.Element => {
   const [videoSearchText, setVideoSearchText] = useState('');
@@ -27,10 +33,13 @@ export const TopVloggerScreen = (): JSX.Element => {
     [],
   );
   const [miniCardData, setMiniCardData] = useState<YTChannelItem[]>([]);
+  const [filterStatus, setFilterStatus] = useState(false);
+  const [filterOptionStatus, setFilterOptionStatus] = useState(false);
 
   const fetchYTChannels = async () => {
+    setFilterStatus(false);
+    setFilterOptionStatus(false);
     setIsLoading(true);
-
     try {
       let YouTubeChannels = await getYouTubeChannelsAPI(videoSearchText);
 
@@ -51,6 +60,7 @@ export const TopVloggerScreen = (): JSX.Element => {
     } catch (error) {
       console.error(error);
     }
+    setFilterStatus(true);
   };
 
   const filterYTChannels = React.useCallback(
@@ -65,11 +75,15 @@ export const TopVloggerScreen = (): JSX.Element => {
           let channelStat = await getChannelStatistics(
             channel?.snippet?.channelId,
           );
+          let channelSnippet = await getChannelSnippet(
+            channel?.snippet?.channelId,
+          );
           if (channelStat) {
             let YTchannelDetails = {
               ...channel,
               subscribers: Number(channelStat.subscriberCount),
               views: Number(channelStat.viewCount),
+              thumbnailC: channelSnippet.thumbnails.medium.url,
             };
             YTChannelDatawithCounts.push(YTchannelDetails);
           }
@@ -95,23 +109,53 @@ export const TopVloggerScreen = (): JSX.Element => {
     [],
   );
 
+  const getChannelSnippet: any = React.useCallback(
+    async (channelId: string) => {
+      try {
+        let snippet;
+        let SnippetAPI = await getYTChannelsSnippetAPI(channelId);
+        snippet = SnippetAPI?.items?.[0].snippet;
+        return snippet;
+      } catch (e) {
+        console.log(e);
+        return {};
+      }
+    },
+    [],
+  );
+
+  const filterOption = () => {
+    //setFilterOptionStatus(true);
+    //setFilterStatus(false);
+    Alert.alert('Filter Channels', 'Select an option', [
+      {
+        text: 'Subscriber',
+        onPress: () => filterSubscriber(),
+      },
+      {text: 'View Count', onPress: () => filterView()},
+    ]);
+  };
   const filterSubscriber = React.useCallback(() => {
     setSortedByViewsData([]);
     let sortedYTChannelBySubscribers = Helpers.sortArrayByKey(
       miniCardData,
       'subscribers',
     );
-
-    setMiniCardData(sortedYTChannelBySubscribers);
-    setSortedBySubscribersData(sortedYTChannelBySubscribers);
+    let reverseSortedYTChannelBySubscribers = Helpers.reverseArray(
+      sortedYTChannelBySubscribers,
+    );
+    setMiniCardData(reverseSortedYTChannelBySubscribers);
+    setSortedBySubscribersData(reverseSortedYTChannelBySubscribers);
   }, [miniCardData]);
 
   const filterView = () => {
     setSortedBySubscribersData([]);
     let sortedYTChannelByViews = Helpers.sortArrayByKey(miniCardData, 'views');
-
-    setMiniCardData(sortedYTChannelByViews);
-    setSortedByViewsData(sortedYTChannelByViews);
+    let reverseSortedYTChannelByViews = Helpers.reverseArray(
+      sortedYTChannelByViews,
+    );
+    setMiniCardData(reverseSortedYTChannelByViews);
+    setSortedByViewsData(reverseSortedYTChannelByViews);
   };
 
   return (
@@ -124,31 +168,82 @@ export const TopVloggerScreen = (): JSX.Element => {
             value={videoSearchText}
             onChangeText={text => setVideoSearchText(text)}
           />
-          <Text style={styles.text} onPress={() => fetchYTChannels()}>
+          <Icon
+            name="search1"
+            size={30}
+            color="#900"
+            onPress={() => fetchYTChannels()}
+          />
+          {filterStatus && (
+            <View style={{alignItems: 'flex-start', paddingLeft: 10}}>
+              <Icon1
+                name="sort-amount-desc"
+                size={25}
+                color="#900"
+                onPress={() => filterOption()}
+              />
+            </View>
+            // <Text
+            //   style={{
+            //     paddingRight: 10,
+            //     paddingLeft: 18,
+            //     fontSize: 14,
+            //     fontWeight: 'bold',
+            //     color: 'blue',
+            //   }}
+            //   onPress={() => filterOption()}>
+            //   Click here for filter options:
+            // </Text>
+          )}
+          {/* <Text style={styles.text} onPress={() => fetchYTChannels()}>
             Search
-          </Text>
+          </Text> */}
         </View>
         <View
           style={{
-            flexDirection: 'row',
+            flexDirection: 'column',
           }}>
-          <Text
+          {filterOptionStatus && (
+            <View
+              style={{
+                flexDirection: 'row',
+                paddingLeft: 16,
+              }}>
+              <Text
+                style={styles.textButton}
+                onPress={() => filterSubscriber()}>
+                Subscribers
+              </Text>
+              <Text style={styles.textButton} onPress={() => filterView()}>
+                View Count
+              </Text>
+            </View>
+          )}
+          {/* <Text
             style={{
               paddingRight: 10,
               paddingLeft: 18,
               fontSize: 14,
               fontWeight: 'bold',
-            }}>
-            Filter by:
-          </Text>
-          <Text style={styles.textButton} onPress={() => filterSubscriber()}>
+              color: 'blue',
+            }}
+            onPress={() => filterOption()}>
+            Click here for filter options:
+          </Text> */}
+          {/* <Text style={styles.textButton} onPress={() => filterSubscriber()}>
             Subscribers
           </Text>
           <Text style={styles.textButton} onPress={() => filterView()}>
             View Count
-          </Text>
+          </Text> */}
         </View>
-
+        {isLoading && (
+          <ActivityIndicator
+            style={{marginTop: Dimensions.get('window').height / 84}}
+            size="large"
+            color="red"
+          />
+        )}
         {/* FLATLIST WHICH TAKES TWO DATA SOURCES: THE CHANNELS (FilterData) + SUBSCRIBERS/VIEW COUNT (subView) returns MINICARD OBJECT*/}
         <FlatList
           data={miniCardData}
@@ -157,12 +252,12 @@ export const TopVloggerScreen = (): JSX.Element => {
           keyExtractor={item => {
             return item.id.videoId;
           }}
-          renderItem={({item, index}) => {
+          renderItem={({item}) => {
             return (
               <MiniCard
                 channel={item.snippet.channelTitle} //Channel name
                 title={item.snippet.title} //Video related to the query
-                thumbnail={item.snippet.thumbnails.medium.url} //Thumbnail of the video - Might want to remove it???
+                thumbnail={item.thumbnailC} //Thumbnail of the channel
                 viewCount={item.views} //ViewCount
                 subscriberCount={item.subscribers} //Subscriber
               />
@@ -170,13 +265,6 @@ export const TopVloggerScreen = (): JSX.Element => {
           }}
         />
       </View>
-      {isLoading && (
-        <ActivityIndicator
-          style={{marginTop: Dimensions.get('window').height / 84}}
-          size="large"
-          color="red"
-        />
-      )}
     </>
   );
 };
@@ -235,6 +323,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 25,
     padding: 5,
+    marginRight: 20,
     backgroundColor: '#e6e6e6',
     paddingHorizontal: 10,
   },
