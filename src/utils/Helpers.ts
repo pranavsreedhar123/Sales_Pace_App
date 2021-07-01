@@ -1,4 +1,5 @@
 export namespace Helpers {
+  
   export const getUniqueArray = (
     redundantArray: any,
     distinctKey: string,
@@ -13,12 +14,17 @@ export namespace Helpers {
     }
     return result;
   };
-
+  
   export const sortArrayByKey = (array: any, key: string) => {
     return array.sort((a: any, b: any) => {
       return a[key] - b[key];
     });
   };
+  
+  export const reverseArray = (array: any) => {
+    return array.reverse();
+  };
+
 
   export const formatDate = (dateString: string): string => {
     let date = new Date(dateString);
@@ -48,5 +54,4 @@ export namespace Helpers {
     }
 
     return rgb;
-  };
 }
