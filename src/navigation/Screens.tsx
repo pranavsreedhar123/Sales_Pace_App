@@ -1,5 +1,7 @@
 export const Screens = {
-    LoginScreen: 'Login',
-    TopVloggerScreen: 'TopVloggerScreen',
-  };
-  
+  DefaultDrawer: 'DefaultDrawer',
+  LoginScreen: 'Login',
+  TopVloggerScreen: 'TopVloggerScreen',
+  GovtProjectScreen: 'GovtProjectScreen',
+};
+
