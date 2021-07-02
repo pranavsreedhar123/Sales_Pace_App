@@ -10,7 +10,7 @@ import {
   setCommonDrawerScreenOptions,
   setHeaderTitle,
 } from './ScreenOptions';
-import {Login} from '../screens/Login';
+import Login from '../screens/Login';
 
 const Stack = createStackNavigator();
 const DefaultDrawer = createDrawerNavigator();
