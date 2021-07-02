@@ -49,7 +49,9 @@ export const DefaultDrawerNavigator = (): JSX.Element => {
         name={Screens.TopVloggerScreen}
         component={TopVloggerScreen}
         options={{
-          headerShown: false,
+          ...commonDrawerScreenOptions,
+          ...drawerMenuInHeader,
+          headerTitle: setHeaderTitle('Top VLoggers'),
         }}
       />
     </DefaultDrawer.Navigator>

@@ -63,7 +63,6 @@
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F2B4896554DF9901F36944C2 /* Pods-Sales_Pace_App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Sales_Pace_App.release.xcconfig"; path = "Target Support Files/Pods-Sales_Pace_App/Pods-Sales_Pace_App.release.xcconfig"; sourceTree = "<group>"; };
 		F98D946417A1E7D8326E97D8 /* Pods-Sales_Pace_App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Sales_Pace_App.debug.xcconfig"; path = "Target Support Files/Pods-Sales_Pace_App/Pods-Sales_Pace_App.debug.xcconfig"; sourceTree = "<group>"; };
-		BB243E10E158473D8992DBB1 /* AntDesign.ttf */ = {isa = PBXFileReference; name = "AntDesign.ttf"; path = "../node_modules/native-base/Fonts/AntDesign.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		E4C327E7EA914C85B87578C8 /* Entypo.ttf */ = {isa = PBXFileReference; name = "Entypo.ttf"; path = "../node_modules/native-base/Fonts/Entypo.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		E5626C805E4E4E718DF401CD /* EvilIcons.ttf */ = {isa = PBXFileReference; name = "EvilIcons.ttf"; path = "../node_modules/native-base/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		944E9E7AE72E453CB8C2401D /* Feather.ttf */ = {isa = PBXFileReference; name = "Feather.ttf"; path = "../node_modules/native-base/Fonts/Feather.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
@@ -83,27 +82,6 @@
 		6B6F3A6143F548AA94747B90 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; name = "SimpleLineIcons.ttf"; path = "../node_modules/native-base/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		40412B52BBE2432F81C7698B /* Zocial.ttf */ = {isa = PBXFileReference; name = "Zocial.ttf"; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
-
-/* Begin PBXFrameworksBuildPhase section */
-		00E356EB1AD99517003FC87E /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8A3D35E6C503ADEAF96BFC20 /* libPods-Sales_Pace_App-Sales_Pace_AppTests.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		13B07F8C1A680F5B00A75B9A /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				9F359331CC0AAA915AEA836D /* libPods-Sales_Pace_App.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXFrameworksBuildPhase section */
-
-/* Begin PBXGroup section */
 		00E356EF1AD99517003FC87E /* Sales_Pace_AppTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -188,7 +166,6 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		8E0AAD024D734ED0B26201C6 /* Resources */ = {
 			isa = "PBXGroup";
 			children = (
 				BB243E10E158473D8992DBB1 /* AntDesign.ttf */,
@@ -211,30 +188,6 @@
 				6B6F3A6143F548AA94747B90 /* SimpleLineIcons.ttf */,
 				40412B52BBE2432F81C7698B /* Zocial.ttf */,
 			);
-			name = Resources;
-			sourceTree = "<group>";
-			path = "";
-		};
-/* End PBXGroup section */
-
-/* Begin PBXNativeTarget section */
-		00E356ED1AD99517003FC87E /* Sales_Pace_AppTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "Sales_Pace_AppTests" */;
-			buildPhases = (
-				E63267916ED485BE38705D1C /* [CP] Check Pods Manifest.lock */,
-				00E356EA1AD99517003FC87E /* Sources */,
-				00E356EB1AD99517003FC87E /* Frameworks */,
-				00E356EC1AD99517003FC87E /* Resources */,
-				D321B1528313EA540A5671A5 /* [CP] Embed Pods Frameworks */,
-				98D74C17C15B3E684ED833B5 /* [CP] Copy Pods Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				00E356F51AD99517003FC87E /* PBXTargetDependency */,
-			);
-			name = Sales_Pace_AppTests;
 			productName = Sales_Pace_AppTests;
 			productReference = 00E356EE1AD99517003FC87E /* Sales_Pace_AppTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -311,7 +264,6 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				8706B93D2300423398A74FC8 /* AntDesign.ttf in Resources */,
 				E214C1107AEE4028B79AAA20 /* Entypo.ttf in Resources */,
 				4E172F4D6D774C24B80A7B67 /* EvilIcons.ttf in Resources */,
 				CDABEDD56D4446FF935E41B5 /* Feather.ttf in Resources */,
@@ -331,27 +283,6 @@
 				C5A3117ADE7D43C398875CAC /* SimpleLineIcons.ttf in Resources */,
 				6BB44A59DEEA4E84AC94ED3B /* Zocial.ttf in Resources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Bundle React Native code and images";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e\n\nexport NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
-		};
-		0DFE9E6A21B228FC613BB6EA /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
