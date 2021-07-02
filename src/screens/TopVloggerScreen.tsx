@@ -8,6 +8,7 @@ import {
   FlatList,
   StyleSheet,
   Alert,
+  Keyboard,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Icon1 from 'react-native-vector-icons/FontAwesome';
@@ -35,8 +36,11 @@ export const TopVloggerScreen = (): JSX.Element => {
   const [miniCardData, setMiniCardData] = useState<YTChannelItem[]>([]);
   const [filterStatus, setFilterStatus] = useState(false);
   const [filterOptionStatus, setFilterOptionStatus] = useState(false);
+  const [isFilteredBySubscribers, setIsFilteredBySubscribers] = useState(false);
+  const [isFilteredByViews, setIsFilteredByViews] = useState(false);
 
   const fetchYTChannels = async () => {
+    Keyboard.dismiss();
     setFilterStatus(false);
     setFilterOptionStatus(false);
     setIsLoading(true);
@@ -125,18 +129,21 @@ export const TopVloggerScreen = (): JSX.Element => {
   );
 
   const filterOption = () => {
-    //setFilterOptionStatus(true);
+    setFilterOptionStatus(!filterOptionStatus);
     //setFilterStatus(false);
-    Alert.alert('Filter Channels', 'Select an option', [
-      {
-        text: 'Subscriber',
-        onPress: () => filterSubscriber(),
-      },
-      {text: 'View Count', onPress: () => filterView()},
-    ]);
+    // Alert.alert('Filter Channels', 'Select an option', [
+    // {
+    //   text: 'Subscriber',
+    //   onPress: () => filterSubscriber(),
+    // },
+    // {text: 'View Count', onPress: () => filterView()},
+    // ]);
   };
   const filterSubscriber = React.useCallback(() => {
+    // setIsFilteredByViews(false);
+    // setIsFilteredBySubscribers(!isFilteredBySubscribers);
     setSortedByViewsData([]);
+    // if (isFilteredBySubscribers) {
     let sortedYTChannelBySubscribers = Helpers.sortArrayByKey(
       miniCardData,
       'subscribers',
@@ -146,80 +153,102 @@ export const TopVloggerScreen = (): JSX.Element => {
     );
     setMiniCardData(reverseSortedYTChannelBySubscribers);
     setSortedBySubscribersData(reverseSortedYTChannelBySubscribers);
+    // }
   }, [miniCardData]);
 
   const filterView = () => {
+    // setIsFilteredBySubscribers(false);
+    // setIsFilteredByViews(!isFilteredByViews);
     setSortedBySubscribersData([]);
+    // if (isFilteredByViews) {
     let sortedYTChannelByViews = Helpers.sortArrayByKey(miniCardData, 'views');
     let reverseSortedYTChannelByViews = Helpers.reverseArray(
       sortedYTChannelByViews,
     );
     setMiniCardData(reverseSortedYTChannelByViews);
     setSortedByViewsData(reverseSortedYTChannelByViews);
+    // }
   };
 
   return (
     <>
       <View style={{flex: 1}}>
         <View style={styles.container}>
-          <TextInput
-            placeholder="Search Channel"
-            style={styles.input}
-            value={videoSearchText}
-            onChangeText={text => setVideoSearchText(text)}
-          />
-          <Icon
-            name="search1"
-            size={30}
-            color="#900"
-            onPress={() => fetchYTChannels()}
-          />
-          {filterStatus && (
-            <View style={{alignItems: 'flex-start', paddingLeft: 10}}>
-              <Icon1
-                name="sort-amount-desc"
-                size={25}
-                color="#900"
-                onPress={() => filterOption()}
-              />
-            </View>
-            // <Text
-            //   style={{
-            //     paddingRight: 10,
-            //     paddingLeft: 18,
-            //     fontSize: 14,
-            //     fontWeight: 'bold',
-            //     color: 'blue',
-            //   }}
-            //   onPress={() => filterOption()}>
-            //   Click here for filter options:
-            // </Text>
-          )}
+          <View style={styles.searchBox}>
+            <TextInput
+              placeholder="Search Channel"
+              style={styles.input}
+              value={videoSearchText}
+              onChangeText={text => setVideoSearchText(text)}
+            />
+            <Icon
+              name="search1"
+              size={30}
+              color="blue"
+              onPress={() => fetchYTChannels()}
+            />
+            {filterStatus && (
+              <View
+                style={{
+                  alignItems: 'flex-start',
+                  paddingLeft: 10,
+                  paddingTop: 5,
+                }}>
+                <Icon1
+                  name="sort-amount-desc"
+                  size={25}
+                  color="blue"
+                  onPress={() => filterOption()}
+                />
+              </View>
+
+              // <Text
+              //   style={{
+              //     paddingRight: 10,
+              //     paddingLeft: 18,
+              //     fontSize: 14,
+              //     fontWeight: 'bold',
+              //     color: 'blue',
+              //   }}
+              //   onPress={() => filterOption()}>
+              //   Click here for filter options:
+              // </Text>
+            )}
+          </View>
           {/* <Text style={styles.text} onPress={() => fetchYTChannels()}>
             Search
           </Text> */}
-        </View>
-        <View
-          style={{
-            flexDirection: 'column',
-          }}>
-          {filterOptionStatus && (
-            <View
-              style={{
-                flexDirection: 'row',
-                paddingLeft: 16,
-              }}>
-              <Text
-                style={styles.textButton}
-                onPress={() => filterSubscriber()}>
-                Subscribers
-              </Text>
-              <Text style={styles.textButton} onPress={() => filterView()}>
-                View Count
-              </Text>
-            </View>
-          )}
-          {/* <Text
+          <View
+            style={{
+              flexDirection: 'column',
+            }}>
+            {filterOptionStatus && (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  padding: 10,
+                }}>
+                <Text
+                  style={
+                    isFilteredBySubscribers
+                      ? styles.textButtonEnabled
+                      : styles.textButtonDisabled
+                  }
+                  onPress={() => filterSubscriber()}>
+                  Subscribers
+                </Text>
+                <Text
+                  style={
+                    isFilteredByViews
+                      ? styles.textButtonEnabled
+                      : styles.textButtonDisabled
+                  }
+                  onPress={() => filterView()}>
+                  View Count
+                </Text>
+              </View>
+            )}
+            {/* <Text
             style={{
               paddingRight: 10,
               paddingLeft: 18,
@@ -230,13 +259,15 @@ export const TopVloggerScreen = (): JSX.Element => {
             onPress={() => filterOption()}>
             Click here for filter options:
           </Text> */}
-          {/* <Text style={styles.textButton} onPress={() => filterSubscriber()}>
+            {/* <Text style={styles.textButton} onPress={() => filterSubscriber()}>
             Subscribers
           </Text>
           <Text style={styles.textButton} onPress={() => filterView()}>
             View Count
           </Text> */}
+          </View>
         </View>
+
         {isLoading && (
           <ActivityIndicator
             style={{marginTop: Dimensions.get('window').height / 84}}
@@ -270,16 +301,23 @@ export const TopVloggerScreen = (): JSX.Element => {
 };
 
 const styles = StyleSheet.create({
+  // container: {
+  //   padding: 50,
+  //   paddingHorizontal: 15,
+  //   paddingRight: 0,
+  //   paddingBottom: 10,
+  //   flexDirection: 'row',
+  //   marginTop: Dimensions.get('window').height / 17,
+  //   width: Dimensions.get('window').width,
+  //   backgroundColor: '#FFF',
+  //   height: '11%',
+  // },
   container: {
-    padding: 50,
-    paddingHorizontal: 15,
-    paddingRight: 0,
-    paddingBottom: 10,
-    flexDirection: 'row',
-    marginTop: Dimensions.get('window').height / 17,
-    width: Dimensions.get('window').width,
-    backgroundColor: '#FFF',
-    height: '11%',
+    paddingLeft: 10,
+    paddingRight: 10,
+    alignSelf: 'stretch',
+    padding: 5,
+    backgroundColor: '#D0D0D0',
   },
   tinyLogo: {
     width: Dimensions.get('window').width / 3,
@@ -307,15 +345,27 @@ const styles = StyleSheet.create({
     backgroundColor: 'blue',
     width: Dimensions.get('window').width * 0.2,
   },
-  textButton: {
+  textButtonEnabled: {
     fontSize: 14,
-    padding: 5,
+    padding: 10,
+    paddingTop: 10,
     fontWeight: 'bold',
-    paddingTop: 0,
     marginLeft: Dimensions.get('window').width / 100,
     color: 'white',
-    backgroundColor: 'red',
-    width: Dimensions.get('window').width * 0.24,
+    backgroundColor: 'rgb(0, 0, 255)',
+    width: Dimensions.get('window').width * 0.45,
+    borderRadius: 5,
+  },
+  textButtonDisabled: {
+    fontSize: 14,
+    padding: 10,
+    paddingTop: 10,
+    fontWeight: 'bold',
+    marginLeft: Dimensions.get('window').width / 100,
+    color: 'white',
+    backgroundColor: 'rgb(0, 0, 255)',
+    width: Dimensions.get('window').width * 0.45,
+    borderRadius: 5,
   },
   input: {
     width: '70%',
@@ -330,5 +380,10 @@ const styles = StyleSheet.create({
   error: {
     borderWidth: 2,
     borderColor: 'red',
+  },
+  searchBox: {
+    flexDirection: 'row',
+    borderColor: '#cccccc',
+    borderBottomWidth: 1,
   },
 });

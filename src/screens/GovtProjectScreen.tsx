@@ -11,17 +11,18 @@ import {
   StyleSheet,
   SectionList,
   Button,
+  Linking,
 } from 'react-native';
 import {Helpers} from '../utils/Helpers';
 import {getHousingDataAPI} from '../services/govtProjectsAPI';
-import { getGovtProjectDetails } from '../services/govtProjectsAPI';
-import { Icon } from 'react-native-elements';
+import {getGovtProjectDetails} from '../services/govtProjectsAPI';
+import {Icon} from 'react-native-elements';
 import Icon1 from 'react-native-vector-icons/FontAwesome';
 import GovtProjectScreenDetail from './GovtProjectScreenDetails';
-import { NavigationActions } from '../navigation/NavigationActions';
+import {NavigationActions} from '../navigation/NavigationActions';
 import Modal from 'react-native-modal';
-import { Alert } from 'react-native';
-
+import {Alert} from 'react-native';
+import {ScrollView} from 'react-native-gesture-handler';
 
 const housingData = [
   {
@@ -107,35 +108,30 @@ const housingData = [
 ];
 
 const GovtProjectScreen = () => {
-
-
   const [isModalVisible, setModalVisible] = useState(false);
   const [allGovtTenders, setAllGovtTenders] = useState<any>([]);
   const [filteredGovtTenders, setFilteredGovtTenders] = useState<any>([]);
   const [groupedGovtTenders, setGroupedGovtTenders] = useState<any>([]);
   const [isLoading, setLoading] = useState(true);
   const [tenderSearchText, setTenderSearchText] = useState('');
-  const [sourceID,setSourceID]=useState<any>()
-  const [tenderID,setTenderID]=useState<any>()
-  const [tenderDetails,setTenderDetails] =useState<any>([])
-
+  const [sourceID, setSourceID] = useState<any>();
+  const [tenderID, setTenderID] = useState<any>();
+  const [tenderDetails, setTenderDetails] = useState<any>({});
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
- 
   };
 
-
-const passValuesInModal=(tender:any)=>{
-  toggleModal()
-  console.log(isModalVisible)
-  if(!isModalVisible)
-  { console.log(JSON.stringify(tender));
-    console.log(tender.tender_source+'')
-    setTenderID(tender.tender_id);
-    setSourceID(tender.tender_source);
-   
-}}
+  const passValuesInModal = (tender: any) => {
+    toggleModal();
+    console.log(isModalVisible);
+    if (!isModalVisible) {
+      console.log(JSON.stringify(tender));
+      console.log(tender.tender_source + '');
+      setTenderID(tender.tender_id);
+      setSourceID(tender.tender_source);
+    }
+  };
   useEffect(() => {
     setLoading(true);
     try {
@@ -151,20 +147,21 @@ const passValuesInModal=(tender:any)=>{
     }
   }, []);
   useEffect(() => {
-    try{
-      // alert(sourceID+tenderID);
-  const getprojectDetails=async ()=>{
-    // alert("Inswide details")
-    let projectDetails:string =await  getGovtProjectDetails(sourceID.toString(),tenderID.toString());
-    console.log(projectDetails,"*********")
-  };
- sourceID && tenderID && getprojectDetails();}
-  catch(e){
-    // consol
-  }
-
-}, [sourceID,tenderID]);
-
+    try {
+      // alert(sourceID + tenderID);
+      const getprojectDetails = async () => {
+        let projectDetails: string = await getGovtProjectDetails(
+          sourceID.toString(),
+          tenderID.toString(),
+        );
+        console.log(projectDetails, '*********');
+        setTenderDetails(JSON.parse(projectDetails));
+      };
+      sourceID && tenderID && getprojectDetails();
+    } catch (e) {
+      // consol
+    }
+  }, [sourceID, tenderID]);
 
   useEffect(() => {
     const getGroupedAndFilteredData = () => {
@@ -184,14 +181,12 @@ const passValuesInModal=(tender:any)=>{
           };
         },
       );
-      console.log(mappedCrawledTenders,"jewfniewfiewfoiewf")
+      console.log(mappedCrawledTenders, 'jewfniewfiewfoiewf');
       setGroupedGovtTenders(mappedCrawledTenders);
     };
     filteredGovtTenders && getGroupedAndFilteredData();
   }, [filteredGovtTenders]);
-// console.log(filteredGovtTenders+"-====")
-
-
+  // console.log(filteredGovtTenders+"-====")
 
   const getAmountFormatted = (amt: any) => {
     let value = parseInt(amt);
@@ -219,37 +214,31 @@ const passValuesInModal=(tender:any)=>{
     let allTenderContainingSearchText = allGovtTenders.filter((tender: any) => {
       return tender.tender_title?.includes(tenderSearchText);
     });
-// console.log(allTenderContainingSearchText.length)
+    // console.log(allTenderContainingSearchText.length)
     tenderSearchText
       ? setFilteredGovtTenders(allTenderContainingSearchText)
       : setFilteredGovtTenders(allGovtTenders);
   };
-// console.log(JSON.stringify(groupedGovtTenders))
+  // console.log(JSON.stringify(groupedGovtTenders))
 
-const sortOption= (sortBy:any)=>{
+  const sortOption = (sortBy: any) => {
+    let allTendersWithSorting = Helpers.sortArrayByKey(
+      filteredGovtTenders,
+      sortBy,
+    );
+    setFilteredGovtTenders(allTendersWithSorting);
+    // setGroupedGovtTenders(allTendersWithSorting)
+    console.log(allTendersWithSorting, 'Sortedddddddddddd');
+  };
+  const [isVisible, setVisiblity] = useState(false);
 
-  
-  let allTendersWithSorting=Helpers.sortArrayByKey(filteredGovtTenders,sortBy)
-setFilteredGovtTenders(allTendersWithSorting);
-// setGroupedGovtTenders(allTendersWithSorting)
-console.log(allTendersWithSorting,"Sortedddddddddddd")
-}
-const[isVisible,setVisiblity]= useState(false);
-
-
-
-let DATA="{\"sr_no\":\"46665927\",\"tender_id\":\"44418460\",\"tender_category\":\"Uttar Pradesh Housing And Development Board\",\"amount_string\":\"Refer Document\",\"tender_amount\":0.0000,\"closing_date\":\"2021-06-29\",\"tender_description\":\"Construction of 144 no 4 storey flats under pmay at pocket-2 in avadh vihar yojna lucknow group-a\",\"tender_url\":\"https://www.tendertiger.com/viewtenderdetailnd.aspx?SrNo=46665927&tendertype=9d09819bf4266dce2eviL&Year=2018&SerText=Uttar+Pradesh+Housing+and+Development+Board&Read=true\",\"tender_currency\":\"Refer\",\"state_name\":\"Uttar Pradesh\"}"
-DATA=JSON.parse(DATA)
+  let DATA =
+    '{"sr_no":"46665927","tender_id":"44418460","tender_category":"Uttar Pradesh Housing And Development Board","amount_string":"Refer Document","tender_amount":0.0000,"closing_date":"2021-06-29","tender_description":"Construction of 144 no 4 storey flats under pmay at pocket-2 in avadh vihar yojna lucknow group-a","tender_url":"https://www.tendertiger.com/viewtenderdetailnd.aspx?SrNo=46665927&tendertype=9d09819bf4266dce2eviL&Year=2018&SerText=Uttar+Pradesh+Housing+and+Development+Board&Read=true","tender_currency":"Refer","state_name":"Uttar Pradesh"}';
+  DATA = tenderDetails;
   return (
-    
     <View style={{flex: 1}}>
+      {/* true?<GovtProjectScreenDetail/>:null */}
 
-
-
-
-  {/* true?<GovtProjectScreenDetail/>:null */}
-
-      
       <View style={styles.container}>
         <View style={styles.searchBox}>
           <TextInput
@@ -259,21 +248,21 @@ DATA=JSON.parse(DATA)
             onChangeText={text => setTenderSearchText(text)}
           />
 
+          <Icon
+            style={styles.text}
+            raised
+            name="search"
+            type="font-awesome"
+            color="#005A9C"
+            // backgroundColor: '#D0D0D0'
 
-<Icon
-style={styles.text}
-  raised
-  name='search'
-  type='font-awesome'
-  color='#005A9C'
-  // backgroundColor: '#D0D0D0'
-  
-  onPress={() => filterTenders()} />
+            onPress={() => filterTenders()}
+          />
           {/* <Text onPress={() => filterTenders()}>
             Search
           </Text> */}
 
-{/* <View style={{alignItems: 'flex-end', paddingLeft: 10,paddingVertical:15}}>
+          {/* <View style={{alignItems: 'flex-end', paddingLeft: 10,paddingVertical:15}}>
               <Icon
                 name="sort-amount-desc"
                 type='font-awesome'
@@ -284,7 +273,7 @@ style={styles.text}
                 onPress={() => sortOption("tender_amount")}
               />
             </View> */}
-            {/* {filterOptionStatus && (
+          {/* {filterOptionStatus && (
             <View
               style={{
                 flexDirection: 'row',
@@ -301,11 +290,10 @@ style={styles.text}
             </View>
           )} */}
         </View>
-     
 
         <View style={styles.sectionsList}>
           {!groupedGovtTenders?.length && (
-            <Text style={{...styles.text, marginVertical: 300,height:30}}>
+            <Text style={{...styles.text, marginVertical: 300, height: 30}}>
               No Tender Found
             </Text>
           )}
@@ -314,11 +302,12 @@ style={styles.text}
             sections={groupedGovtTenders}
             keyExtractor={(tender, index) => tender + index}
             renderItem={({item}) => (
-              <View style={styles.item}
-              // onPress={() => passValuesInModal(item)}
-              // onPress={()=>NavigationActions.navigateToDifferentStackedScreen(
-              //   {screenName:'GovtProjectScreenDetails',params:item}
-              //   )}
+              <TouchableOpacity
+                style={styles.item}
+                onPress={() => passValuesInModal(item)}
+                // onPress={()=>NavigationActions.navigateToDifferentStackedScreen(
+                //   {screenName:'GovtProjectScreenDetails',params:item}
+                //   )}
               >
                 <Text style={styles.tenderData}>
                   <Text style={styles.title}>Tender Title: </Text>
@@ -332,7 +321,7 @@ style={styles.text}
                   <Text style={styles.title}> Closing Date : </Text>{' '}
                   {Helpers.formatDate(item.closing_date)}
                 </Text>
-              </View>
+              </TouchableOpacity>
             )}
             // renderItem={({tender}) => <Item tenderDetails={tender} />}
             renderSectionHeader={({section: {tender_type}}) => (
@@ -341,49 +330,92 @@ style={styles.text}
           />
         </View>
       </View>
-      <Modal isVisible={isModalVisible}
-      style={{margin:0}}>
-        <View style={styles.modal}>
-       
-          <View style={{alignItems: 'flex-end'}}><Text style={styles.titles}>{'\n'}{'\n'}Tender ID : <Text style={styles.values}  >{DATA.tender_id} {'\n'}</Text></Text></View>
-    
-   <Text style={styles.titles}>Tender Title : <Text style={styles.values}>{DATA.tender_description}</Text></Text>
-  
-   <Text style={styles.titles}> State: <Text style={{...styles.values,}} > {DATA.state_name}</Text></Text>
+      <Modal isVisible={isModalVisible} style={{margin: 0}}>
+        <ScrollView style={styles.modal}>
+          <Text>
+            {'\n'}
+            {'\n'}
+          </Text>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={styles.titles}>Tender ID </Text>
+            <Text style={styles.values}>
+              : {tenderDetails?.tender_id} {'\n'}
+            </Text>
+          </View>
 
-  
-   <Text style={styles.titles}>Tender Category : <Text style={styles.values}> {DATA.tender_category}</Text></Text>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={styles.titles}>Tender Title </Text>
+            <Text style={styles.values}>
+              {' '}
+              : {tenderDetails?.tender_description}
+            </Text>
+          </View>
 
-   <Text style={styles.titles}>Tender Amount : <Text style={styles.values}> {DATA.tender_amount}</Text></Text>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={styles.titles}> State: </Text>
+            <Text style={{...styles.values}}>
+              : {tenderDetails?.state_name}
+            </Text>
+          </View>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={styles.titles}>Tender Category </Text>
+            <Text style={styles.values}>
+              : {tenderDetails?.tender_category}
+            </Text>
+          </View>
 
-   <Text style={styles.titles}>Tender Closing Date : <Text style={{...styles.values,color:'darkred'}} > {DATA.closing_date}</Text>{'\n'}{'\n'}</Text>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={styles.titles}>Tender Amount </Text>
+            <Text style={styles.values}>
+              : {getAmountFormatted(tenderDetails?.tender_amount)}
+            </Text>
+          </View>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={styles.titles}>Closing Date </Text>
+            <Text style={{...styles.values, color: 'darkred'}}>
+              : {tenderDetails?.closing_date} {'\n'}
+            </Text>
+          </View>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={styles.titles}>Tender URL </Text>
+            <Text
+              style={{...styles.values, color: 'blue'}}
+              onPress={() => Linking.openURL(tenderDetails?.tender_url)}>
+              : {tenderDetails?.tender_url} {'\n'}
+              {'\n'}
+              {'\n'}
+              {'\n'}
+            </Text>
+          </View>
 
-   <Text style={styles.titles}>Tender URL : <Text style={ {...styles.values,color:'blue'}} onPress={() => Linking.openURL(DATA.tender_url)}> {DATA.tender_url}</Text></Text>
-
-
-
-          <Button title="Close Tender" onPress={toggleModal} />
-        </View>
+          <View style={{marginHorizontal: 80, marginBottom: 20}}>
+            <Button title="Close Tender" onPress={toggleModal} />
+          </View>
+        </ScrollView>
       </Modal>
     </View>
-    
   );
 };
 
 const styles = StyleSheet.create({
-  titles:{
-
-    fontSize: 18,fontFamily:'Vintage',paddingVertical:10,
-    paddingLeft:10,color :'#005A9C', fontWeight:'bold'
-  },
-  values:{
-    fontWeight:'bold',fontSize:15,color :'black'
-  },
-  modal:{
-    flex:1,
-    width:'100%',
-    backgroundColor:'#e6e6e6'
-  },
+  // titles: {
+  //   fontSize: 18,
+  //   fontFamily: 'Vintage',
+  //   paddingVertical: 10,
+  //   paddingLeft: 10,
+  //   color: '#005A9C',
+  //   fontWeight: 'bold',
+  // },
+  // values: {
+  //   fontWeight: 'bold',
+  //   fontSize: 15,
+  //   color: 'black',
+  // },
+  // modal: {
+  //   flex: 1,
+  //   width: '100%',
+  //   backgroundColor: '#e6e6e6',
+  // },
   container: {
     paddingLeft: 10,
     paddingRight: 10,
@@ -404,7 +436,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     fontSize: 16,
     padding: 7,
-    paddingBottom:2,
+    paddingBottom: 2,
     // padding:10000,
     fontWeight: 'bold',
     marginLeft: 15,
@@ -460,6 +492,31 @@ const styles = StyleSheet.create({
     width: '100%',
     borderRadius: 5,
     alignSelf: 'stretch',
+  },
+  titles: {
+    fontSize: 18,
+    fontFamily: 'Vintage',
+    paddingVertical: 10,
+    paddingLeft: 10,
+    color: '#005A9C',
+    fontWeight: 'bold',
+    flexDirection: 'column',
+    width: 140,
+  },
+  values: {
+    paddingBottom: 0,
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: 'black',
+    paddingVertical: 10,
+    marginRight: 145,
+    marginLeft: 10,
+    flexDirection: 'column',
+  },
+  modal: {
+    flex: 1,
+    width: '100%',
+    backgroundColor: '#e6e6e6',
   },
 });
 

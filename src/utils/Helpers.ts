@@ -54,4 +54,3 @@ export namespace Helpers {
     return rgb;
   };
 }
-}
