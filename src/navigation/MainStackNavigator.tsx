@@ -51,7 +51,7 @@ export const DefaultDrawerNavigator = (): JSX.Element => {
         options={{
           headerShown: false,
         }}
-      />
+      /> 
     </DefaultDrawer.Navigator>
   );
 };

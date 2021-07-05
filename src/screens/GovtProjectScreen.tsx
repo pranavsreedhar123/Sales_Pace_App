@@ -112,6 +112,7 @@ const GovtProjectScreen = () => {
         setFilteredGovtTenders(JSON.parse(crawledHousingData));
       };
       getHousingData();
+      console.log(allGovtTenders);
     } catch (e) {
       console.log(e);
       setLoading(false);
@@ -138,6 +139,7 @@ const GovtProjectScreen = () => {
       setGroupedGovtTenders(mappedCrawledTenders);
     };
     filteredGovtTenders && getGroupedAndFilteredData();
+    // console.log(filteredGovtTenders)
   }, [filteredGovtTenders]);
 
   const getAmountFormatted = (amt: any) => {

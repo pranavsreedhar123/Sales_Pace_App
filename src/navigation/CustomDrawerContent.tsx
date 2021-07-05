@@ -10,7 +10,7 @@ export const CustomDrawerContent = (): JSX.Element => {
   const screens = CustomDrawerScreens();
 
   return (
-    <ScrollView>
+    <ScrollView style={{paddingTop: 30}}>
       {screens.map((screen: CustomDrawerScreen, index: number) => (
         <CustomButton
           key={index}
