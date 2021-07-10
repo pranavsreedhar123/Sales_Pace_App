@@ -26,3 +26,20 @@ export async function getGovtProjectDetails(
   console.log(apiGovtProjectDetails + 'data----<>');
   return apiGovtProjectDetails;
 }
+
+// tender_url=
+  
+
+export async function checkProjectDetailsURL(
+ tender_url:string
+): Promise<unknown> {
+  // alert(tender_source + '---' + tender_id);
+
+  const apiGovtProjectDetails = (await apiClient(
+    tender_url,  {
+      method: 'GET',
+    },
+  )) 
+  console.log(apiGovtProjectDetails + 'data----<>');
+  return apiGovtProjectDetails;
+}

@@ -15,7 +15,7 @@ import {
   Image,
 } from 'react-native';
 import {Helpers} from '../utils/Helpers';
-import {getHousingDataAPI} from '../services/govtProjectsAPI';
+import {checkProjectDetailsURL, getHousingDataAPI} from '../services/govtProjectsAPI';
 import {getGovtProjectDetails} from '../services/govtProjectsAPI';
 import {Icon} from 'react-native-elements';
 import Icon1 from 'react-native-vector-icons/FontAwesome';
@@ -118,9 +118,10 @@ const GovtProjectScreen = () => {
   const [sourceID, setSourceID] = useState<any>();
   const [tenderID, setTenderID] = useState<any>();
   const [tenderDetails, setTenderDetails] = useState<any>({});
+  const [isLoadingTenderDetails,setIsLoadingTenderDetails] =useState(true)
 
   const toggleModal = () => {
-    setModalVisible(!isModalVisible);
+    !isLoadingTenderDetails && setModalVisible(!isModalVisible);
   };
 
   const passValuesInModal = (tender: any) => {
@@ -133,11 +134,17 @@ const GovtProjectScreen = () => {
       setSourceID(tender.tender_source);
     }
   };
+
   useEffect(() => {
     setLoading(true);
     try {
+      Linking.addEventListener('url',()=>{console.log('Hello World')} );
+
+
       const getHousingData = async () => {
         let crawledHousingData: string = await getHousingDataAPI();
+        
+  console.log(await Linking.getInitialURL(),"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
         setAllGovtTenders(JSON.parse(crawledHousingData));
         setFilteredGovtTenders(JSON.parse(crawledHousingData));
       };
@@ -148,6 +155,21 @@ const GovtProjectScreen = () => {
       setLoading(false);
     }
   }, []);
+  const checkIfURLExist=async(projectDetailsJSON:any)=>{
+try{
+    await checkProjectDetailsURL('https://etender.up.nic.in/nicgep/app?page=FrontEndTenderDetailsExternal&amp;service=page&amp;tnid=915548%20');
+
+  }
+  catch{()=>{
+    console.log("just for testing");
+    projectDetailsJSON.tender_url="google.com";
+
+  }}
+  setIsLoadingTenderDetails(false)
+  setTenderDetails(projectDetailsJSON);
+  
+  }
+  
   useEffect(() => {
     try {
       // alert(sourceID + tenderID);
@@ -156,8 +178,10 @@ const GovtProjectScreen = () => {
           sourceID.toString(),
           tenderID.toString(),
         );
-        console.log(projectDetails, '*********');
-        setTenderDetails(JSON.parse(projectDetails));
+      let  projectDetailsJSON=JSON.parse(projectDetails)
+      
+        checkIfURLExist(projectDetailsJSON?.tender_url);
+     
       };
       sourceID && tenderID && getprojectDetails();
     } catch (e) {
@@ -235,9 +259,17 @@ const GovtProjectScreen = () => {
   };
   const [isVisible, setVisiblity] = useState(false);
 
-  let DATA =
-    '{"sr_no":"46665927","tender_id":"44418460","tender_category":"Uttar Pradesh Housing And Development Board","amount_string":"Refer Document","tender_amount":0.0000,"closing_date":"2021-06-29","tender_description":"Construction of 144 no 4 storey flats under pmay at pocket-2 in avadh vihar yojna lucknow group-a","tender_url":"https://www.tendertiger.com/viewtenderdetailnd.aspx?SrNo=46665927&tendertype=9d09819bf4266dce2eviL&Year=2018&SerText=Uttar+Pradesh+Housing+and+Development+Board&Read=true","tender_currency":"Refer","state_name":"Uttar Pradesh"}';
-  DATA = tenderDetails;
+
+
+
+  // a openTenerURL(tender_url:any)
+  const openTenerURL=async (tender_url:any)=>
+    {
+      
+    console.log(await Linking.canOpenURL(tender_url))
+    await Linking.openURL(tender_url)
+    // .catch(()=>{console.log("ERROR")});
+  }
   return (
     <View style={{flex: 1}}>
       {/* true?<GovtProjectScreenDetail/>:null */}
@@ -383,10 +415,12 @@ const GovtProjectScreen = () => {
             </Text>
           </View>
           <View style={{flexDirection: 'row'}}>
-            <Text style={styles.titles}>Tender URL </Text>
+            <Text style={styles.titles} 
+            >Tender URL </Text>
             <Text
               style={{...styles.values, color: 'blue'}}
-              onPress={() => Linking.openURL(tenderDetails?.tender_url)}>
+              onPress={() => 
+                openTenerURL(tenderDetails?.tender_url)}>
               : {tenderDetails?.tender_url} {'\n'}
               {'\n'}
               {'\n'}
