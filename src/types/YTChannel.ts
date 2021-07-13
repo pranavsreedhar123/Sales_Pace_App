@@ -10,6 +10,7 @@ export type YTChannel = {
     subscribers?: number;
     views?: number;
     thumbnailC?: string;
+    hiddenSubscriber: boolean;
   };
   
   export type YTChannelId = {

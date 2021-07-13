@@ -3,5 +3,6 @@ export const Screens = {
   LoginScreen: 'Login',
   TopVloggerScreen: 'TopVloggerScreen',
   GovtProjectScreen: 'GovtProjectScreen',
+  GovtProjectScreenDetails:'GovtProjectScreenDetails'
 };
 
