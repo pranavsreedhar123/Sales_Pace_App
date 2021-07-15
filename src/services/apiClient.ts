@@ -47,7 +47,7 @@ export const apiClient = async (
   requestConfig: RequestInit,
 ): Promise<unknown> => {
   if (__DEV__) {
-    console.log('fetch', url, requestConfig);
+    console.log('fetch', url,"=-=--", requestConfig);
   }
 
   const timeoutValue = 60000;

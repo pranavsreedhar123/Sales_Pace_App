@@ -7,14 +7,15 @@ import {Login} from '../screens/Login';
 import {TopVloggerScreen} from '../screens/TopVloggerScreen';
 import GovtProjectScreen from '../screens/GovtProjectScreen';
 import {CustomDrawerContent} from './CustomDrawerContent';
-import { AuthContext, LoginContext, useAuth } from '../components/auth-context';
+import {AuthContext, LoginContext, useAuth} from '../components/auth-context';
 import {
   setDrawerMenuInHeader,
   setCommonDrawerScreenOptions,
   setHeaderTitle,
 } from './ScreenOptions';
-import {Alert} from 'react-native';
-import { ScreenStack } from 'react-native-screens';
+import Login from '../screens/Login';
+import TradeFairScreen from '../screens/TradeFairScreen';
+
 const Stack = createStackNavigator();
 const DefaultDrawer = createDrawerNavigator();
 const drawerMenuInHeader = setDrawerMenuInHeader();
@@ -43,7 +44,7 @@ export const NotLoggedInStackNavigator = (): JSX.Element => {
           headerShown: false,
         }}
       />
-  </Stack.Navigator>
+    </Stack.Navigator>
   );
 };
 export const LoggedInStackNavigator = (): JSX.Element => {
@@ -71,6 +72,16 @@ export const DefaultDrawerNavigator = (): JSX.Element => {
           headerTitle: setHeaderTitle('All Tenders'),
         }}
       />
+      <DefaultDrawer.Screen
+        name={Screens.TradeFairScreen}
+        component={TradeFairScreen}
+        options={{
+          ...commonDrawerScreenOptions,
+          ...drawerMenuInHeader,
+          headerTitle: setHeaderTitle('Trade Fairs'),
+        }}
+      />
+
       <DefaultDrawer.Screen
         name={Screens.TopVloggerScreen}
         component={TopVloggerScreen}
