@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useEffect} from 'react';
 import _ from 'lodash';
 
 // import { SearchBar } from 'react-native-elements';
@@ -12,16 +12,16 @@ import {
   SectionList,
   Button,
   Linking,
+  ActivityIndicator,
 } from 'react-native';
 import {Helpers} from '../utils/Helpers';
-import {checkProjectDetailsURL, getHousingDataAPI} from '../services/govtProjectsAPI';
+import {
+  checkProjectDetailsURL,
+  getHousingDataAPI,
+} from '../services/govtProjectsAPI';
 import {getGovtProjectDetails} from '../services/govtProjectsAPI';
 import {Icon} from 'react-native-elements';
-import Icon1 from 'react-native-vector-icons/FontAwesome';
-import GovtProjectScreenDetail from './GovtProjectScreenDetails';
-import {NavigationActions} from '../navigation/NavigationActions';
 import Modal from 'react-native-modal';
-import {Alert} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 
 const housingData = [
@@ -117,15 +117,18 @@ const GovtProjectScreen = () => {
   const [sourceID, setSourceID] = useState<any>();
   const [tenderID, setTenderID] = useState<any>();
   const [tenderDetails, setTenderDetails] = useState<any>({});
-  const [isLoadingTenderDetails,setIsLoadingTenderDetails] =useState(true)
+  const [isLoadingTenderDetails, setIsLoadingTenderDetails] = useState(false);
 
   const toggleModal = () => {
-    !isLoadingTenderDetails && setModalVisible(!isModalVisible);
+    setModalVisible(!isModalVisible);
   };
 
-  const passValuesInModal = (tender: any) => {
-    toggleModal();
-    console.log(isModalVisible);
+  const passValuesInModal = async (tender: any) => {
+    console.log(tender, 'tender ki values');
+
+    // toggleModal();
+    await getProjectDetails(tender.tender_source, tender.tender_id);
+
     if (!isModalVisible) {
       console.log(JSON.stringify(tender));
       console.log(tender.tender_source + '');
@@ -135,61 +138,58 @@ const GovtProjectScreen = () => {
   };
 
   useEffect(() => {
-    setLoading(true);
-    try {
-      Linking.addEventListener('url',()=>{console.log('Hello World')} );
+    const getHousingData = async () => {
+      setLoading(true);
+      try {
+        let crawledHousingData = await getHousingDataAPI();
+        console.log(crawledHousingData, '^^^^^^^^^^^^^^^^^^^^');
 
-
-      const getHousingData = async () => {
-        let crawledHousingData: string = await getHousingDataAPI();
-        
-  console.log(await Linking.getInitialURL(),"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
         setAllGovtTenders(JSON.parse(crawledHousingData));
         setFilteredGovtTenders(JSON.parse(crawledHousingData));
-      };
-      getHousingData();
-    } catch (e) {
-      // console.log(e);
+      } catch (e) {}
       setLoading(false);
-    }
+    };
+
+    getHousingData();
   }, []);
-  const checkIfURLExist=async(projectDetailsJSON:any)=>{
-try{
-    await checkProjectDetailsURL('https://etender.up.nic.in/nicgep/app?page=FrontEndTenderDetailsExternal&amp;service=page&amp;tnid=915548%20');
 
-  }
-  catch{()=>{
-    console.log("just for testing");
-    projectDetailsJSON.tender_url="google.com";
-
-  }}
-  setIsLoadingTenderDetails(false)
-  setTenderDetails(projectDetailsJSON);
-  
-  }
-  
-  useEffect(() => {
+  const checkIfURLExist = async (projectDetailsJSON: any) => {
+    setIsLoadingTenderDetails(true);
     try {
-      // alert(sourceID + tenderID);
-      const getprojectDetails = async () => {
-        let projectDetails: string = await getGovtProjectDetails(
-          sourceID.toString(),
-          tenderID.toString(),
+      let urlDetailsCheckResponse = await checkProjectDetailsURL(
+        projectDetailsJSON.tender_url,
+      );
+      if (urlDetailsCheckResponse.status == 200) {
+      } else {
+        projectDetailsJSON.tender_url = Helpers.extractDomain(
+          projectDetailsJSON.tender_url,
         );
-      let  projectDetailsJSON=JSON.parse(projectDetails)
-      
-        checkIfURLExist(projectDetailsJSON?.tender_url);
-     
-      };
-      sourceID && tenderID && getprojectDetails();
-    } catch (e) {
-      // consol
-    }
-  }, [sourceID, tenderID]);
+      }
+      console.log(projectDetailsJSON, ':projectDetailsJSON:::::::::');
 
+      setTenderDetails(projectDetailsJSON);
+      setModalVisible(true);
+    } catch {
+      (e: Error) => {
+        console.log(e);
+      };
+    }
+    setIsLoadingTenderDetails(false);
+  };
+
+  const getProjectDetails = async (sourceId: string, tenderId: string) => {
+    try {
+      let projectDetails: string = await getGovtProjectDetails(
+        sourceId,
+        tenderId,
+      );
+      let projectDetailsJSON = JSON.parse(projectDetails);
+
+      checkIfURLExist(projectDetailsJSON);
+    } catch (e) {}
+  };
   useEffect(() => {
     const getGroupedAndFilteredData = () => {
-      // alert(12)
       const tendersGroupedByType = _.groupBy(
         filteredGovtTenders,
         'tender_type',
@@ -251,26 +251,18 @@ try{
       sortBy,
     );
     setFilteredGovtTenders(allTendersWithSorting);
-    // setGroupedGovtTenders(allTendersWithSorting)
-    console.log(allTendersWithSorting, 'Sortedddddddddddd');
   };
   const [isVisible, setVisiblity] = useState(false);
 
-
-
-
-  // a openTenerURL(tender_url:any)
-  const openTenerURL=async (tender_url:any)=>
-    {
-      
-    console.log(await Linking.canOpenURL(tender_url))
-    await Linking.openURL(tender_url)
+  const openTenderURL = async (tender_url: any) => {
+    console.log(await Linking.canOpenURL(tender_url));
+    await Linking.openURL(tender_url);
     // .catch(()=>{console.log("ERROR")});
-  }
+  };
   return (
     <View style={{flex: 1}}>
       {/* true?<GovtProjectScreenDetail/>:null */}
-
+      {isLoadingTenderDetails && <ActivityIndicator />}
       <View style={styles.container}>
         <View style={styles.searchBox}>
           <TextInput
@@ -341,10 +333,10 @@ try{
                 //   {screenName:'GovtProjectScreenDetails',params:item}
                 //   )}
               >
-                <Text style={styles.tenderData}>
+                <View style={styles.tenderData}>
                   <Text style={styles.title}>Tender Title: </Text>
                   {item.tender_title}{' '}
-                </Text>
+                </View>
                 <Text style={styles.tenderData}>
                   <Text style={styles.title}> Tender Amount : </Text>{' '}
                   {getAmountFormatted(item.tender_amount)}
@@ -409,12 +401,10 @@ try{
             </Text>
           </View>
           <View style={{flexDirection: 'row'}}>
-            <Text style={styles.titles} 
-            >Tender URL </Text>
+            <Text style={styles.titles}>Tender URL </Text>
             <Text
               style={{...styles.values, color: 'blue'}}
-              onPress={() => 
-                openTenerURL(tenderDetails?.tender_url)}>
+              onPress={() => openTenderURL(tenderDetails?.tender_url)}>
               : {tenderDetails?.tender_url} {'\n'}
               {'\n'}
               {'\n'}
@@ -505,6 +495,7 @@ const styles = StyleSheet.create({
   },
   tenderData: {
     paddingVertical: 2,
+    flexDirection: 'row',
   },
   title: {
     fontSize: 14,
