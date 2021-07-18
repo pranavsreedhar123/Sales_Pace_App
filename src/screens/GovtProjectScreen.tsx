@@ -12,6 +12,7 @@ import {
   SectionList,
   Button,
   Linking,
+  Image,
 } from 'react-native';
 import {Helpers} from '../utils/Helpers';
 import {getHousingDataAPI} from '../services/govtProjectsAPI';
@@ -141,6 +142,7 @@ const GovtProjectScreen = () => {
         setFilteredGovtTenders(JSON.parse(crawledHousingData));
       };
       getHousingData();
+      console.log(allGovtTenders);
     } catch (e) {
       // console.log(e);
       setLoading(false);
@@ -185,6 +187,7 @@ const GovtProjectScreen = () => {
       setGroupedGovtTenders(mappedCrawledTenders);
     };
     filteredGovtTenders && getGroupedAndFilteredData();
+    // console.log(filteredGovtTenders)
   }, [filteredGovtTenders]);
   // console.log(filteredGovtTenders+"-====")
 
@@ -249,11 +252,14 @@ const GovtProjectScreen = () => {
           />
 
           <Icon
-            style={styles.text}
-            raised
+            style={styles.icon}
             name="search"
+            size={30}
+            color="blue"
+            //raised
+            //name="search"
             type="font-awesome"
-            color="#005A9C"
+            //color="#005A9C"
             // backgroundColor: '#D0D0D0'
 
             onPress={() => filterTenders()}
@@ -445,15 +451,28 @@ const styles = StyleSheet.create({
     backgroundColor: 'blue',
     // width:200
   },
+  icon: {
+    alignSelf: 'center',
+    fontWeight: 'bold',
+    paddingLeft: 5,
+    paddingTop: 5,
+    //paddingBottom: 10,
+    //borderRadius: 5,
+    //color: 'white',
+    //backgroundColor: 'blue',
+    // width:200
+  },
   searchBox: {
     flexDirection: 'row',
     borderColor: '#cccccc',
     borderBottomWidth: 1,
+    height: '5%',
   },
   input: {
     width: '80%',
     borderColor: '#c6c8cc',
     borderWidth: 2,
+    paddingRight: 5,
 
     borderRadius: 25,
     padding: 5,
@@ -517,6 +536,12 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     backgroundColor: '#e6e6e6',
+  },
+  tinyLogo: {
+    width: Dimensions.get('window').width / 4,
+    height: Dimensions.get('window').height / 9,
+    resizeMode: 'contain',
+    alignSelf: 'center',
   },
 });
 

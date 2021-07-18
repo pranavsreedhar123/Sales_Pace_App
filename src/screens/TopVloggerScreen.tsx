@@ -8,6 +8,7 @@ import {
   FlatList,
   StyleSheet,
   Alert,
+  Image,
   Keyboard,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -88,6 +89,7 @@ export const TopVloggerScreen = (): JSX.Element => {
               subscribers: Number(channelStat.subscriberCount),
               views: Number(channelStat.viewCount),
               thumbnailC: channelSnippet.thumbnails.medium.url,
+              hiddenSubscriber: channelStat.hiddenSubscriberCount,
             };
             YTChannelDatawithCounts.push(YTchannelDetails);
           }
@@ -142,6 +144,12 @@ export const TopVloggerScreen = (): JSX.Element => {
   const filterSubscriber = React.useCallback(() => {
     // setIsFilteredByViews(false);
     // setIsFilteredBySubscribers(!isFilteredBySubscribers);
+    for (const item of miniCardData) {
+      if (item.hiddenSubscriber == false) {
+        filterView();
+        break;
+      }
+    }
     setSortedByViewsData([]);
     // if (isFilteredBySubscribers) {
     let sortedYTChannelBySubscribers = Helpers.sortArrayByKey(
@@ -295,6 +303,9 @@ export const TopVloggerScreen = (): JSX.Element => {
             );
           }}
         />
+        <Image
+          source={require('../images/sg.png')}
+          style={styles.tinyLogo}></Image>
       </View>
     </>
   );
@@ -320,8 +331,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#D0D0D0',
   },
   tinyLogo: {
-    width: Dimensions.get('window').width / 3,
-    height: Dimensions.get('window').height / 8,
+    width: Dimensions.get('window').width / 5,
+    height: Dimensions.get('window').height / 10,
     resizeMode: 'contain',
     alignSelf: 'center',
   },

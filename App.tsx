@@ -2,6 +2,7 @@ import React, {useRef} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {navigationRef} from './src/navigation/NavigationActions';
 import {MainStackNavigator} from './src/navigation/MainStackNavigator';
+import {AuthContext, LoginContext} from './src/components/auth-context';
 
 const App = (): JSX.Element => {
   const routeNameRef = useRef<string>();
@@ -20,7 +21,7 @@ const App = (): JSX.Element => {
       }}>
       <MainStackNavigator />
     </NavigationContainer>
-  );
+);
 };
 
 export default App;
