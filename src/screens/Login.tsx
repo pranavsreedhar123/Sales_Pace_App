@@ -8,27 +8,29 @@ import {
   Alert,
   Dimensions,
 } from 'react-native';
-import {MainStackNavigator} from '../navigation/MainStackNavigator';
+import {MainStackNavigator, LoggedInStackNavigator, DefaultDrawerNavigator} from '../navigation/MainStackNavigator';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {useAuth} from '../components/auth-context';
+import {AuthContext, useAuth} from '../components/auth-context';
 import {Screens} from '../navigation/Screens';
+import MiniCard from './MiniCard';
+import {NavigationActions} from '../navigation/NavigationActions';
 Icon.loadFont();
 
 export const Login = (): JSX.Element => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [signedIn, setSignedIn] = useState(false);
-  const {login} = useAuth();
+  //const {login} = useAuth();
   const validate = (email: string, password: string) => {
     //Alert.alert(`Email: ${email}  Password: ${password}`);
     if (email == 'pranavsreedhar2002@gmail.com' && password == 'password123') {
-      Alert.alert('Correct Email or Password');
-      login;
+      NavigationActions.navigateToScreen({
+        screenName: Screens.DefaultDrawer,
+      });
     } else {
       Alert.alert('Incorrect Email or Password');
     }
   };
-
   return (
     <View style={styles.container}>
       <Image

@@ -331,8 +331,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#D0D0D0',
   },
   tinyLogo: {
-    width: Dimensions.get('window').width / 5.5,
-    height: Dimensions.get('window').height / 10.5,
+    width: Dimensions.get('window').width / 5,
+    height: Dimensions.get('window').height / 10,
     resizeMode: 'contain',
     alignSelf: 'center',
   },

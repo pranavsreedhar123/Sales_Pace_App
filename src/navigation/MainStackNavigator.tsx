@@ -13,20 +13,42 @@ import {
   setCommonDrawerScreenOptions,
   setHeaderTitle,
 } from './ScreenOptions';
-
+import {Alert} from 'react-native';
+import { ScreenStack } from 'react-native-screens';
 const Stack = createStackNavigator();
 const DefaultDrawer = createDrawerNavigator();
 const drawerMenuInHeader = setDrawerMenuInHeader();
 const commonDrawerScreenOptions = setCommonDrawerScreenOptions();
 
 export const MainStackNavigator = (): JSX.Element => {
-  // const {loggedIn} = useAuth();
-  const loggedIn = true;
+  //const loggedIn = useAuth();
+  //Alert.alert('' + loggedIn);
+  const loggedIn = false;
   return loggedIn ? <LoggedInStackNavigator /> : <NotLoggedInStackNavigator />;
+};
+export const NotLoggedInStackNavigator = (): JSX.Element => {
+  return (
+    <Stack.Navigator initialRouteName="LoginScreen">
+      <Stack.Screen
+        name={Screens.LoginScreen}
+        component={Login}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name={Screens.DefaultDrawer}
+        component={DefaultDrawerNavigator}
+        options={{
+          headerShown: false,
+        }}
+      />
+  </Stack.Navigator>
+  );
 };
 export const LoggedInStackNavigator = (): JSX.Element => {
   return (
-    <Stack.Navigator initialRouteName={Screens.LoginScreen}>
+    <Stack.Navigator>
       <Stack.Screen
         name={Screens.DefaultDrawer}
         component={DefaultDrawerNavigator}
@@ -37,20 +59,6 @@ export const LoggedInStackNavigator = (): JSX.Element => {
     </Stack.Navigator>
   );
 };
-export const NotLoggedInStackNavigator = (): JSX.Element => {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name={Screens.LoginScreen}
-        component={Login}
-        options={{
-          headerShown: false,
-        }}
-      />
-    </Stack.Navigator>
-  );
-};
-
 export const DefaultDrawerNavigator = (): JSX.Element => {
   return (
     <DefaultDrawer.Navigator drawerContent={() => <CustomDrawerContent />}>
