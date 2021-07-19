@@ -3,18 +3,17 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 //import {createSwitchNavigator} from '@react-navigation'
 import {Screens} from './Screens';
-import {Login} from '../screens/Login';
 import {TopVloggerScreen} from '../screens/TopVloggerScreen';
 import GovtProjectScreen from '../screens/GovtProjectScreen';
 import {CustomDrawerContent} from './CustomDrawerContent';
-import {AuthContext, LoginContext, useAuth} from '../components/auth-context';
 import {
   setDrawerMenuInHeader,
   setCommonDrawerScreenOptions,
   setHeaderTitle,
 } from './ScreenOptions';
-import Login from '../screens/Login';
+
 import TradeFairScreen from '../screens/TradeFairScreen';
+import {Login} from '../screens/Login';
 
 const Stack = createStackNavigator();
 const DefaultDrawer = createDrawerNavigator();

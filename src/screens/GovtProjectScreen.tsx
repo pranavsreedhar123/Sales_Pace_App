@@ -336,17 +336,12 @@ const GovtProjectScreen = () => {
 
           <Icon
             // style={styles.text}
-            // style={{padding:200}}
+            style={{padding: 0}}
             raised
             size={19}
             name="search"
             color="blue"
-            //raised
-            //name="search"
             type="font-awesome"
-            //color="#005A9C"
-            // backgroundColor: '#D0D0D0'
-
             onPress={() => filterTenders()}
           />
           <View
@@ -652,7 +647,6 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
     alignSelf: 'stretch',
-    padding: 5,
     backgroundColor: '#D0D0D0',
   },
   sectionsList: {
@@ -690,7 +684,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderColor: '#cccccc',
     borderBottomWidth: 1,
-    height: '5%',
   },
   input: {
     width: '70%',
@@ -701,6 +694,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     backgroundColor: '#e6e6e6',
     paddingHorizontal: 15,
+    // height: 40,
   },
   item: {
     backgroundColor: '#f5f5f5',
