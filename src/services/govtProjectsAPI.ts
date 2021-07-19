@@ -29,8 +29,7 @@ export async function getGovtProjectDetails(
 
 export async function checkProjectDetailsURL(
  tender_url:string
-): Promise<unknown> {
-  // alert(tender_source + '---' + tender_id);
+): Promise<any> {
 
   const apiGovtProjectDetails = await apiClient(
     tender_url,  {

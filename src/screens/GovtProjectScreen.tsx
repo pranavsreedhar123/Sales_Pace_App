@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react';
 import _ from 'lodash';
-
 // import { SearchBar } from 'react-native-elements';
 import {
   View,
@@ -13,6 +12,7 @@ import {
   Button,
   Linking,
   ActivityIndicator,
+  ToastAndroid,
 } from 'react-native';
 import {Helpers} from '../utils/Helpers';
 import {
@@ -23,6 +23,10 @@ import {getGovtProjectDetails} from '../services/govtProjectsAPI';
 import {Icon} from 'react-native-elements';
 import Modal from 'react-native-modal';
 import {ScrollView} from 'react-native-gesture-handler';
+import {Spinner} from 'native-base';
+import {color} from 'react-native-elements/dist/helpers';
+import {Alert} from 'react-native';
+// import { CustomModal } from '../components/CustomModal';
 
 const housingData = [
   {
@@ -107,6 +111,7 @@ const housingData = [
   },
 ];
 
+//GroupedGovtTender is only working
 const GovtProjectScreen = () => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [allGovtTenders, setAllGovtTenders] = useState<any>([]);
@@ -118,11 +123,17 @@ const GovtProjectScreen = () => {
   const [tenderID, setTenderID] = useState<any>();
   const [tenderDetails, setTenderDetails] = useState<any>({});
   const [isLoadingTenderDetails, setIsLoadingTenderDetails] = useState(false);
-
+  const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
+  const [isGroupBy, setIsGroupBy] = useState(true);
+  const [isSortByDateAsc, setIsSortByDateAsc] = useState(true);
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
-
+  function setFilterModal() {
+    console.log('', isFilterModalVisible);
+    setIsFilterModalVisible(!isFilterModalVisible);
+    console.log('', isFilterModalVisible);
+  }
   const passValuesInModal = async (tender: any) => {
     console.log(tender, 'tender ki values');
 
@@ -171,7 +182,12 @@ const GovtProjectScreen = () => {
       setModalVisible(true);
     } catch {
       (e: Error) => {
-        console.log(e);
+        console.log(e + 'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwww');
+        ToastAndroid.showWithGravity(
+          'Unable to Process the request.\n Something went wrong',
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER,
+        );
       };
     }
     setIsLoadingTenderDetails(false);
@@ -186,7 +202,16 @@ const GovtProjectScreen = () => {
       let projectDetailsJSON = JSON.parse(projectDetails);
 
       checkIfURLExist(projectDetailsJSON);
-    } catch (e) {}
+    } catch (e) {
+      ToastAndroid.showWithGravityAndOffset(
+        'Unable to Process the request.\n Something went wrong',
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        30,
+        50,
+        // style= {color:'black'}
+      );
+    }
   };
   useEffect(() => {
     const getGroupedAndFilteredData = () => {
@@ -207,9 +232,9 @@ const GovtProjectScreen = () => {
       );
       console.log(mappedCrawledTenders, 'jewfniewfiewfoiewf');
       setGroupedGovtTenders(mappedCrawledTenders);
+      // setTenderData(mappedCrawledTenders)
     };
-    filteredGovtTenders && getGroupedAndFilteredData();
-    // console.log(filteredGovtTenders)
+    filteredGovtTenders && !!isGroupBy && getGroupedAndFilteredData();
   }, [filteredGovtTenders]);
   // console.log(filteredGovtTenders+"-====")
 
@@ -237,7 +262,9 @@ const GovtProjectScreen = () => {
   };
   const filterTenders = () => {
     let allTenderContainingSearchText = allGovtTenders.filter((tender: any) => {
-      return tender.tender_title?.includes(tenderSearchText);
+      return tender.tender_title
+        ?.toLowerCase()
+        ?.includes(tenderSearchText.toLowerCase());
     });
     // console.log(allTenderContainingSearchText.length)
     tenderSearchText
@@ -246,13 +273,39 @@ const GovtProjectScreen = () => {
   };
   // console.log(JSON.stringify(groupedGovtTenders))
 
-  const sortOption = (sortBy: any) => {
-    let allTendersWithSorting = Helpers.sortArrayByKey(
-      filteredGovtTenders,
-      sortBy,
+  const sortOption = () => {
+    setIsGroupBy(false);
+    setIsSortByDateAsc(!isSortByDateAsc);
+    setIsFilterModalVisible(!isFilterModalVisible);
+
+    // alert('sorted')
+    // let allTendersWithSorting = Helpers.sortArrayByKey(
+    //   allGovtTenders,
+    //   sortBy,
+    // );
+    let allTendersWithSorting = Helpers.sortArrayByDate(
+      allGovtTenders,
+      'closing_date',
+      isSortByDateAsc,
     );
-    setFilteredGovtTenders(allTendersWithSorting);
+    // sortArrayByDate(allGovtTenders);
+    // setGroupedGovtTenders(mappedCrawledTenders);
+
+    console.log(groupedGovtTenders, '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+    let groupedSortedTenders = [
+      {
+        tender_type: 'sorted_data',
+        data: allTendersWithSorting,
+      },
+    ];
+
+    console.log(groupedSortedTenders, '******************');
+
+    setFilteredGovtTenders(groupedSortedTenders);
+    // setGroupedGovtTenders(groupedSortedTenders);
+    // setTenderData(allTendersWithSorting)
   };
+
   const [isVisible, setVisiblity] = useState(false);
 
   const openTenderURL = async (tender_url: any) => {
@@ -260,10 +313,18 @@ const GovtProjectScreen = () => {
     await Linking.openURL(tender_url);
     // .catch(()=>{console.log("ERROR")});
   };
+  const groupByTenderType = () => {
+    // alert('Hello is it group')
+    setIsGroupBy(true);
+    setIsFilterModalVisible(!isFilterModalVisible);
+    // setTenderData(groupedGovtTenders)
+  };
+
+  // setTenderData(groupedGovtTenders)
   return (
     <View style={{flex: 1}}>
       {/* true?<GovtProjectScreenDetail/>:null */}
-      {isLoadingTenderDetails && <ActivityIndicator />}
+
       <View style={styles.container}>
         <View style={styles.searchBox}>
           <TextInput
@@ -274,9 +335,11 @@ const GovtProjectScreen = () => {
           />
 
           <Icon
-            style={styles.icon}
+            // style={styles.text}
+            // style={{padding:200}}
+            raised
+            size={19}
             name="search"
-            size={30}
             color="blue"
             //raised
             //name="search"
@@ -286,6 +349,24 @@ const GovtProjectScreen = () => {
 
             onPress={() => filterTenders()}
           />
+          <View
+            style={{
+              flexDirection: 'row',
+              alignSelf: 'flex-start',
+              borderRadius: 50,
+            }}>
+            <TouchableOpacity onPress={() => setFilterModal()}>
+              <Icon
+                raised
+                name="sort-amount-desc"
+                type="font-awesome"
+                size={19}
+                color="#005A9C"
+
+                // onPress={() => sortOption("tender_amount")}
+              />
+            </TouchableOpacity>
+          </View>
           {/* <Text onPress={() => filterTenders()}>
             Search
           </Text> */}
@@ -319,15 +400,120 @@ const GovtProjectScreen = () => {
           )} */}
         </View>
 
+        <Modal
+          isVisible={isFilterModalVisible}
+          style={{
+            // isVisible=isFilterModalVisible,
+            // flexDirection:'row',
+            // marginRight:10,
+
+            // marginTop:10,
+            margin: 0,
+            marginTop: Dimensions.get('screen').height / 6,
+            maxHeight: Dimensions.get('screen').height / 4,
+            // height:/
+            borderRadius: 40,
+            width: Dimensions.get('screen').width,
+
+            // height:800,
+            // margin:300,
+            alignSelf: 'flex-end',
+            // padding:10,
+            backgroundColor: 'white',
+          }}>
+          <Text
+            style={{
+              // flexDirection:'column',
+              fontSize: 18,
+              fontWeight: 'bold',
+              marginTop: 0,
+              marginLeft: 20,
+              paddingBottom: 15,
+            }}>
+            Group By{' '}
+          </Text>
+
+          <TouchableOpacity
+            style={{flexDirection: 'row', marginLeft: 40}}
+            onPress={groupByTenderType}>
+            <Icon
+              name="circle"
+              type="font-awesome"
+              size={20}
+              // color="#55DD33"
+              color={isGroupBy ? '#55DD33' : '#D0D0D0'}
+              style={{flexDirection: 'column'}}
+            />
+            <Text
+              style={{flexDirection: 'row', fontSize: 16, fontWeight: 'bold'}}>
+              {' '}
+              Tender Type{' '}
+            </Text>
+          </TouchableOpacity>
+          <Text style={{borderBottomWidth: 2}}> </Text>
+          <Text
+            style={{
+              // flexDirection:'column',
+              fontSize: 18,
+              fontWeight: 'bold',
+              marginLeft: 20,
+              paddingVertical: 10,
+            }}>
+            Sort By{' '}
+          </Text>
+          <TouchableOpacity
+            style={{flexDirection: 'row', marginLeft: 40}}
+            // onPress={()  }
+            onPress={sortOption}>
+            <Icon
+              name="circle"
+              type="font-awesome"
+              size={20}
+              color={isGroupBy ? '#D0D0D0' : '#55DD33'}
+            />
+            <Text
+              style={{
+                // flexDirection:'column',
+                fontSize: 16,
+                fontWeight: 'bold',
+              }}>
+              {' '}
+              Closing Date {isSortByDateAsc ? '(ASC)' : '(DESC)'}{' '}
+            </Text>
+            <Icon
+              // name="arrow-down"
+              name={isSortByDateAsc ? 'arrow-down' : 'arrow-up'}
+              type="font-awesome"
+              size={20}
+              color={isGroupBy ? '#D0D0D0' : '#55DD33'}
+            />
+          </TouchableOpacity>
+        </Modal>
+
+        {isLoadingTenderDetails && (
+          <ActivityIndicator
+            size={'large'}
+            // {...props}
+            color={'red'}
+          />
+        )}
         <View style={styles.sectionsList}>
           {!groupedGovtTenders?.length && (
-            <Text style={{...styles.text, marginVertical: 300, height: 30}}>
+            <Text
+              style={{
+                ...styles.text,
+                marginVertical: 300,
+                height: 40,
+                paddingLeft: 30,
+                paddingTop: 10,
+                backgroundColor: '#005A9C',
+              }}>
               No Tender Found
             </Text>
           )}
 
           <SectionList
-            sections={groupedGovtTenders}
+            sections={isGroupBy ? groupedGovtTenders : filteredGovtTenders}
             keyExtractor={(tender, index) => tender + index}
             renderItem={({item}) => (
               <TouchableOpacity
@@ -337,10 +523,10 @@ const GovtProjectScreen = () => {
                 //   {screenName:'GovtProjectScreenDetails',params:item}
                 //   )}
               >
-                <View style={styles.tenderData}>
+                <Text style={styles.tenderData}>
                   <Text style={styles.title}>Tender Title: </Text>
                   {item.tender_title}{' '}
-                </View>
+                </Text>
                 <Text style={styles.tenderData}>
                   <Text style={styles.title}> Tender Amount : </Text>{' '}
                   {getAmountFormatted(item.tender_amount)}
@@ -351,75 +537,93 @@ const GovtProjectScreen = () => {
                 </Text>
               </TouchableOpacity>
             )}
-            // renderItem={({tender}) => <Item tenderDetails={tender} />}
             renderSectionHeader={({section: {tender_type}}) => (
-              <Text style={styles.header}>{tender_type}</Text>
+              <>
+                {isGroupBy && <Text style={styles.header}>{tender_type}</Text>}
+              </>
             )}
           />
         </View>
       </View>
       <Modal isVisible={isModalVisible} style={{margin: 0}}>
-        <ScrollView style={styles.modal}>
-          <Text>
-            {'\n'}
-            {'\n'}
-          </Text>
-          <View style={{flexDirection: 'row'}}>
-            <Text style={styles.titles}>Tender ID </Text>
-            <Text style={styles.values}>
-              : {tenderDetails?.tender_id} {'\n'}
+        <View style={styles.modal}>
+          <ScrollView style={styles.modal}>
+            <Text>
+              {'\n'}
+              {'\n'}
             </Text>
-          </View>
+            <View style={{flexDirection: 'row'}}>
+              <Text style={styles.titles}>Tender ID </Text>
+              <Text style={styles.values}>
+                : {tenderDetails?.tender_id} {'\n'}
+              </Text>
+            </View>
 
-          <View style={{flexDirection: 'row'}}>
-            <Text style={styles.titles}>Tender Title </Text>
-            <Text style={styles.values}>
-              {' '}
-              : {tenderDetails?.tender_description}
-            </Text>
-          </View>
+            <View style={{flexDirection: 'row'}}>
+              <Text style={styles.titles}>Tender Title </Text>
+              <Text style={styles.values}>
+                {' '}
+                : {tenderDetails?.tender_description}
+              </Text>
+            </View>
 
-          <View style={{flexDirection: 'row'}}>
-            <Text style={styles.titles}> State: </Text>
-            <Text style={{...styles.values}}>
-              : {tenderDetails?.state_name}
-            </Text>
-          </View>
-          <View style={{flexDirection: 'row'}}>
-            <Text style={styles.titles}>Tender Category </Text>
-            <Text style={styles.values}>
-              : {tenderDetails?.tender_category}
-            </Text>
-          </View>
+            <View style={{flexDirection: 'row'}}>
+              <Text style={styles.titles}> State: </Text>
+              <Text style={{...styles.values}}>
+                : {tenderDetails?.state_name}
+              </Text>
+            </View>
+            <View style={{flexDirection: 'row'}}>
+              <Text style={styles.titles}>Tender Category </Text>
+              <Text style={styles.values}>
+                : {tenderDetails?.tender_category}
+              </Text>
+            </View>
 
-          <View style={{flexDirection: 'row'}}>
-            <Text style={styles.titles}>Tender Amount </Text>
-            <Text style={styles.values}>
-              : {getAmountFormatted(tenderDetails?.tender_amount)}
-            </Text>
-          </View>
-          <View style={{flexDirection: 'row'}}>
-            <Text style={styles.titles}>Closing Date </Text>
-            <Text style={{...styles.values, color: 'darkred'}}>
-              : {tenderDetails?.closing_date} {'\n'}
-            </Text>
-          </View>
-          <View style={{flexDirection: 'row'}}>
-            <Text style={styles.titles}>Tender URL </Text>
+            <View style={{flexDirection: 'row'}}>
+              <Text style={styles.titles}>Tender Amount </Text>
+              <Text style={styles.values}>
+                : {getAmountFormatted(tenderDetails?.tender_amount)}
+              </Text>
+            </View>
+            <View style={{flexDirection: 'row'}}>
+              <Text style={styles.titles}>Closing Date </Text>
+              <Text style={{...styles.values, color: 'darkred'}}>
+                : {Helpers.formatDate(tenderDetails?.closing_date)} {'\n'}
+              </Text>
+            </View>
+            <View style={{flexDirection: 'row'}}>
+              <Text style={styles.titles}>Tender URL </Text>
+              <Text
+                style={{...styles.values, color: 'blue'}}
+                onPress={() => openTenderURL(tenderDetails?.tender_url)}>
+                : {tenderDetails?.tender_url} {'\n'}
+                {'\n'}
+                {'\n'}
+                {'\n'}
+              </Text>
+            </View>
+          </ScrollView>
+          <View
+            style={{
+              marginHorizontal: 80,
+              backgroundColor: '#D22B2B',
+              marginBottom: 20,
+            }}>
             <Text
-              style={{...styles.values, color: 'blue'}}
-              onPress={() => openTenderURL(tenderDetails?.tender_url)}>
-              : {tenderDetails?.tender_url} {'\n'}
-              {'\n'}
-              {'\n'}
-              {'\n'}
+              style={{
+                backgroundColor: '#005A9C',
+                color: 'white',
+                textAlign: 'center',
+                fontSize: 20,
+                fontWeight: 'bold',
+                padding: 5,
+              }}
+              onPress={toggleModal}>
+              Back
             </Text>
           </View>
-
-          <View style={{marginHorizontal: 80, marginBottom: 20}}>
-            <Button title="Close Tender" onPress={toggleModal} />
-          </View>
-        </ScrollView>
+        </View>
       </Modal>
     </View>
   );
@@ -462,16 +666,14 @@ const styles = StyleSheet.create({
 
   text: {
     alignSelf: 'center',
-    fontSize: 16,
-    padding: 7,
+    fontSize: 17,
     paddingBottom: 2,
-    // padding:10000,
     fontWeight: 'bold',
     marginLeft: 15,
     borderRadius: 5,
     color: 'white',
     backgroundColor: 'blue',
-    // width:200
+    width: 200,
   },
   icon: {
     alignSelf: 'center',
@@ -491,13 +693,12 @@ const styles = StyleSheet.create({
     height: '5%',
   },
   input: {
-    width: '80%',
+    width: '70%',
     borderColor: '#c6c8cc',
     borderWidth: 2,
     paddingRight: 5,
-
+    fontSize: 17,
     borderRadius: 25,
-    padding: 5,
     backgroundColor: '#e6e6e6',
     paddingHorizontal: 15,
   },

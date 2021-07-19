@@ -438,13 +438,21 @@ const TradeFairScreen = () => {
   const [sourceID, setSourceID] = useState<any>();
   const [tenderID, setTenderID] = useState<any>();
   const [tenderDetails, setTenderDetails] = useState<any>({});
-  const [isLoadingTenderDetails,setIsLoadingTenderDetails] =useState(true)
+  const [isLoadingTenderDetails,setIsLoadingTenderDetails] =useState(true);
+  const [isFilterModalVisible,setIsFilterModalVisible]=useState(false)
+  const [isGroupBy,setIsGroupBy]=useState(true)
+  const [isSortByDateAsc,setIsSortByDateAsc]= useState(true);
 
   const toggleModal = () => {
    
     !isLoadingTenderDetails && setModalVisible(!isModalVisible);
    
   };
+  function setFilterModal(){
+    console.log("",isFilterModalVisible)
+setIsFilterModalVisible(!isFilterModalVisible)
+console.log("",isFilterModalVisible)
+  }
 
   const passValuesInModal = (tender: any) => {
     toggleModal();
@@ -529,15 +537,15 @@ try{
       // alert(12)
       const tendersGroupedByType = _.groupBy(
         filteredTradeFair,
-        'tender_type',
+        'city',
       );
-      setLoading(false);
+      setLoading(true);
 
       const mappedCrawledTenders = _.map(
         tendersGroupedByType,
         (value: any, key: any) => {
           return {
-            tender_type: key,
+            city: key,
             data: value,
           };
         },
@@ -583,15 +591,15 @@ try{
   };
   // console.log(JSON.stringify(groupedGovtTenders))
 
-  const sortOption = (sortBy: any) => {
-    let allTendersWithSorting = Helpers.sortArrayByKey(
-      filteredTradeFair,
-      sortBy,
-    );
-    setFilteredTradeFair(allTendersWithSorting);
-    // setGroupedGovtTenders(allTendersWithSorting)
-    console.log(allTendersWithSorting, 'Sortedddddddddddd');
-  };
+  // const sortOption = (sortBy: any) => {
+  //   let allTendersWithSorting = Helpers.sortArrayByKey(
+  //     filteredTradeFair,
+  //     sortBy,
+  //   );
+  //   setFilteredTradeFair(allTendersWithSorting);
+  //   // setGroupedGovtTenders(allTendersWithSorting)
+  //   console.log(allTendersWithSorting, 'Sortedddddddddddd');
+  // };
   const [isVisible, setVisiblity] = useState(false);
 
 
@@ -647,6 +655,46 @@ let indPrice=rsFormatter.format(indPriceString[1])
               "isAmt":false}]
   }
 }
+const groupByTenderType =()=>{
+  // alert('Hello is it group')
+  setIsGroupBy(true);
+
+  setIsFilterModalVisible(!isFilterModalVisible);
+  setFilteredTradeFair(allTradeFair);
+  console.log(filteredTradeFair,'<--',isGroupBy,'-->',groupedTradeFair)
+  // setTenderData(groupedGovtTenders)
+
+}
+const sortOption = () => {
+  setIsGroupBy(false);
+  setIsSortByDateAsc(!isSortByDateAsc)
+  setIsFilterModalVisible(!isFilterModalVisible);
+  
+  // alert('sorted')
+  // let allTendersWithSorting = Helpers.sortArrayByKey(
+  //   allGovtTenders,
+  //   sortBy,
+  // );
+let allTendersWithSorting =Helpers.sortArrayByDate(
+    allTradeFair,'end_date',isSortByDateAsc
+  );
+  // sortArrayByDate(allGovtTenders);
+  // setGroupedGovtTenders(mappedCrawledTenders);
+
+  console.log(groupedTradeFair,'@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+  let groupedSortedTenders=[{
+    city:'sorted_data',
+    data:allTendersWithSorting
+  }]
+
+  console.log(groupedSortedTenders,'******************');
+
+  setFilteredTradeFair(groupedSortedTenders);
+  // setGroupedGovtTenders(groupedSortedTenders);
+  // setTenderData(allTendersWithSorting)
+};
+
+
   return (
     <View style={{flex: 1}}>
       {/* true?<GovtProjectScreenDetail/>:null */}
@@ -661,10 +709,11 @@ let indPrice=rsFormatter.format(indPriceString[1])
           />
 
           <Icon
-            style={styles.text}
+            // style={styles.text}
             raised
             name="search"
             type="font-awesome"
+            size={19}
             color="#005A9C"
             // backgroundColor: '#D0D0D0'
 
@@ -701,17 +750,116 @@ let indPrice=rsFormatter.format(indPriceString[1])
               </Text>
             </View>
           )} */}
+           <View  style={{flexDirection:'row',
+        // marginRight:300,
+        
+        // marginLeft:10,
+        alignSelf:'flex-start',
+        // padding:10 ,
+        borderRadius:50,
+        // backgroundColor:'white'
+      }} 
+        >
+          <TouchableOpacity    onPress={()=>setFilterModal()}>
+          <Icon
+          //  style={styles.text}
+            raised
+
+                name="sort-amount-desc"
+                type='font-awesome'
+                size={19}
+                color="#005A9C"
+                
+                // onPress={() => sortOption("tender_amount")}
+              
+              />
+
+          </TouchableOpacity>
+     
         </View>
 
+        </View>
+       
         <View style={styles.sectionsList}>
           {!groupedTradeFair?.length && (
-            <Text style={{...styles.text, marginVertical: 300, height: 30}}>
-              No Tender Found
+           <Text style={{...styles.text, marginVertical: 300, height: 40,paddingHorizontal:20,paddingTop:10,backgroundColor: '#005A9C'}}>
+         
+              No Trade Fair Found
             </Text>
           )}
+  <Modal  
+        isVisible={isFilterModalVisible}
+        style={{
+          // isVisible=isFilterModalVisible,
+          // flexDirection:'row',
+        // marginRight:10,
+      
+        // marginTop:10,
+        margin:0,
+        marginTop:(Dimensions.get('screen').height/6),
+        maxHeight:Dimensions.get('screen').height/4,
+        // height:/
+        borderRadius:40,
+        width:Dimensions.get('screen').width,
+        
+        // height:800,
+        // margin:300,
+        alignSelf:'flex-end',
+        // padding:10,
+        backgroundColor:'white'
+        }}>
+          <Text   style={{
+                // flexDirection:'column',
+                fontSize:18,fontWeight:'bold',marginTop:0,marginLeft:20,paddingBottom:15}}>Group By </Text>
 
+          <TouchableOpacity style={{flexDirection:'row',marginLeft:40}}
+          onPress={ groupByTenderType}
+          >
+          <Icon
+              name="circle"
+              type='font-awesome'
+              size={19}
+              // color="#55DD33"
+              color={isGroupBy ? "#55DD33":"#D0D0D0"}
+              style={{flexDirection:'column'}}
+              
+              
+            /> 
+              <Text 
+              style={{flexDirection:'row',fontSize:16,fontWeight:'bold'}}
+              >  City  </Text>
+</TouchableOpacity>
+<Text style={{borderBottomWidth:2}}> </Text>
+<Text   style={{
+                // flexDirection:'column',
+                fontSize:18,fontWeight:'bold',marginLeft:20,paddingVertical:10}}>Sort By </Text>
+<TouchableOpacity style={{flexDirection:'row',marginLeft:40}}
+// onPress={()  }
+onPress={sortOption}
+>
+              <Icon
+                name="circle"
+                type='font-awesome'
+                size={20}
+                color={isGroupBy ? "#D0D0D0":"#55DD33"}
+              /> 
+              <Text 
+              style={{
+                // flexDirection:'column',
+                fontSize:16,fontWeight:'bold'}}>  Closing Date  {isSortByDateAsc ? "(ASC)":"(DESC)"} </Text>
+                   <Icon
+                // name="arrow-down"
+                name={isSortByDateAsc ? "arrow-down":"arrow-up"}
+                type='font-awesome'
+                size={20}
+                color={isGroupBy ? "#D0D0D0":"#55DD33"}
+              /> 
+              </TouchableOpacity>
+              
+
+        </Modal>
           <SectionList
-            sections={groupedTradeFair}
+            sections={isGroupBy ? groupedTradeFair :filteredTradeFair}
             keyExtractor={(tender, index) => tender + index}
             renderItem={({item}) => (
               <TouchableOpacity
@@ -729,7 +877,7 @@ let indPrice=rsFormatter.format(indPriceString[1])
                 {item.city?.length>0 && (
                 <Text style={styles.tenderData}>
                   <Text style={styles.title}>City: </Text>
-                  {item.city.replace('(India)', '')}{' '}
+                  {item.city}{' '}
                 </Text> )} 
 
                 <Text style={styles.tenderData}>
@@ -743,20 +891,27 @@ let indPrice=rsFormatter.format(indPriceString[1])
                   <Text style={styles.title}> Event Date : </Text>{' '}
                   {
                   // Helpers.formatDate(item.event_date)
-                  item.start_date.replace('/', ' ')
-                  }{' - '}{item.end_date.replace('/', ' ')}{' '}{item.event_year}
+                  item.start_date
+                  }{' - '}{item.end_date}{' '}{item.event_year}
                 </Text>
               </TouchableOpacity>
             )}
-            // renderItem={({tender}) => <Item tenderDetails={tender} />}
-            // renderSectionHeader={({section: {tender_type}}) => (
-            //   <Text style={styles.header}>{tender_type}</Text>
+            // // renderItem={({tender}) => <Item tenderDetails={tender} />}
+            // renderSectionHeader={({section: {city}}) => (
+            //   <Text style={styles.header}>{city}</Text>
             // )}
+
+            renderSectionHeader={({section: {city}}) => (
+              <>
+               {isGroupBy && <Text style={styles.header}>{city}</Text>}
+               </>
+  
+              )}
           />
         </View>
       </View>
    
-      <Modal isVisible={isModalVisible} style={{margin: 0}}>
+      <Modal isVisible={isModalVisible} style={{margin: 0,backgroundColor:'white'}}>
     <View style={styles.modal}>
           <Text>
             {'\n'}
@@ -825,11 +980,14 @@ let indPrice=rsFormatter.format(indPriceString[1])
             fax-no: {tenderDetails?.fax_no}
             </Text>)} */}
             {tenderDetails?.venue_website && (
+            
+            <><Text style={{ ...styles.values}}> To Visit Venue Website and to check more information                 
             <Text
               style={{...styles.values, color: 'blue'}}
               onPress={() => 
-                openTradeFairURL(tenderDetails?.venue_website)}>
-               {tenderDetails?.venue_website} {'\n'}</Text>)}
+                openTradeFairURL(tenderDetails?.venue_website)}>  Click Here {'\n'}</Text></Text>
+               </>
+               )}
             </View>           
           </View>
 
@@ -871,13 +1029,13 @@ let indPrice=rsFormatter.format(indPriceString[1])
          
           </View>
           {/* getExhibitorSpacePrice(tenderDetails?.exhibitor_space_price)[0].isAmt */}
-          <View style={{flexDirection: 'row'}}>
-          { getExhibitorSpacePrice(tenderDetails?.exhibitor_space_price)[0].isAmt  && (
+          {/* <View style={{flexDirection: 'row'}}> */}
+          {/* { getExhibitorSpacePrice(tenderDetails?.exhibitor_space_price)[0].isAmt  && (
             <><Text style={styles.titles}>Exhibitor Space Price </Text><Text style={styles.values}>
                   {/* {tenderDetails?.exhibitor_space_price} */}
-                  : {getExhibitorSpacePrice(tenderDetails?.exhibitor_space_price)[0].price}
-                </Text></>)}
-          </View>
+                  {/* : {getExhibitorSpacePrice(tenderDetails?.exhibitor_space_price)[0].price} */}
+                {/* </Text></>)} */} 
+          {/* </View> */}
 
 
           {/* <View style={{flexDirection: 'row'}}>
@@ -908,8 +1066,8 @@ let indPrice=rsFormatter.format(indPriceString[1])
         </ScrollView>
         <View style={{marginHorizontal: 100, marginBottom: 20,}}>
             <Text 
-            style={{backgroundColor:"#D22B2B",color:"white",textAlign:'center',fontSize:20,fontWeight:'bold',padding:5}}
-           onPress={toggleModal} > Close</Text>
+            style={{backgroundColor:"#005A9C",color:"white",textAlign:'center',fontSize:20,fontWeight:'bold',padding:5}}
+           onPress={toggleModal} > Back</Text>
           </View>
         </View>
       </Modal>
@@ -955,7 +1113,7 @@ const styles = StyleSheet.create({
 
   text: {
     alignSelf: 'center',
-    fontSize: 16,
+    fontSize: 17,
     padding: 7,
     paddingBottom: 2,
     // padding:10000,
@@ -972,10 +1130,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   input: {
-    width: '80%',
+    width: '70%',
     borderColor: '#c6c8cc',
     borderWidth: 2,
-
+    fontSize:17,
     borderRadius: 25,
     padding: 5,
     backgroundColor: '#e6e6e6',
@@ -1039,7 +1197,8 @@ const styles = StyleSheet.create({
   modal: {
     flex: 1,
     width: '100%',
-    backgroundColor: '#e6e6e6',
+    // backgroundColor: '#e6e6e6',
+    backgroundColor:'white'
   },
 });
 
