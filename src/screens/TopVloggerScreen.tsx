@@ -11,8 +11,7 @@ import {
   Image,
   Keyboard,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/AntDesign';
-import Icon1 from 'react-native-vector-icons/FontAwesome';
+import {Icon} from 'react-native-elements';
 import MiniCard from './MiniCard';
 import {Helpers} from '../utils/Helpers';
 import {YT_CHANNEL_DATA} from '../utils/Constant';
@@ -22,8 +21,6 @@ import {
   getYouTubeChannelsAPI,
   getYTChannelsSnippetAPI,
 } from '../services/youTubeAPIs';
-Icon.loadFont();
-Icon1.loadFont();
 
 export const TopVloggerScreen = (): JSX.Element => {
   const [videoSearchText, setVideoSearchText] = useState('');
@@ -190,22 +187,27 @@ export const TopVloggerScreen = (): JSX.Element => {
               onChangeText={text => setVideoSearchText(text)}
             />
             <Icon
-              name="search1"
-              size={30}
+              raised
+              style={{padding: 0}}
+              size={19}
+              name="search"
               color="#005A9C"
+              type="font-awesome"
               onPress={() => fetchYTChannels()}
             />
             {filterStatus && (
               <View
                 style={{
                   alignItems: 'flex-start',
-                  paddingLeft: 10,
-                  paddingTop: 5,
+                  paddingLeft: 0,
                 }}>
-                <Icon1
+                <Icon
+                  raised
+                  style={{padding: 0}}
+                  size={19}
                   name="sort-amount-desc"
-                  size={25}
                   color="#005A9C"
+                  type="font-awesome"
                   onPress={() => filterOption()}
                 />
               </View>
@@ -352,9 +354,11 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 25,
     padding: 5,
-    marginRight: 20,
+    marginRight: 8,
     backgroundColor: '#e6e6e6',
     paddingHorizontal: 10,
+    height: 40,
+    marginTop: 10,
   },
   error: {
     borderWidth: 2,
