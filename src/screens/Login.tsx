@@ -23,7 +23,7 @@ export const Login = (): JSX.Element => {
   //const {login} = useAuth();
   const validate = (email: string, password: string) => {
     //Alert.alert(`Email: ${email}  Password: ${password}`);
-    if (email == 'test@gmail.com' && password == 'password123') {
+    if (email == 'test@saint-gobain.com' && password == '12345') {
       NavigationActions.navigateToScreen({
         screenName: Screens.DefaultDrawer,
       });
