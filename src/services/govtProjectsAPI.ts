@@ -26,3 +26,16 @@ export async function getGovtProjectDetails(
   console.log(apiGovtProjectDetails + 'data----<>');
   return apiGovtProjectDetails;
 }
+
+export async function checkProjectDetailsURL(
+ tender_url:string
+): Promise<any> {
+
+  const apiGovtProjectDetails = await apiClient(
+    tender_url,  {
+      method: 'GET',
+    },
+  )
+  console.log(apiGovtProjectDetails + '^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
+  return apiGovtProjectDetails;
+}

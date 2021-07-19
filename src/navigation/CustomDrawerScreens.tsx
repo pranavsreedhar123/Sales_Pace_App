@@ -15,5 +15,10 @@ export const CustomDrawerScreens = (): CustomDrawerScreen[] => {
       displayName: 'All tenders',
       icon: <ListIcon style={{width: 24, height: 24}} />,
     },
+    {
+      name: Screens.TradeFairScreen,
+      displayName: 'All Trade Fairs',
+      icon: <ListIcon style={{width: 24, height: 24}} />,
+    },
   ];
 };

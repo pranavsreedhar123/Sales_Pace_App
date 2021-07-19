@@ -16,9 +16,18 @@ export namespace Helpers {
 
   export const sortArrayByKey = (array: any, key: string) => {
     return array.sort((a: any, b: any) => {
-      return a[key] - b[key];
+      return a[key] - b[key] ;
     });
   };
+  export const sortArrayByDate =(array:any,key:string,asc:boolean)=>{
+    return array.sort((a:any,b:any) => {
+      let firstDate=new Date(a[key]).getTime();
+      let secondDate=new Date(b[key]).getTime();
+     let sortedDate :any= asc ? firstDate-secondDate : secondDate-firstDate;
+
+     return sortedDate
+    });
+  }
 
   export const reverseArray = (array: any) => {
     return array.reverse();
@@ -52,5 +61,21 @@ export namespace Helpers {
     }
 
     return rgb;
+  };
+
+  export const extractDomain = (url: string) => {
+    let result;
+    let match;
+    if (
+      (match = url.match(
+        /^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n\?\=]+)/im,
+      ))
+    ) {
+      result = match[0];
+      if ((match = result.match(/^[^\.]+\.(.+\..+)$/))) {
+        result = match[0];
+      }
+    }
+    return result;
   };
 }
