@@ -28,14 +28,9 @@ export async function getGovtProjectDetails(
 }
 
 export async function checkProjectDetailsURL(
- tender_url:string
-): Promise<any> {
-
-  const apiGovtProjectDetails = await apiClient(
-    tender_url,  {
-      method: 'GET',
-    },
-  )
-  console.log(apiGovtProjectDetails + '^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
-  return apiGovtProjectDetails;
+  tender_url: string,
+): Promise<Response> {
+  return fetch(tender_url).then(response => {
+    return response as Response;
+  });
 }

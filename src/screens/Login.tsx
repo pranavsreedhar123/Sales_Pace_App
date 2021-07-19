@@ -8,7 +8,11 @@ import {
   Alert,
   Dimensions,
 } from 'react-native';
-import {MainStackNavigator, LoggedInStackNavigator, DefaultDrawerNavigator} from '../navigation/MainStackNavigator';
+import {
+  MainStackNavigator,
+  LoggedInStackNavigator,
+  DefaultDrawerNavigator,
+} from '../navigation/MainStackNavigator';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {AuthContext, useAuth} from '../components/auth-context';
 import {Screens} from '../navigation/Screens';
