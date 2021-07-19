@@ -8,7 +8,11 @@ import {
   Alert,
   Dimensions,
 } from 'react-native';
-import {MainStackNavigator, LoggedInStackNavigator, DefaultDrawerNavigator} from '../navigation/MainStackNavigator';
+import {
+  MainStackNavigator,
+  LoggedInStackNavigator,
+  DefaultDrawerNavigator,
+} from '../navigation/MainStackNavigator';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {AuthContext, useAuth} from '../components/auth-context';
 import {Screens} from '../navigation/Screens';
@@ -23,7 +27,7 @@ export const Login = (): JSX.Element => {
   //const {login} = useAuth();
   const validate = (email: string, password: string) => {
     //Alert.alert(`Email: ${email}  Password: ${password}`);
-    if (email == 'pranavsreedhar2002@gmail.com' && password == 'password123') {
+    if (email == '1' && password == '1') {
       NavigationActions.navigateToScreen({
         screenName: Screens.DefaultDrawer,
       });
