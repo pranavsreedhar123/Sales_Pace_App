@@ -340,7 +340,7 @@ const GovtProjectScreen = () => {
             raised
             size={19}
             name="search"
-            color="blue"
+            color="#005A9C"
             type="font-awesome"
             onPress={() => filterTenders()}
           />
@@ -694,7 +694,8 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     backgroundColor: '#e6e6e6',
     paddingHorizontal: 15,
-    // height: 40,
+    height: 40,
+    marginTop: 10,
   },
   item: {
     backgroundColor: '#f5f5f5',

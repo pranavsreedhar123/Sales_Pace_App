@@ -192,7 +192,7 @@ export const TopVloggerScreen = (): JSX.Element => {
             <Icon
               name="search1"
               size={30}
-              color="blue"
+              color="#005A9C"
               onPress={() => fetchYTChannels()}
             />
             {filterStatus && (
@@ -205,27 +205,12 @@ export const TopVloggerScreen = (): JSX.Element => {
                 <Icon1
                   name="sort-amount-desc"
                   size={25}
-                  color="blue"
+                  color="#005A9C"
                   onPress={() => filterOption()}
                 />
               </View>
-
-              // <Text
-              //   style={{
-              //     paddingRight: 10,
-              //     paddingLeft: 18,
-              //     fontSize: 14,
-              //     fontWeight: 'bold',
-              //     color: 'blue',
-              //   }}
-              //   onPress={() => filterOption()}>
-              //   Click here for filter options:
-              // </Text>
             )}
           </View>
-          {/* <Text style={styles.text} onPress={() => fetchYTChannels()}>
-            Search
-          </Text> */}
           <View
             style={{
               flexDirection: 'column',
@@ -256,23 +241,6 @@ export const TopVloggerScreen = (): JSX.Element => {
                 </Text>
               </View>
             )}
-            {/* <Text
-            style={{
-              paddingRight: 10,
-              paddingLeft: 18,
-              fontSize: 14,
-              fontWeight: 'bold',
-              color: 'blue',
-            }}
-            onPress={() => filterOption()}>
-            Click here for filter options:
-          </Text> */}
-            {/* <Text style={styles.textButton} onPress={() => filterSubscriber()}>
-            Subscribers
-          </Text>
-          <Text style={styles.textButton} onPress={() => filterView()}>
-            View Count
-          </Text> */}
           </View>
         </View>
 
@@ -303,9 +271,9 @@ export const TopVloggerScreen = (): JSX.Element => {
             );
           }}
         />
-        <Image
+        {/* <Image
           source={require('../images/sg.png')}
-          style={styles.tinyLogo}></Image>
+          style={styles.tinyLogo}></Image> */}
       </View>
     </>
   );
