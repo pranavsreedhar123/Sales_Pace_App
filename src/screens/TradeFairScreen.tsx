@@ -702,7 +702,7 @@ let allTendersWithSorting =Helpers.sortArrayByDate(
       <View style={styles.container}>
         <View style={styles.searchBox}>
           <TextInput
-            placeholder="Search Tenders"
+            placeholder="Search Trade Fair"
             style={styles.input}
             value={tenderSearchText}
             onChangeText={text => setTenderSearchText(text)}
@@ -870,25 +870,25 @@ onPress={sortOption}
                 //   )}
               >
                 <Text style={styles.tenderData}>
-                  <Text style={styles.title}>Trade Fair Name: </Text>
+                  <Text style={styles.title}>Trade Fair Name</Text>
                   {item.tradefair_name}{' '}
                 </Text>
 
                 {item.city?.length>0 && (
                 <Text style={styles.tenderData}>
-                  <Text style={styles.title}>City: </Text>
+                  <Text style={styles.title}>City</Text>
                   {item.city}{' '}
                 </Text> )} 
 
                 <Text style={styles.tenderData}>
-                  <Text style={styles.title}> Venue Name : </Text>{' '}
+                  <Text style={styles.title}>Venue Name</Text>{' '}
                   {
                   // getAmountFormatted(item.tender_amount)
                   item.venue_name
                   }
                 </Text>
                 <Text style={styles.tenderData}>
-                  <Text style={styles.title}> Event Date : </Text>{' '}
+                  <Text style={styles.title}>Event Date</Text>{' '}
                   {
                   // Helpers.formatDate(item.event_date)
                   item.start_date
@@ -954,9 +954,8 @@ onPress={sortOption}
 
   <View style={{flexDirection: 'row'}}>
 {tenderDetails?.venue_address && (
-    <><Text style={styles.titles}> Address: </Text><Text style={{ ...styles.values }}>
-                  : {tenderDetails?.venue_address.replace(/^\{|\}$/g,'')
-                  }
+    <><Text style={styles.titles}>Address</Text>
+                  <Text style={{ ...styles.values }}>{tenderDetails?.venue_address.replace(/^\{|\}$/g,'')}
                   {/* replace(/^(.)|(.)$/g,'')  */}
                 </Text></>)}
 </View>
@@ -1002,10 +1001,10 @@ onPress={sortOption}
 
             <View >
             {tenderDetails?.organizer_name && (
-           <Text style={styles.values}> Name:  {tenderDetails?.organizer_name } 
+           <Text style={styles.values}>Name:  {tenderDetails?.organizer_name } 
             </Text>)}
             {tenderDetails?.organizer_phoneno && (
-           <Text style={styles.values}> Phone No:  {tenderDetails?.organizer_phoneno } 
+           <Text style={styles.values}>Phone No:  {tenderDetails?.organizer_phoneno } 
             </Text>)}
             {tenderDetails?.organizer_email && (
               <><Text style={{ ...styles.values}} >
