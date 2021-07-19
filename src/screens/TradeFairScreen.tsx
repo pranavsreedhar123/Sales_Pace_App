@@ -1138,6 +1138,8 @@ const styles = StyleSheet.create({
     padding: 5,
     backgroundColor: '#e6e6e6',
     paddingHorizontal: 15,
+    height: 40,
+    marginTop: 10,
   },
   item: {
     backgroundColor: '#f5f5f5',

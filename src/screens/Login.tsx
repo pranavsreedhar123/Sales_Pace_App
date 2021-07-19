@@ -23,7 +23,7 @@ export const Login = (): JSX.Element => {
   //const {login} = useAuth();
   const validate = (email: string, password: string) => {
     //Alert.alert(`Email: ${email}  Password: ${password}`);
-    if (email == 'pranavsreedhar2002@gmail.com' && password == 'password123') {
+    if (email == 'test@gmail.com' && password == 'password123') {
       NavigationActions.navigateToScreen({
         screenName: Screens.DefaultDrawer,
       });
@@ -85,7 +85,7 @@ export const Login = (): JSX.Element => {
           marginHorizontal: Dimensions.get('window').width / 7,
           alignItems: 'center',
           justifyContent: 'center',
-          marginTop: Dimensions.get('window').height / 25,
+          marginTop: Dimensions.get('window').height / 18,
           backgroundColor: '#00716F',
           borderRadius: 23,
           paddingVertical: 8,
@@ -126,6 +126,7 @@ const styles = StyleSheet.create({
   tinyLogo: {
     width: Dimensions.get('window').width / 3,
     height: Dimensions.get('window').height / 3,
+    marginTop: Dimensions.get('window').height / 10,
     resizeMode: 'contain',
     alignSelf: 'center',
   },
