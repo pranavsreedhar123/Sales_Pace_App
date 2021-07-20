@@ -582,9 +582,10 @@ try{
   };
   const filterTenders = () => {
     let allTenderContainingSearchText = allTradeFair.filter((tender: any) => {
-      return tender.venue_name?.includes(tenderSearchText);
+      return tender.city?.toLowerCase()
+      ?.includes(tenderSearchText.toLowerCase());
     });
-    // console.log(allTenderContainingSearchText.length)
+    // console.log(allTenderContainingSearchText.length)includes(tenderSearchText);
     tenderSearchText
       ? setFilteredTradeFair(allTenderContainingSearchText)
       : setFilteredTradeFair(allTradeFair);
@@ -676,7 +677,7 @@ const sortOption = () => {
   //   sortBy,
   // );
 let allTendersWithSorting =Helpers.sortArrayByDate(
-    allTradeFair,'end_date',isSortByDateAsc
+    allTradeFair,'end_date',isSortByDateAsc,'event_year'
   );
   // sortArrayByDate(allGovtTenders);
   // setGroupedGovtTenders(mappedCrawledTenders);
@@ -702,7 +703,7 @@ let allTendersWithSorting =Helpers.sortArrayByDate(
       <View style={styles.container}>
         <View style={styles.searchBox}>
           <TextInput
-            placeholder="Search Trade Fair"
+            placeholder="Search City"
             style={styles.input}
             value={tenderSearchText}
             onChangeText={text => setTenderSearchText(text)}
@@ -870,7 +871,7 @@ onPress={sortOption}
                 //   )}
               >
                 <Text style={styles.tenderData}>
-                  <Text style={styles.title}>Trade Fair Name</Text>
+                  <Text style={styles.title}>Trade Fair Name </Text>
                   {item.tradefair_name}{' '}
                 </Text>
 

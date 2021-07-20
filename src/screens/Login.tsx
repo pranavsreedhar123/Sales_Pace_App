@@ -123,14 +123,14 @@ export const Login = (): JSX.Element => {
 const styles = StyleSheet.create({
   container: {
     padding: 50,
-    marginTop: Dimensions.get('window').height / 17,
+    //marginTop: Dimensions.get('window').height / 17,
     backgroundColor: '#FFF',
     height: '100%',
   },
   tinyLogo: {
     width: Dimensions.get('window').width / 3,
     height: Dimensions.get('window').height / 3,
-    marginTop: Dimensions.get('window').height / 10,
+    marginTop: Dimensions.get('window').height / 32,
     resizeMode: 'contain',
     alignSelf: 'center',
   },
