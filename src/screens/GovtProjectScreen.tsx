@@ -523,11 +523,11 @@ const GovtProjectScreen = () => {
                   {item.tender_title}{' '}
                 </Text>
                 <Text style={styles.tenderData}>
-                  <Text style={styles.title}> Tender Amount : </Text>{' '}
+                  <Text style={styles.title}>Tender Amount: </Text>{' '}
                   {getAmountFormatted(item.tender_amount)}
                 </Text>
                 <Text style={styles.tenderData}>
-                  <Text style={styles.title}> Closing Date : </Text>{' '}
+                  <Text style={styles.title}>Closing Date: </Text>{' '}
                   {Helpers.formatDate(item.closing_date)}
                 </Text>
               </TouchableOpacity>
@@ -557,34 +557,33 @@ const GovtProjectScreen = () => {
             <View style={{flexDirection: 'row'}}>
               <Text style={styles.titles}>Tender Title </Text>
               <Text style={styles.values}>
-                {' '}
-                : {tenderDetails?.tender_description}
+                {tenderDetails?.tender_description}
               </Text>
             </View>
 
             <View style={{flexDirection: 'row'}}>
-              <Text style={styles.titles}> State: </Text>
+              <Text style={styles.titles}>Location </Text>
               <Text style={{...styles.values}}>
-                : {tenderDetails?.state_name}
+                {tenderDetails?.state_name}
               </Text>
             </View>
             <View style={{flexDirection: 'row'}}>
               <Text style={styles.titles}>Tender Category </Text>
               <Text style={styles.values}>
-                : {tenderDetails?.tender_category}
+                {tenderDetails?.tender_category}
               </Text>
             </View>
 
             <View style={{flexDirection: 'row'}}>
               <Text style={styles.titles}>Tender Amount </Text>
               <Text style={styles.values}>
-                : {getAmountFormatted(tenderDetails?.tender_amount)}
+                {getAmountFormatted(tenderDetails?.tender_amount)}
               </Text>
             </View>
             <View style={{flexDirection: 'row'}}>
               <Text style={styles.titles}>Closing Date </Text>
               <Text style={{...styles.values, color: 'darkred'}}>
-                : {Helpers.formatDate(tenderDetails?.closing_date)} {'\n'}
+                {Helpers.formatDate(tenderDetails?.closing_date)} {'\n'}
               </Text>
             </View>
             <View style={{flexDirection: 'row'}}>
