@@ -329,6 +329,7 @@ const GovtProjectScreen = () => {
         <View style={styles.searchBox}>
           <TextInput
             placeholder="Search Tenders"
+            placeholderTextColor="black"
             style={styles.input}
             value={tenderSearchText}
             onChangeText={text => setTenderSearchText(text)}
@@ -695,6 +696,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     height: 40,
     marginTop: 10,
+    color: 'black',
   },
   item: {
     backgroundColor: '#f5f5f5',

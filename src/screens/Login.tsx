@@ -47,6 +47,7 @@ export const Login = (): JSX.Element => {
           keyboardType="email-address"
           autoCapitalize="none"
           placeholder="Email"
+          placeholderTextColor="black"
           style={styles.input}
           returnKeyLabel={'next'}
           onChangeText={(text: string) => setEmail(text)}
@@ -69,6 +70,7 @@ export const Login = (): JSX.Element => {
           secureTextEntry
           autoCapitalize="none"
           placeholder="Password"
+          placeholderTextColor="black"
           style={styles.input}
           returnKeyLabel={'next'}
           onChangeText={(text: string) => setPassword(text)}
@@ -112,7 +114,7 @@ export const Login = (): JSX.Element => {
 };
 const styles = StyleSheet.create({
   container: {
-    padding: 50,
+    padding: Dimensions.get('window').height / 15,
     //marginTop: Dimensions.get('window').height / 17,
     backgroundColor: '#FFF',
     height: '100%',
@@ -120,12 +122,14 @@ const styles = StyleSheet.create({
   tinyLogo: {
     width: Dimensions.get('window').width / 3,
     height: Dimensions.get('window').height / 3,
-    marginTop: Dimensions.get('window').height / 30,
+    marginTop: Dimensions.get('window').height / 50,
+    marginBottom: Dimensions.get('window').height / 700,
+    paddingBottom: Dimensions.get('window').height / 700,
     resizeMode: 'contain',
     alignSelf: 'center',
   },
   logo: {
-    marginTop: 25,
+    marginTop: Dimensions.get('window').height / 30,
     width: Dimensions.get('window').width / 1.3,
     height: Dimensions.get('window').height / 4,
     resizeMode: 'contain',
@@ -140,8 +144,10 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   input: {
-    paddingHorizontal: 5,
+    paddingHorizontal: Dimensions.get('window').height / 169,
     width: '100%',
+    color: 'black',
+    fontFamily: 'Arial',
   },
   error: {
     borderWidth: 2,

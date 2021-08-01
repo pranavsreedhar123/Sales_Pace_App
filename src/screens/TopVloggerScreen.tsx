@@ -182,6 +182,7 @@ export const TopVloggerScreen = (): JSX.Element => {
           <View style={styles.searchBox}>
             <TextInput
               placeholder="Search Channel"
+              placeholderTextColor="black"
               style={styles.input}
               value={videoSearchText}
               onChangeText={text => setVideoSearchText(text)}
@@ -361,6 +362,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     height: 40,
     marginTop: 10,
+    color: 'black',
   },
   error: {
     borderWidth: 2,
