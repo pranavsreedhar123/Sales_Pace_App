@@ -13,72 +13,76 @@ import {
 } from 'react-native';
 import {Helpers} from '../utils/Helpers';
 // import {getGovtProjectDetails} from '../services/govtProjectsAPI';
-import { Icon } from 'react-native-elements';
-import { Component } from 'react';
-import { TouchableHighlight } from 'react-native';
-import { Modal } from 'react-native'; 
+import {Icon} from 'react-native-elements';
+import {Component} from 'react';
+import {TouchableHighlight} from 'react-native';
+import {Modal} from 'react-native';
 const [tender_id, setTender_id] = useState<any>([]);
 const [tender_source, setTender_source] = useState<any>([]);
 const [isVisible, setVisiblity] = useState<any>([]);
 const [isLoading, setLoading] = useState(true);
 const [tenderDataDetail, setTenderDataDetail] = useState<any>([]);
 
-function detailList(tender_id:any,tender_source:any,isVisible:any)
-{}
-  
-
+function detailList(tender_id: any, tender_source: any, isVisible: any) {}
 
 class ModalExample extends Component {
   state = {
-     modalVisible: false,
-  }
+    modalVisible: false,
+  };
   toggleModal(visible: boolean) {
-     this.setState({ modalVisible: visible });
+    this.setState({modalVisible: visible});
   }
   render() {
-     return (
-        <View style = {styles.container}>
-           <Modal animationType = {"slide"} transparent = {false}
-              visible = {this.state.modalVisible}
-              onRequestClose = {() => { console.log("Modal has been closed.") } }>
-              
-              <View style = {styles.modal}>
-                 <Text style = {styles.text}>Modal is open!</Text>
-                 
-                 <TouchableHighlight onPress = {() => {
-                    this.toggleModal(!this.state.modalVisible)}}>
-                    
-                    <Text style = {styles.text}>Close Modal</Text>
-                 </TouchableHighlight>
-              </View>
-           </Modal>
-           
-           <TouchableHighlight onPress = {() => {this.toggleModal(true)}}>
-              <Text style = {styles.text}>Open Modal</Text>
-           </TouchableHighlight>
-        </View>
-     )
+    return (
+      <View style={styles.container}>
+        <Modal
+          animationType={'slide'}
+          transparent={false}
+          visible={this.state.modalVisible}
+          onRequestClose={() => {
+            console.log('Modal has been closed.');
+          }}>
+          <View style={styles.modal}>
+            <Text style={styles.text}>Modal is open!</Text>
+
+            <TouchableHighlight
+              onPress={() => {
+                this.toggleModal(!this.state.modalVisible);
+              }}>
+              <Text style={styles.text}>Close Modal</Text>
+            </TouchableHighlight>
+          </View>
+        </Modal>
+
+        <TouchableHighlight
+          onPress={() => {
+            this.toggleModal(true);
+          }}>
+          <Text style={styles.text}>Open Modal</Text>
+        </TouchableHighlight>
+      </View>
+    );
   }
 }
-export default ModalExample
-const styles = StyleSheet.create ({
+export default ModalExample;
+const styles = StyleSheet.create({
   container: {
-     alignItems: 'center',
-     backgroundColor: '#ede3f2',
-     padding: 100
+    alignItems: 'center',
+    backgroundColor: '#ede3f2',
+    padding: 100,
   },
   modal: {
-     flex: 1,
-     alignItems: 'center',
-     backgroundColor: '#f7021a',
-     padding: 100
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: '#f7021a',
+    padding: 100,
   },
   text: {
-     color: '#3f2949',
-     marginTop: 10
-  }
-})
- 
+    color: '#3f2949',
+    marginTop: 10,
+  },
+});
+
 // const GovtProjectScreenDetail =()=>{
 //   //   setTender_id('44418');
 //   //   setTender_source('1');
@@ -95,8 +99,7 @@ const styles = StyleSheet.create ({
 //   // useEffect(() => {
 //   //   fetchMyAPI()
 //   // }, [ ])
-  
- 
+
 // return(
 
 //     <View>

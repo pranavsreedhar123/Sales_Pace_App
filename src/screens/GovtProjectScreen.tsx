@@ -322,6 +322,7 @@ const GovtProjectScreen = () => {
         <View style={styles.searchBox}>
           <TextInput
             placeholder="Search Tenders"
+            placeholderTextColor="black"
             style={styles.input}
             value={tenderSearchText}
             onChangeText={text => setTenderSearchText(text)}
@@ -516,11 +517,11 @@ const GovtProjectScreen = () => {
                   {item.tender_title}{' '}
                 </Text>
                 <Text style={styles.tenderData}>
-                  <Text style={styles.title}> Tender Amount : </Text>{' '}
+                  <Text style={styles.title}>Tender Amount: </Text>{' '}
                   {getAmountFormatted(item.tender_amount)}
                 </Text>
                 <Text style={styles.tenderData}>
-                  <Text style={styles.title}> Closing Date : </Text>{' '}
+                  <Text style={styles.title}>Closing Date: </Text>{' '}
                   {Helpers.formatDate(item.closing_date)}
                 </Text>
               </TouchableOpacity>
@@ -681,6 +682,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     height: 40,
     marginTop: 10,
+    color: 'black',
   },
   item: {
     backgroundColor: '#f5f5f5',

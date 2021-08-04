@@ -13,7 +13,7 @@ import {NavigationActions} from './NavigationActions';
 import {CustomButton} from '../components/CustomButton';
 import {Title} from '../components/Title';
 import {List, ListItem} from 'native-base';
-import { Screens } from './Screens';
+import {Screens} from './Screens';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import {
   MainStackNavigator,
@@ -69,7 +69,8 @@ export const CustomDrawerContent = (): JSX.Element => {
             backgroundColor: '#00716F',
             borderRadius: 23,
             marginHorizontal: 20,
-            paddingLeft: 15,
+            paddingHorizontal: 15,
+            width: '90%',
             //width: '80%',
           }}
           onPress={() => {
@@ -79,7 +80,15 @@ export const CustomDrawerContent = (): JSX.Element => {
           }}
           // onPress={() => navigation.navigate('NotLoggedInStackNavigator')}
         >
-          <Text style={{color: 'white', fontWeight: 'bold'}}>Logout</Text>
+          <Text
+            style={{
+              color: 'white',
+              fontWeight: 'bold',
+              width: '100%',
+              paddingHorizontal: 80,
+            }}>
+            Logout
+          </Text>
         </ListItem>
       </List>
       <Image

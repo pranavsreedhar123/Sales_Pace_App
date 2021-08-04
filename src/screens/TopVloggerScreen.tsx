@@ -182,6 +182,7 @@ export const TopVloggerScreen = (): JSX.Element => {
           <View style={styles.searchBox}>
             <TextInput
               placeholder="Search Channel"
+              placeholderTextColor="black"
               style={styles.input}
               value={videoSearchText}
               onChangeText={text => setVideoSearchText(text)}
@@ -333,7 +334,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginLeft: Dimensions.get('window').width / 100,
     color: 'white',
-    backgroundColor: 'rgb(0, 0, 255)',
+    backgroundColor: '#005A9C',
+    //backgroundColor: 'rgb(0, 0, 255)',
     width: Dimensions.get('window').width * 0.45,
     borderRadius: 5,
   },
@@ -344,7 +346,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginLeft: Dimensions.get('window').width / 100,
     color: 'white',
-    backgroundColor: 'rgb(0, 0, 255)',
+    backgroundColor: '#005A9C',
+    //backgroundColor: 'rgb(0, 0, 255)',
     width: Dimensions.get('window').width * 0.45,
     borderRadius: 5,
   },
