@@ -255,7 +255,7 @@ const GovtProjectScreen = () => {
           ' K';
       }
     } else {
-      retVal = '--';
+      retVal = 'Refer Tender Document For Amount';
     }
     return retVal;
   };
@@ -479,7 +479,7 @@ const GovtProjectScreen = () => {
           </TouchableOpacity>
         </Modal>
 
-        {isLoadingTenderDetails && (
+        {(isLoadingTenderDetails || isLoading )&& (
           <ActivityIndicator
             size={'large'}
             // {...props}
@@ -487,7 +487,7 @@ const GovtProjectScreen = () => {
           />
         )}
         <View style={styles.sectionsList}>
-          {!groupedGovtTenders?.length && (
+          {!isLoading && !groupedGovtTenders?.length && (
             <Text
               style={{
                 ...styles.text,
@@ -543,49 +543,42 @@ const GovtProjectScreen = () => {
             </Text>
             <View style={{flexDirection: 'row'}}>
               <Text style={styles.titles}>Tender ID </Text>
-              <Text style={styles.values}>
-                {tenderDetails?.tender_id} {'\n'}
+              <Text style={styles.values}>{tenderDetails?.tender_id} {'\n'}
               </Text>
             </View>
 
             <View style={{flexDirection: 'row'}}>
               <Text style={styles.titles}>Tender Title </Text>
-              <Text style={styles.values}>
-                {tenderDetails?.tender_description}
+              <Text style={styles.values}> {tenderDetails?.tender_description}
               </Text>
             </View>
 
             <View style={{flexDirection: 'row'}}>
-              <Text style={styles.titles}>Location </Text>
-              <Text style={{...styles.values}}>
-                {tenderDetails?.Location}
+              <Text style={styles.titles}> Location </Text>
+              <Text style={{...styles.values}}>{tenderDetails?.Location}
               </Text>
             </View>
             <View style={{flexDirection: 'row'}}>
               <Text style={styles.titles}>Tender Category </Text>
-              <Text style={styles.values}>
-                {tenderDetails?.tender_category}
+              <Text style={styles.values}> {tenderDetails?.tender_category}
               </Text>
             </View>
 
             <View style={{flexDirection: 'row'}}>
               <Text style={styles.titles}>Tender Amount </Text>
-              <Text style={styles.values}>
-                {getAmountFormatted(tenderDetails?.tender_amount)}
+              <Text style={styles.values}> {getAmountFormatted(tenderDetails?.tender_amount)}
               </Text>
             </View>
             <View style={{flexDirection: 'row'}}>
               <Text style={styles.titles}>Closing Date </Text>
-              <Text style={{...styles.values, color: 'darkred'}}>
-                {Helpers.formatDate(tenderDetails?.closing_date)} {'\n'}
+              <Text style={{...styles.values, color: 'darkred'}}> {Helpers.formatDate(tenderDetails?.closing_date)} {'\n'}
               </Text>
             </View>
             <View style={{flexDirection: 'row'}}>
               <Text style={styles.titles}>Tender URL </Text>
               <Text
                 style={{...styles.values, color: 'blue'}}
-                onPress={() => openTenderURL(tenderDetails?.tender_url)}>
-                : {tenderDetails?.tender_url} {'\n'}
+                onPress={() => openTenderURL(tenderDetails?.tender_url)}> {tenderDetails?.tender_url} {'\n'}
                 {'\n'}
                 {'\n'}
                 {'\n'}

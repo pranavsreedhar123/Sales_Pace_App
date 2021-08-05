@@ -14,8 +14,8 @@ import {NavigationActions} from '../navigation/NavigationActions';
 Icon.loadFont();
 
 export const Login = (): JSX.Element => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('test@saint-gobain.com');
+  const [password, setPassword] = useState('12345');
   const validate = (email: string, password: string) => {
     if (email == 'test@saint-gobain.com' && password == '12345') {
       NavigationActions.navigateToScreen({
