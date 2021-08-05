@@ -24,13 +24,13 @@ const MiniCard = (props: any) => {
           <Text style={{fontSize: 13, fontWeight: 'bold'}}>Related Videos: </Text>
           {props.title}
         </Text>
-        <Text style={{fontSize: 13}}>
-          <Text style={{fontSize: 13, fontWeight: 'bold'}}>Subscribers: </Text>
-          {props.subscriberCount}
+        <Text style={{fontSize: 13,fontWeight: 'bold'}}>Subscribers: 
+          <Text style={{color: props.isFilteredBySubscribers ? 'red':'black'}}>  {props.subscriberCount}</Text>
+        
         </Text>
-        <Text style={{fontSize: 13}}>
-          <Text style={{fontSize: 13, fontWeight: 'bold'}}>Total Views: </Text>
-          {props.viewCount}
+        <Text style={{fontSize: 13, fontWeight: 'bold'}}> Total Views: 
+          <Text style={{color: props.isFilteredByViews? 'red':'black',fontWeight: 'bold'  }}> {props.viewCount} </Text>
+         
         </Text>
       </View>
     </View>
