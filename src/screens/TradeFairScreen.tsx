@@ -580,8 +580,9 @@ const TradeFairScreen = () => {
   };
   const filterTenders = () => {
     let allTenderContainingSearchText = allTradeFair.filter((tender: any) => {
-      return tender.city?.toLowerCase()
-      ?.includes(tenderSearchText.toLowerCase());
+      return tender.city
+        ?.toLowerCase()
+        ?.includes(tenderSearchText.toLowerCase());
     });
     // console.log(allTenderContainingSearchText.length)includes(tenderSearchText);
     tenderSearchText
