@@ -130,19 +130,13 @@ const GovtProjectScreen = () => {
     setModalVisible(!isModalVisible);
   };
   function setFilterModal() {
-    console.log('', isFilterModalVisible);
     setIsFilterModalVisible(!isFilterModalVisible);
-    console.log('', isFilterModalVisible);
   }
   const passValuesInModal = async (tender: any) => {
-    console.log(tender, 'tender ki values');
-
     // toggleModal();
     await getProjectDetails(tender.tender_source, tender.tender_id);
 
     if (!isModalVisible) {
-      console.log(JSON.stringify(tender));
-      console.log(tender.tender_source + '');
       setTenderID(tender.tender_id);
       setSourceID(tender.tender_source);
     }
@@ -153,7 +147,6 @@ const GovtProjectScreen = () => {
       setLoading(true);
       try {
         let crawledHousingData = await getHousingDataAPI();
-        console.log(crawledHousingData, '^^^^^^^^^^^^^^^^^^^^');
 
         setAllGovtTenders(JSON.parse(crawledHousingData));
         setFilteredGovtTenders(JSON.parse(crawledHousingData));
@@ -170,13 +163,13 @@ const GovtProjectScreen = () => {
       let urlDetailsCheckResponse = await checkProjectDetailsURL(
         projectDetailsJSON.tender_url,
       );
-      if (urlDetailsCheckResponse.status == 200) {
-      } else {
+      console.log(urlDetailsCheckResponse, 'check projectDetailsJSON:::::::::');
+
+      if (urlDetailsCheckResponse.status != 200) {
         projectDetailsJSON.tender_url = Helpers.extractDomain(
           projectDetailsJSON.tender_url,
         );
       }
-      console.log(projectDetailsJSON, ':projectDetailsJSON:::::::::');
 
       setTenderDetails(projectDetailsJSON);
       setModalVisible(true);
@@ -199,8 +192,10 @@ const GovtProjectScreen = () => {
         sourceId,
         tenderId,
       );
+
       let projectDetailsJSON = JSON.parse(projectDetails);
 
+      console.log(projectDetailsJSON, '&&&&&&&&&&&&&&&&&');
       checkIfURLExist(projectDetailsJSON);
     } catch (e) {
       ToastAndroid.showWithGravityAndOffset(
@@ -230,30 +225,34 @@ const GovtProjectScreen = () => {
           };
         },
       );
-      console.log(mappedCrawledTenders, 'jewfniewfiewfoiewf');
+
       setGroupedGovtTenders(mappedCrawledTenders);
       // setTenderData(mappedCrawledTenders)
     };
     filteredGovtTenders && !!isGroupBy && getGroupedAndFilteredData();
   }, [filteredGovtTenders]);
-  // console.log(filteredGovtTenders+"-====")
 
   const getAmountFormatted = (amt: any) => {
     let value = parseInt(amt);
     let val = Math.abs(value);
     let retVal = '';
 
-    if (amt !== 0) {
+    if (parseInt(amt) !== 0) {
       if (val >= 10000000) {
         retVal =
-          '₹' +
+          '₹ ' +
           (val / 10000000).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') +
           ' Cr';
-      } else {
+      } else if (val > 100000) {
         retVal =
-          '₹' +
+          '₹ ' +
           (val / 100000).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') +
           ' Lac';
+      } else {
+        retVal =
+          '₹ ' +
+          (val / 1000).toFixed(3).replace(/\d(?=(\d{3})+\.)/g, '$&,') +
+          ' K';
       }
     } else {
       retVal = '--';
@@ -266,12 +265,11 @@ const GovtProjectScreen = () => {
         ?.toLowerCase()
         ?.includes(tenderSearchText.toLowerCase());
     });
-    // console.log(allTenderContainingSearchText.length)
+
     tenderSearchText
       ? setFilteredGovtTenders(allTenderContainingSearchText)
       : setFilteredGovtTenders(allGovtTenders);
   };
-  // console.log(JSON.stringify(groupedGovtTenders))
 
   const sortOption = () => {
     setIsGroupBy(false);
@@ -288,18 +286,13 @@ const GovtProjectScreen = () => {
       'closing_date',
       isSortByDateAsc,
     );
-    // sortArrayByDate(allGovtTenders);
-    // setGroupedGovtTenders(mappedCrawledTenders);
 
-    console.log(groupedGovtTenders, '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
     let groupedSortedTenders = [
       {
         tender_type: 'sorted_data',
         data: allTendersWithSorting,
       },
     ];
-
-    console.log(groupedSortedTenders, '******************');
 
     setFilteredGovtTenders(groupedSortedTenders);
     // setGroupedGovtTenders(groupedSortedTenders);
@@ -309,8 +302,8 @@ const GovtProjectScreen = () => {
   const [isVisible, setVisiblity] = useState(false);
 
   const openTenderURL = async (tender_url: any) => {
-    console.log(await Linking.canOpenURL(tender_url));
     await Linking.openURL(tender_url);
+
     // .catch(()=>{console.log("ERROR")});
   };
   const groupByTenderType = () => {
@@ -551,7 +544,7 @@ const GovtProjectScreen = () => {
             <View style={{flexDirection: 'row'}}>
               <Text style={styles.titles}>Tender ID </Text>
               <Text style={styles.values}>
-                : {tenderDetails?.tender_id} {'\n'}
+                {tenderDetails?.tender_id} {'\n'}
               </Text>
             </View>
 
@@ -565,7 +558,7 @@ const GovtProjectScreen = () => {
             <View style={{flexDirection: 'row'}}>
               <Text style={styles.titles}>Location </Text>
               <Text style={{...styles.values}}>
-                {tenderDetails?.state_name}
+                {tenderDetails?.Location}
               </Text>
             </View>
             <View style={{flexDirection: 'row'}}>
