@@ -19,10 +19,13 @@ export namespace Helpers {
       return a[key] - b[key] ;
     });
   };
-  export const sortArrayByDate =(array:any,key:string,asc:boolean)=>{
+  export const sortArrayByDate =(array:any,key:string,asc:boolean,key2?:string)=>{
     return array.sort((a:any,b:any) => {
-      let firstDate=new Date(a[key]).getTime();
-      let secondDate=new Date(b[key]).getTime();
+      let firstDate= new Date(key2 ?a[key]+'/'+a[key2]:a[key]).getTime();
+      let secondDate= new Date(key2 ?b[key]+'/'+b[key2]:b[key]).getTime();
+
+      console.log(firstDate,secondDate,"*********Dates **************",new Date('23/Jan/2022'));
+      
      let sortedDate :any= asc ? firstDate-secondDate : secondDate-firstDate;
 
      return sortedDate

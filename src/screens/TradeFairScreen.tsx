@@ -574,15 +574,16 @@ const TradeFairScreen = () => {
           ' Lac';
       }
     } else {
-      retVal = '--';
+      retVal = 'Refer Trade Fair Document For Amount';
     }
     return retVal;
   };
   const filterTenders = () => {
     let allTenderContainingSearchText = allTradeFair.filter((tender: any) => {
-      return tender.venue_name?.includes(tenderSearchText);
+      return tender.city?.toLowerCase()
+      ?.includes(tenderSearchText.toLowerCase());
     });
-    // console.log(allTenderContainingSearchText.length)
+    // console.log(allTenderContainingSearchText.length)includes(tenderSearchText);
     tenderSearchText
       ? setFilteredTradeFair(allTenderContainingSearchText)
       : setFilteredTradeFair(allTradeFair);
@@ -692,8 +693,7 @@ const TradeFairScreen = () => {
       <View style={styles.container}>
         <View style={styles.searchBox}>
           <TextInput
-            placeholder="Search Trade Fair"
-            placeholderTextColor="black"
+            placeholder="Search City"
             style={styles.input}
             value={tenderSearchText}
             onChangeText={text => setTenderSearchText(text)}
@@ -886,7 +886,7 @@ const TradeFairScreen = () => {
                 //   )}
               >
                 <Text style={styles.tenderData}>
-                  <Text style={styles.title}>Trade Fair Name: </Text>{' '}
+                  <Text style={styles.title}>Trade Fair Name </Text>
                   {item.tradefair_name}{' '}
                 </Text>
 
