@@ -574,7 +574,7 @@ const TradeFairScreen = () => {
           ' Lac';
       }
     } else {
-      retVal = '--';
+      retVal = 'Refer Trade Fair Document For Amount';
     }
     return retVal;
   };

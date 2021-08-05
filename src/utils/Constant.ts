@@ -179,4 +179,8 @@ export const YT_CHANNEL_DATA: YTChannel = {
       },
     },
   ],
+
+
 };
+
+export const YT_API_KEY = 'AIzaSyDTPLXAczbj-2wYN30awanRnpbQpDSWvmM'

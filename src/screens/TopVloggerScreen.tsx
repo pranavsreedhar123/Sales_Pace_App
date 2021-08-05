@@ -21,9 +21,13 @@ import {
   getYouTubeChannelsAPI,
   getYTChannelsSnippetAPI,
 } from '../services/youTubeAPIs';
+import { useEffect } from 'react';
 
 export const TopVloggerScreen = (): JSX.Element => {
-  const [videoSearchText, setVideoSearchText] = useState('');
+  
+    const [videoSearchText, setVideoSearchText] = useState('Construction Design');
+
+  // const [videoSearchText, setVideoSearchText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [sortedBySubscribersData, setSortedBySubscribersData] = useState<
     YTChannelItem[]
@@ -64,6 +68,11 @@ export const TopVloggerScreen = (): JSX.Element => {
     }
     setFilterStatus(true);
   };
+
+
+  useEffect(() => {
+    fetchYTChannels();
+  }, []);
 
   const filterYTChannels = React.useCallback(
     async (tempDataArray: YTChannelItem[]) => {
@@ -139,10 +148,12 @@ export const TopVloggerScreen = (): JSX.Element => {
     // ]);
   };
   const filterSubscriber = React.useCallback(() => {
-    // setIsFilteredByViews(false);
-    // setIsFilteredBySubscribers(!isFilteredBySubscribers);
+    //  setIsFilteredByViews(false);
+     setIsFilteredBySubscribers(true);
     for (const item of miniCardData) {
+      console.log(item,"))))))))))))))))))))))))))))))))))))))))))000")
       if (item.hiddenSubscriber == false) {
+       
         filterView();
         break;
       }
@@ -162,8 +173,8 @@ export const TopVloggerScreen = (): JSX.Element => {
   }, [miniCardData]);
 
   const filterView = () => {
-    // setIsFilteredBySubscribers(false);
-    // setIsFilteredByViews(!isFilteredByViews);
+    //  setIsFilteredBySubscribers(false);
+     setIsFilteredByViews(true);
     setSortedBySubscribersData([]);
     // if (isFilteredByViews) {
     let sortedYTChannelByViews = Helpers.sortArrayByKey(miniCardData, 'views');
@@ -174,6 +185,9 @@ export const TopVloggerScreen = (): JSX.Element => {
     setSortedByViewsData(reverseSortedYTChannelByViews);
     // }
   };
+useEffect(()=>{!!isFilteredBySubscribers && setIsFilteredByViews(!isFilteredBySubscribers)},[isFilteredBySubscribers])
+
+useEffect(()=>{!!isFilteredByViews && setIsFilteredBySubscribers(!isFilteredByViews)},[isFilteredByViews])
 
   return (
     <>
@@ -216,13 +230,13 @@ export const TopVloggerScreen = (): JSX.Element => {
           </View>
           <View
             style={{
-              flexDirection: 'column',
+              flexDirection: 'row',
             }}>
             {filterOptionStatus && (
               <View
                 style={{
                   flexDirection: 'row',
-                  padding: 10,
+                   padding: 10,
                 }}>
                 <Text
                   style={
@@ -231,7 +245,7 @@ export const TopVloggerScreen = (): JSX.Element => {
                       : styles.textButtonDisabled
                   }
                   onPress={() => filterSubscriber()}>
-                  Subscribers
+                  Sort By Max Subscriber
                 </Text>
                 <Text
                   style={
@@ -240,7 +254,7 @@ export const TopVloggerScreen = (): JSX.Element => {
                       : styles.textButtonDisabled
                   }
                   onPress={() => filterView()}>
-                  View Count
+               Sort By Max View Count
                 </Text>
               </View>
             )}
@@ -269,7 +283,10 @@ export const TopVloggerScreen = (): JSX.Element => {
                 title={item.snippet.title} //Video related to the query
                 thumbnail={item.thumbnailC} //Thumbnail of the channel
                 viewCount={item.views} //ViewCount
-                subscriberCount={item.subscribers} //Subscriber
+                subscriberCount={item.subscribers}
+                isFilteredBySubscribers={isFilteredBySubscribers}
+              isFilteredByViews={isFilteredByViews}
+                //Subscriber
               />
             );
           }}
@@ -335,6 +352,7 @@ const styles = StyleSheet.create({
     marginLeft: Dimensions.get('window').width / 100,
     color: 'white',
     backgroundColor: '#005A9C',
+    
     //backgroundColor: 'rgb(0, 0, 255)',
     width: Dimensions.get('window').width * 0.45,
     borderRadius: 5,
@@ -346,7 +364,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginLeft: Dimensions.get('window').width / 100,
     color: 'white',
-    backgroundColor: '#005A9C',
+    backgroundColor: 'grey',
     //backgroundColor: 'rgb(0, 0, 255)',
     width: Dimensions.get('window').width * 0.45,
     borderRadius: 5,

@@ -255,7 +255,7 @@ const GovtProjectScreen = () => {
           ' K';
       }
     } else {
-      retVal = '--';
+      retVal = 'Refer Tender Document For Amount';
     }
     return retVal;
   };
