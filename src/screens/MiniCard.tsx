@@ -21,16 +21,29 @@ const MiniCard = (props: any) => {
           {props.channel}
         </Text>
         <Text style={{fontSize: 13}} ellipsizeMode="tail" numberOfLines={2}>
-          <Text style={{fontSize: 13, fontWeight: 'bold'}}>Related Videos: </Text>
+          <Text style={{fontSize: 13, fontWeight: 'bold'}}>
+            Related Videos:{' '}
+          </Text>
           {props.title}
         </Text>
-        <Text style={{fontSize: 13,fontWeight: 'bold'}}>Subscribers: 
-          <Text style={{color: props.isFilteredBySubscribers ? 'red':'black'}}>  {props.subscriberCount}</Text>
-        
+        <Text style={{fontSize: 13, fontWeight: 'bold'}}>
+          Subscribers:
+          <Text
+            style={{color: props.isFilteredBySubscribers ? 'red' : 'black'}}>
+            {' '}
+            {props.subscriberCount}
+          </Text>
         </Text>
-        <Text style={{fontSize: 13, fontWeight: 'bold'}}> Total Views: 
-          <Text style={{color: props.isFilteredByViews? 'red':'black',fontWeight: 'bold'  }}> {props.viewCount} </Text>
-         
+        <Text style={{fontSize: 13, fontWeight: 'bold'}}>
+          Total Views:
+          <Text
+            style={{
+              color: props.isFilteredByViews ? 'red' : 'black',
+              fontWeight: 'bold',
+            }}>
+            {' '}
+            {props.viewCount}{' '}
+          </Text>
         </Text>
       </View>
     </View>
