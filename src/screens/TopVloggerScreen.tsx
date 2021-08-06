@@ -10,6 +10,8 @@ import {
   Alert,
   Image,
   Keyboard,
+  TouchableOpacity,
+  Linking,
 } from 'react-native';
 import {Icon} from 'react-native-elements';
 import MiniCard from './MiniCard';
@@ -71,6 +73,12 @@ export const TopVloggerScreen = (): JSX.Element => {
   useEffect(() => {
     fetchYTChannels();
   }, []);
+
+  const openYouTubeURL = async (youtube_url: string) => {
+    await Linking.openURL(youtube_url);
+
+    // .catch(()=>{console.log("ERROR")});
+  };
 
   const filterYTChannels = React.useCallback(
     async (tempDataArray: YTChannelItem[]) => {
@@ -279,16 +287,23 @@ export const TopVloggerScreen = (): JSX.Element => {
           }}
           renderItem={({item}) => {
             return (
-              <MiniCard
-                channel={item.snippet.channelTitle} //Channel name
-                title={item.snippet.title} //Video related to the query
-                thumbnail={item.thumbnailC} //Thumbnail of the channel
-                viewCount={item.views} //ViewCount
-                subscriberCount={item.subscribers}
-                isFilteredBySubscribers={isFilteredBySubscribers}
-                isFilteredByViews={isFilteredByViews}
-                //Subscriber
-              />
+              <TouchableOpacity
+                onPress={() =>
+                  openYouTubeURL(
+                    'https://www.youtube.com/channel/' + item.snippet.channelId,
+                  )
+                }>
+                <MiniCard
+                  channel={item.snippet.channelTitle} //Channel name
+                  title={item.snippet.title} //Video related to the query
+                  thumbnail={item.thumbnailC} //Thumbnail of the channel
+                  viewCount={item.views} //ViewCount
+                  subscriberCount={item.subscribers}
+                  isFilteredBySubscribers={isFilteredBySubscribers}
+                  isFilteredByViews={isFilteredByViews}
+                  //Subscriber
+                />
+              </TouchableOpacity>
             );
           }}
         />

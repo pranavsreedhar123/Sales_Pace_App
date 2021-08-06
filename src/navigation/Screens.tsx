@@ -3,7 +3,8 @@ export const Screens = {
   LoginScreen: 'Login',
   TopVloggerScreen: 'TopVloggerScreen',
   GovtProjectScreen: 'GovtProjectScreen',
-  GovtProjectScreenDetails:'GovtProjectScreenDetails',
-  TradeFairScreen:'TradeFairScreen'
+  GovtProjectScreenDetails: 'GovtProjectScreenDetails',
+  TradeFairScreen: 'TradeFairScreen',
+  VideoScreen: 'VideoScreen',
+  VideoCard: 'VideoCard',
 };
-

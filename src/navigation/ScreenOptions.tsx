@@ -13,6 +13,7 @@ export const setCommonDrawerScreenOptions = () => {
     headerTitleStyle: {
       color: '#005A9C',
       alignItems: 'center',
+      fontSize: 22,
     },
     headerBackTitleVisible: false,
     headerTintColor: '#fff',
