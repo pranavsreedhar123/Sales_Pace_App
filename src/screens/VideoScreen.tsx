@@ -118,7 +118,7 @@ export const VideoScreen = (): JSX.Element => {
               </View>
               <Icon
                 raised
-                style={{padding: 0}}
+                style={{paddingTop: 5}}
                 size={19}
                 name="search"
                 color="#005A9C"
