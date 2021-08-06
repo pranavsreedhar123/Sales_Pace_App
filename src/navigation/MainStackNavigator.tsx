@@ -5,6 +5,7 @@ import {createDrawerNavigator} from '@react-navigation/drawer';
 import {Screens} from './Screens';
 import {TopVloggerScreen} from '../screens/TopVloggerScreen';
 import GovtProjectScreen from '../screens/GovtProjectScreen';
+import {VideoScreen} from '../screens/VideoScreen';
 import {CustomDrawerContent} from './CustomDrawerContent';
 import {
   setDrawerMenuInHeader,
@@ -80,7 +81,6 @@ export const DefaultDrawerNavigator = (): JSX.Element => {
           headerTitle: setHeaderTitle('Trade Fairs'),
         }}
       />
-
       <DefaultDrawer.Screen
         name={Screens.TopVloggerScreen}
         component={TopVloggerScreen}
@@ -88,6 +88,15 @@ export const DefaultDrawerNavigator = (): JSX.Element => {
           ...commonDrawerScreenOptions,
           ...drawerMenuInHeader,
           headerTitle: setHeaderTitle('Top VLoggers'),
+        }}
+      />
+      <DefaultDrawer.Screen
+        name={Screens.VideoScreen}
+        component={VideoScreen}
+        options={{
+          ...commonDrawerScreenOptions,
+          ...drawerMenuInHeader,
+          headerTitle: setHeaderTitle('Video'),
         }}
       />
     </DefaultDrawer.Navigator>
