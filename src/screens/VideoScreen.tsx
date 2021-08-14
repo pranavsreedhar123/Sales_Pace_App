@@ -33,18 +33,15 @@ export const VideoScreen = (): JSX.Element => {
   const [channel, setChannel] = useState('Saint-Gobain Glass');
   const [visible, setVisible] = useState(false);
   const [searchText, setSearchText] = useState('Search video by');
-  const [searchStatus, setSearchStatus] = useState(false);
   const [query, setQuery] = useState('');
   const [linkStatus, setLinkStatus] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [searchStatus, setSearchStatus] = useState(false);
   const [link, setLink] = useState('');
   const [miniCardData, setMiniCardData] = useState<YTChannelItem[]>([]);
-
   const fetchYTVideos = async () => {
-    setSearchText('Search video by ' + channel);
     Keyboard.dismiss();
     setIsLoading(true);
-    setSearchStatus(true);
     try {
       let YouTubeVideos = await getYouTubeVideosAPI(
         'UCewFSOTzBXhH3A8hWezvTng',
@@ -77,16 +74,24 @@ export const VideoScreen = (): JSX.Element => {
           };
         },
       );
-      setMiniCardData(tempDataArray);
+      setSearchText('Search video by ' + channel);
+      //setSearchStatus(true);
       //tempDataArray.length && getYTVideos(tempDataArray);
+      setMiniCardData(tempDataArray);
     } catch (error) {
       console.error(error);
     }
   };
 
-  useEffect(() => {
-    fetchYTVideos();
-  }, []);
+  if (Platform.OS === 'ios') {
+    useEffect(() => {
+      fetchYTVideos();
+    }, []);
+  } else if (Platform.OS === 'android') {
+    useEffect(() => {
+      fetchYTVideos();
+    }, [channel]);
+  }
 
   return (
     <>
@@ -100,6 +105,7 @@ export const VideoScreen = (): JSX.Element => {
                   mode="dropdown"
                   onValueChange={value => {
                     setChannel(value);
+                    //fetchYTVideos();
                     setSearchStatus(false);
                   }}>
                   <Picker.Item
@@ -116,7 +122,7 @@ export const VideoScreen = (): JSX.Element => {
                   />
                 </Picker>
               </View>
-              <Icon
+              {/* <Icon
                 raised
                 style={{paddingTop: 5}}
                 size={19}
@@ -124,7 +130,7 @@ export const VideoScreen = (): JSX.Element => {
                 color="#005A9C"
                 type="font-awesome"
                 onPress={() => fetchYTVideos()}
-              />
+              /> */}
             </View>
           )}
           {Platform.OS === 'ios' && (
@@ -162,26 +168,25 @@ export const VideoScreen = (): JSX.Element => {
             style={{
               flexDirection: 'row',
             }}></View>
-          {searchStatus && (
-            <View style={styles.searchBox}>
-              <TextInput
-                style={styles.link}
-                placeholder={searchText}
-                placeholderTextColor="black"
-                autoCapitalize="none"
-                onChangeText={text => setQuery(text)}
-              />
-              <Icon
-                raised
-                style={{padding: 0}}
-                size={15}
-                name="search"
-                color="#005A9C"
-                type="font-awesome"
-                onPress={() => fetchYTVideos()}
-              />
-            </View>
-          )}
+
+          <View style={styles.searchBox}>
+            <TextInput
+              style={styles.link}
+              placeholder={searchText}
+              placeholderTextColor="black"
+              autoCapitalize="none"
+              onChangeText={text => setQuery(text)}
+            />
+            <Icon
+              raised
+              style={{padding: 0}}
+              size={15}
+              name="search"
+              color="#005A9C"
+              type="font-awesome"
+              onPress={() => fetchYTVideos()}
+            />
+          </View>
         </View>
 
         {isLoading && (

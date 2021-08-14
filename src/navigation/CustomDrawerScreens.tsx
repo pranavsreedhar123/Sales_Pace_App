@@ -22,7 +22,7 @@ export const CustomDrawerScreens = (): CustomDrawerScreen[] => {
     },
     {
       name: Screens.VideoScreen,
-      displayName: 'Video',
+      displayName: 'Video Sharing',
       icon: <ListIcon style={{width: 24, height: 24}} />,
     },
   ];
