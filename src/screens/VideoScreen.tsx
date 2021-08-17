@@ -28,7 +28,6 @@ import {useEffect} from 'react';
 import {Picker} from 'native-base';
 import {Picker as SelectPicker} from '@react-native-picker/picker';
 import {TouchableOpacity} from 'react-native';
-import {pick} from 'lodash';
 export const VideoScreen = (): JSX.Element => {
   const [channel, setChannel] = useState('Saint-Gobain Glass');
   const [visible, setVisible] = useState(false);

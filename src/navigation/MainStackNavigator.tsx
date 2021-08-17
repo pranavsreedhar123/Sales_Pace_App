@@ -96,7 +96,7 @@ export const DefaultDrawerNavigator = (): JSX.Element => {
         options={{
           ...commonDrawerScreenOptions,
           ...drawerMenuInHeader,
-          headerTitle: setHeaderTitle('Video'),
+          headerTitle: setHeaderTitle('Video Sharing'),
         }}
       />
     </DefaultDrawer.Navigator>
