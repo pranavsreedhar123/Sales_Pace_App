@@ -127,6 +127,8 @@ const GovtProjectScreen = () => {
   const [isGroupBy, setIsGroupBy] = useState(true);
   const [isSortByDateAsc, setIsSortByDateAsc] = useState(true);
   const toggleModal = () => {
+    console.log("toggleMosL");
+    
     setModalVisible(!isModalVisible);
   };
   function setFilterModal() {
@@ -160,16 +162,18 @@ const GovtProjectScreen = () => {
   const checkIfURLExist = async (projectDetailsJSON: any) => {
     setIsLoadingTenderDetails(true);
     try {
-      let urlDetailsCheckResponse = await checkProjectDetailsURL(
-        projectDetailsJSON.tender_url,
-      );
-      console.log(urlDetailsCheckResponse, 'check projectDetailsJSON:::::::::');
+      // alert("Its here");
+      // let urlDetailsCheckResponse = await checkProjectDetailsURL(
+      //   projectDetailsJSON.tender_url,
+      // );
+     
+      // console.log(urlDetailsCheckResponse, 'check projectDetailsJSON:::::::::');
 
-      if (urlDetailsCheckResponse.status != 200) {
-        projectDetailsJSON.tender_url = Helpers.extractDomain(
-          projectDetailsJSON.tender_url,
-        );
-      }
+      // if (urlDetailsCheckResponse.status != 200) {
+      //   projectDetailsJSON.tender_url = Helpers.extractDomain(
+      //     projectDetailsJSON.tender_url,
+      //   );
+      // }
 
       setTenderDetails(projectDetailsJSON);
       setModalVisible(true);
