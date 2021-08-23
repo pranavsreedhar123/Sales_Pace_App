@@ -12,6 +12,13 @@ export type YTChannelItem = {
   thumbnailC?: string;
   hiddenSubscriber?: boolean;
 };
+export type YTVideoItem = {
+  etag: string;
+  id: YTChannelId;
+  videoId?: string;
+  kind: string;
+  snippet: YTChannelSnippet;
+};
 
 export type YTChannelId = {
   kind: string;

@@ -4,7 +4,7 @@ import {ViewStyle} from 'react-native';
 
 export const MenuBarIcon = ({style}: {style?: ViewStyle}): JSX.Element => {
   return (
-    <Svg width="20" height="25" style={style} viewBox="0 0 20 1" fill="#000">
+    <Svg width="25" height="30" style={style} viewBox="0 0 20 1" fill="#000">
       <Path
         fillRule="evenodd"
         clipRule="evenodd"
