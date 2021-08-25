@@ -101,7 +101,7 @@ export const Login = (): JSX.Element => {
         <TextInput
           keyboardType="email-address"
           autoCapitalize="none"
-          placeholder="Email"
+          placeholder="SGID"
           placeholderTextColor="black"
           style={styles.input}
           returnKeyLabel={'next'}
