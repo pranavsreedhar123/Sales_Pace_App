@@ -184,3 +184,17 @@ export const YT_CHANNEL_DATA: YTChannel = {
 };
 
 export const YT_API_KEY = 'AIzaSyDTPLXAczbj-2wYN30awanRnpbQpDSWvmM'
+
+export const SSO_OAuth_Get_ACCESS_TOKEN= 
+{clientId:'POC_SalesPaceApp',
+clientSecret:'O7muMvtM9b0Qamm3PwPS',
+scope:'stGoSGI',
+realm:'AccessManagement',
+grant_type:'password'}
+
+export const Tender_OAuth_ACCESS_TOKEN={
+grant_type:'client_credentials',
+client_id:'09f0466d-5326-429a-9a0f-ce721bf6e92d',
+client_secret:'1e4eac04-182f-4882-b829-451b8ea7b0a8',
+scope:'openid'
+}

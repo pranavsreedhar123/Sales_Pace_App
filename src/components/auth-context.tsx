@@ -1,3 +1,4 @@
+import React from 'react';
 import {useState, createContext} from 'react';
 
 //export const LoginContext = createContext(false);
@@ -12,6 +13,7 @@ export const AuthProvider = (props: any) => {
 
   const login = () => {
     sleep(2000).then(() => setLoggedIn(true));
+    
   };
   const logout = () => {
     sleep(2000).then(() => setLoggedIn(false));

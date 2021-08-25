@@ -7,24 +7,69 @@ import {
   View,
   Alert,
   Dimensions,
+  ToastAndroid,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {Screens} from '../navigation/Screens';
 import {NavigationActions} from '../navigation/NavigationActions';
+import { SSO_OAuth_Get_ACCESS_TOKEN } from '../utils/Constant';
+import { getAccessToken } from '../services/ssoLoginAPI';
 Icon.loadFont();
 
 export const Login = (): JSX.Element => {
   const [email, setEmail] = useState('test@saint-gobain.com');
   const [password, setPassword] = useState('12345');
-  const validate = (email: string, password: string) => {
+  const [status,setStatus]=useState('');
+
+
+  
+  const validate = async (email: string, password: string) => {
     if (email == 'test@saint-gobain.com' && password == '12345') {
       NavigationActions.navigateToScreen({
         screenName: Screens.DefaultDrawer,
       });
     } else {
-      Alert.alert('Incorrect Email or Password');
+      try{
+        const OauthDetails= await getAccessToken(email,password);
+      
+        
+        console.log(typeof(OauthDetails),'khbkhvhv');
+        // let OAuthDetailsJSON=JSON.parse(OauthDetails);
+        console.log('ppppppppppppppppppppp',Object.keys(OauthDetails),OauthDetails?.access_token)
+        // if (OAuthDetailsJSON.status = 200) {
+          NavigationActions.navigateToScreen({
+            screenName: Screens.DefaultDrawer,
+          });
+        // } else {
+        //   console.log(OauthDetails,"pp");
+        //   ;
+        // }
+      }
+      catch
+      {
+        (e: Error) => {
+          console.log(e + 'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwww');
+          ToastAndroid.showWithGravity(
+            ' Something went wrong.\n Please try again',
+            ToastAndroid.SHORT,
+            ToastAndroid.CENTER,
+          );
+     
+        };
+      }
+ 
+      OAuthAuthentication(email,password)
+      // Alert.alert('Incorrect Email or Password');
     }
+
+
   };
+  const OAuthAuthentication = async (email: string, password: string) => {
+    // toggleModal();
+
+  
+  }
+  
   return (
     <View style={styles.container}>
       <Image
