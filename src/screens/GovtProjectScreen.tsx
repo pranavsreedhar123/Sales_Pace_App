@@ -560,10 +560,17 @@ const GovtProjectScreen = () => {
               </Text>
             </View>
 
-            <View style={{flexDirection: 'row'}}>
+            {tenderDetails?.Location && (<View style={{flexDirection: 'row'}}>
               <Text style={styles.titles}> Location </Text>
               <Text style={{...styles.values}}>{tenderDetails?.Location}</Text>
-            </View>
+            </View>)}
+
+           
+
+            {tenderDetails?.department && (<View style={{flexDirection: 'row'}}>
+              <Text style={styles.titles}> Department </Text>
+              <Text style={{...styles.values}}>{tenderDetails?.department}</Text>
+            </View>)}
             <View style={{flexDirection: 'row'}}>
               <Text style={styles.titles}>Tender Category </Text>
               <Text style={styles.values}>
@@ -571,7 +578,10 @@ const GovtProjectScreen = () => {
                 {tenderDetails?.tender_category}
               </Text>
             </View>
-
+            {tenderDetails?.tender_description && (<View style={{flexDirection: 'row'}}>
+              <Text style={styles.titles}> Tender Description </Text>
+              <Text style={{...styles.values}}>{tenderDetails?.tender_description}</Text>
+            </View>)}
             <View style={{flexDirection: 'row'}}>
               <Text style={styles.titles}>Tender Amount </Text>
               <Text style={styles.values}>

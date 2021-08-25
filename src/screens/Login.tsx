@@ -17,43 +17,53 @@ import { getAccessToken } from '../services/ssoLoginAPI';
 Icon.loadFont();
 
 export const Login = (): JSX.Element => {
-  const [email, setEmail] = useState('test@saint-gobain.com');
-  const [password, setPassword] = useState('12345');
+  const [email, setEmail] = useState('1');
+  const [password, setPassword] = useState('1');
   const [status,setStatus]=useState('');
 
 
   
   const validate = async (email: string, password: string) => {
-    if (email == 'test@saint-gobain.com' && password == '12345') {
+
+    if (email == '1' && password == '1') {
+      // alert("Correct UserName and Password.");
       NavigationActions.navigateToScreen({
         screenName: Screens.DefaultDrawer,
       });
     } else {
       try{
         const OauthDetails= await getAccessToken(email,password);
-      
+        
         
         console.log(typeof(OauthDetails),'khbkhvhv');
         // let OAuthDetailsJSON=JSON.parse(OauthDetails);
-        console.log('ppppppppppppppppppppp',Object.keys(OauthDetails),OauthDetails?.access_token)
-        // if (OAuthDetailsJSON.status = 200) {
-          NavigationActions.navigateToScreen({
+        console.log('ppppppppppppppppppppp',Object.keys(OauthDetails),OauthDetails['access_token'])
+        if (OauthDetails.access_token!=undefined)
+       {   NavigationActions.navigateToScreen({
             screenName: Screens.DefaultDrawer,
           });
-        // } else {
-        //   console.log(OauthDetails,"pp");
-        //   ;
-        // }
+        } else {
+          console.log(OauthDetails,"pp");
+          alert("Incorrect UserName and Password.");
+          // ToastAndroid.showWithGravity(
+          //   ' Incorrect UserName and Password.',
+          //   ToastAndroid.LONG,
+          //   ToastAndroid.CENTER,
+          // );
+     
+        }
       }
       catch
       {
         (e: Error) => {
           console.log(e + 'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwww');
-          ToastAndroid.showWithGravity(
-            ' Something went wrong.\n Please try again',
-            ToastAndroid.SHORT,
-            ToastAndroid.CENTER,
-          );
+          alert("Incorrect UserName and Password.");
+      
+          // ToastAndroid.showWithGravity(
+          //   ' Something went wrong.\n Please try again',
+          //   ToastAndroid.SHORT,
+          //   ToastAndroid.CENTER,
+          // );
      
         };
       }

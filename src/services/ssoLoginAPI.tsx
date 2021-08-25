@@ -1,3 +1,4 @@
+import { SSOToken } from '../types/SSOToken';
 import { SSO_OAuth_Get_ACCESS_TOKEN } from '../utils/Constant';
 import {apiClient} from './apiClient';
 
@@ -6,7 +7,7 @@ userName:string,
 password:string
 
 
-): Promise<object> {
+): Promise<SSOToken> {
   let formBody :any= [];
  
    
@@ -20,7 +21,7 @@ password:string
    encodedValue = encodeURIComponent(SSO_OAuth_Get_ACCESS_TOKEN.scope);
   formBody.push(encodedKey + "=" + encodedValue);
    encodedKey = encodeURIComponent('grant_type');
-   encodedValue = encodeURIComponent(SSO_OAuth_Get_ACCESS_TOKEN.grant_type);
+   encodedValue = encodeURIComponent('password');
   formBody.push(encodedKey + "=" + encodedValue);
    encodedKey = encodeURIComponent('username');
    encodedValue = encodeURIComponent(userName);
@@ -45,7 +46,7 @@ password:string
                
               }
         },
-      )) as object;
+      )) as SSOToken;
     
       return accessTokenData;
 }

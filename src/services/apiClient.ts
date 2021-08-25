@@ -14,7 +14,12 @@ const checkHTTPStatus = (response: Response, method?: string) =>
         /* eslint-disable no-console */
         console.log('Rejected', text);
       }
+// response.status
 
+
+if (response.status!=200 ) {
+  return resolve(response);
+}
       reject({
         message: text,
         status: response.status,
