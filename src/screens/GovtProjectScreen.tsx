@@ -552,36 +552,50 @@ const GovtProjectScreen = () => {
               </Text>
             </View>
 
-            <View style={{flexDirection: 'row'}}>
+            {tenderDetails?.tender_description && (  <View style={{flexDirection: 'row'}}>
               <Text style={styles.titles}>Tender Title </Text>
               <Text style={styles.values}>
                 {' '}
                 {tenderDetails?.tender_description}
               </Text>
-            </View>
-
-            {tenderDetails?.Location && (<View style={{flexDirection: 'row'}}>
-              <Text style={styles.titles}> Location </Text>
-              <Text style={{...styles.values}}>{tenderDetails?.Location}</Text>
             </View>)}
 
-           
-
-            {tenderDetails?.department && (<View style={{flexDirection: 'row'}}>
-              <Text style={styles.titles}> Department </Text>
-              <Text style={{...styles.values}}>{tenderDetails?.department}</Text>
-            </View>)}
-            <View style={{flexDirection: 'row'}}>
-              <Text style={styles.titles}>Tender Category </Text>
-              <Text style={styles.values}>
-                {' '}
-                {tenderDetails?.tender_category}
-              </Text>
-            </View>
-            {tenderDetails?.tender_description && (<View style={{flexDirection: 'row'}}>
-              <Text style={styles.titles}> Tender Description </Text>
-              <Text style={{...styles.values}}>{tenderDetails?.tender_description}</Text>
-            </View>)}
+            {tenderDetails?.Location && (
+              <View style={{flexDirection: 'row'}}>
+                <Text style={styles.titles}> Location </Text>
+                <Text style={{...styles.values}}>
+                  {tenderDetails?.Location}
+                </Text>
+              </View>
+            )}
+ 
+            {tenderDetails?.department && (
+              <View style={{flexDirection: 'row'}}>
+                <Text style={styles.titles}> Department </Text>
+                <Text style={{...styles.values}}>
+                  {tenderDetails?.department}
+                </Text>
+              </View>
+            )}
+ 
+            {tenderDetails?.tender_category && (
+              <View style={{flexDirection: 'row'}}>
+                <Text style={styles.titles}>Tender Category </Text>
+                <Text style={styles.values}>
+                  {' '}
+                  {tenderDetails?.tender_category}
+                </Text>
+              </View>
+            )}
+ 
+            {tenderDetails?.tender_description && (
+              <View style={{flexDirection: 'row'}}>
+                <Text style={styles.titles}> Tender Description </Text>
+                <Text style={{...styles.values}}>
+                  {tenderDetails?.tender_description}
+                </Text>
+              </View>
+            )}
             <View style={{flexDirection: 'row'}}>
               <Text style={styles.titles}>Tender Amount </Text>
               <Text style={styles.values}>
@@ -589,25 +603,31 @@ const GovtProjectScreen = () => {
                 {getAmountFormatted(tenderDetails?.tender_amount)}
               </Text>
             </View>
-            <View style={{flexDirection: 'row'}}>
-              <Text style={styles.titles}>Closing Date </Text>
-              <Text style={{...styles.values, color: 'darkred'}}>
-                {' '}
-                {Helpers.formatDate(tenderDetails?.closing_date)} {'\n'}
-              </Text>
-            </View>
-            <View style={{flexDirection: 'row'}}>
-              <Text style={styles.titles}>Tender URL </Text>
-              <Text
-                style={{...styles.values, color: 'blue'}}
-                onPress={() => openTenderURL(tenderDetails?.tender_url)}>
-                {' '}
-                {tenderDetails?.tender_url} {'\n'}
-                {'\n'}
-                {'\n'}
-                {'\n'}
-              </Text>
-            </View>
+ 
+            {tenderDetails?.closing_date && (
+              <View style={{flexDirection: 'row'}}>
+                <Text style={styles.titles}>Closing Date </Text>
+                <Text style={{...styles.values, color: 'darkred'}}>
+                  {' '}
+                  {Helpers.formatDate(tenderDetails?.closing_date)} {'\n'}
+                </Text>
+              </View>
+            )}
+ 
+            {tenderDetails?.tender_url && (
+              <View style={{flexDirection: 'row'}}>
+                <Text style={styles.titles}>Tender URL </Text>
+                <Text
+                  style={{...styles.values, color: 'blue'}}
+                  onPress={() => openTenderURL(tenderDetails?.tender_url)}>
+                  {' '}
+                  {tenderDetails?.tender_url} {'\n'}
+                  {'\n'}
+                  {'\n'}
+                  {'\n'}
+                </Text>
+              </View>
+            )}
           </ScrollView>
           <View
             style={{

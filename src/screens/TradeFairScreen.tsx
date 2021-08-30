@@ -1047,7 +1047,7 @@ const TradeFairScreen = () => {
                     Phone No: {tenderDetails?.organizer_phoneno}
                   </Text>
                 )}
-                {tenderDetails?.organizer_email && (
+                {tenderDetails?.organizer_email && tenderDetails?.organizer_email!="" && (
                   <>
                     <Text style={{...styles.values}}>
                       Contact at :-

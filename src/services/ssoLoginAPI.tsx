@@ -21,7 +21,7 @@ password:string
    encodedValue = encodeURIComponent(SSO_OAuth_Get_ACCESS_TOKEN.scope);
   formBody.push(encodedKey + "=" + encodedValue);
    encodedKey = encodeURIComponent('grant_type');
-   encodedValue = encodeURIComponent('password');
+   encodedValue = encodeURIComponent(SSO_OAuth_Get_ACCESS_TOKEN.grant_type);
   formBody.push(encodedKey + "=" + encodedValue);
    encodedKey = encodeURIComponent('username');
    encodedValue = encodeURIComponent(userName);

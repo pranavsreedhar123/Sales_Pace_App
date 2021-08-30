@@ -8,6 +8,7 @@ import {
   Alert,
   Dimensions,
   ToastAndroid,
+  TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {Screens} from '../navigation/Screens';
@@ -44,7 +45,7 @@ export const Login = (): JSX.Element => {
           });
         } else {
           console.log(OauthDetails,"pp");
-          alert("Incorrect UserName and Password.");
+          alert("Incorrect UserName or Password.");
           // ToastAndroid.showWithGravity(
           //   ' Incorrect UserName and Password.',
           //   ToastAndroid.LONG,
@@ -131,7 +132,7 @@ export const Login = (): JSX.Element => {
           onChangeText={(text: string) => setPassword(text)}
         />
       </View>
-      <View
+      <TouchableOpacity
         style={{
           marginHorizontal: Dimensions.get('window').width / 7,
           alignItems: 'center',
@@ -140,11 +141,12 @@ export const Login = (): JSX.Element => {
           backgroundColor: '#00716F',
           borderRadius: 23,
           paddingVertical: 8,
-        }}>
-        <Text style={styles.text} onPress={() => validate(email, password)}>
+        }}
+        onPress={() => validate(email, password)}>
+        <Text style={styles.text} >
           Sign In
         </Text>
-      </View>
+      </TouchableOpacity>
       {/* <View
         style={{
           marginHorizontal: Dimensions.get('window').width / 7,
