@@ -29,6 +29,7 @@ import {Picker} from 'native-base';
 import {Picker as SelectPicker} from '@react-native-picker/picker';
 import {TouchableOpacity} from 'react-native';
 import {pick} from 'lodash';
+import {AnalyticsHelper} from '../utils/AnalyticsHelper';
 export const VideoScreen = (): JSX.Element => {
   const [channel, setChannel] = useState('Saint-Gobain Glass');
   const [visible, setVisible] = useState(false);
@@ -45,6 +46,8 @@ export const VideoScreen = (): JSX.Element => {
     Keyboard.dismiss();
     setIsLoading(true);
     setSearchStatus(true);
+    AnalyticsHelper.logEventVideoSearch(searchText);
+
     try {
       let YouTubeVideos = await getYouTubeVideosAPI(
         'UCewFSOTzBXhH3A8hWezvTng',

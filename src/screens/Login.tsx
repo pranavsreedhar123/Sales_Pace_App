@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Image,
   StyleSheet,
@@ -9,80 +9,104 @@ import {
   Dimensions,
   ToastAndroid,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {Screens} from '../navigation/Screens';
 import {NavigationActions} from '../navigation/NavigationActions';
-import { SSO_OAuth_Get_ACCESS_TOKEN } from '../utils/Constant';
-import { getAccessToken } from '../services/ssoLoginAPI';
+import {
+  SSO_OAuth_Get_ACCESS_TOKEN,
+  AXWAY_TOKEN_STORAGE_KEY,
+} from '../utils/Constant';
+import {getAccessToken} from '../services/ssoLoginAPI';
+import {getAxwayAccessTokenAPI} from '../services/axwayTokenAPI';
+import {AppSecuredStorage} from '../utils/AppSecuredStorage';
 Icon.loadFont();
 
 export const Login = (): JSX.Element => {
-  const [email, setEmail] = useState('1');
-  const [password, setPassword] = useState('1');
-  const [status,setStatus]=useState('');
+  const [email, setEmail] = useState('R6050468');
+  const [password, setPassword] = useState('Anaisha@1211');
+  const [isLoadingLogin, setIsLoadingLogin] = useState(false);
 
+  // useEffect(() => {
+  //   AppSecuredStorage.removeItem(AXWAY_TOKEN_STORAGE_KEY);
+  // }, []);
 
-  
   const validate = async (email: string, password: string) => {
-
+    setIsLoadingLogin(true);
     if (email == '1' && password == '1') {
       // alert("Correct UserName and Password.");
       NavigationActions.navigateToScreen({
         screenName: Screens.DefaultDrawer,
       });
     } else {
-      try{
-        const OauthDetails= await getAccessToken(email,password);
-        
-        
-        console.log(typeof(OauthDetails),'khbkhvhv');
+      try {
+        const OauthDetails = await getAccessToken(email, password);
+        console.log(OauthDetails, 'khbkhvhv');
         // let OAuthDetailsJSON=JSON.parse(OauthDetails);
-        console.log('ppppppppppppppppppppp',Object.keys(OauthDetails),OauthDetails['access_token'])
-        if (OauthDetails.access_token!=undefined)
-       {   NavigationActions.navigateToScreen({
-            screenName: Screens.DefaultDrawer,
-          });
+        // console.log(
+        //   'ppppppppppppppppppppp',
+        //   Object.keys(OauthDetails),
+        //   OauthDetails['access_token'],
+        // );
+        if (OauthDetails.access_token != undefined) {
+          navigateToHomeScreen();
         } else {
-          console.log(OauthDetails,"pp");
-          alert("Incorrect UserName or Password.");
-          // ToastAndroid.showWithGravity(
-          //   ' Incorrect UserName and Password.',
-          //   ToastAndroid.LONG,
-          //   ToastAndroid.CENTER,
-          // );
-     
+          console.log(OauthDetails, 'pp');
+          alert('Incorrect UserName or Password.');
+          ToastAndroid.showWithGravity(
+            ' Incorrect UserName and Password.',
+            ToastAndroid.LONG,
+            ToastAndroid.CENTER,
+          );
         }
-      }
-      catch
-      {
+      } catch {
         (e: Error) => {
           console.log(e + 'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwww');
-          alert("Incorrect UserName and Password.");
-      
-          // ToastAndroid.showWithGravity(
-          //   ' Something went wrong.\n Please try again',
-          //   ToastAndroid.SHORT,
-          //   ToastAndroid.CENTER,
-          // );
-     
+          alert('Incorrect UserName or Password.');
+
+          ToastAndroid.showWithGravity(
+            ' Something went wrong.\n Please try again',
+            ToastAndroid.SHORT,
+            ToastAndroid.CENTER,
+          );
         };
       }
- 
-      OAuthAuthentication(email,password)
+
+      OAuthAuthentication(email, password);
+      setIsLoadingLogin(false);
       // Alert.alert('Incorrect Email or Password');
     }
-
-
   };
   const OAuthAuthentication = async (email: string, password: string) => {
     // toggleModal();
+  };
 
-  
-  }
-  
+  const navigateToHomeScreen = async () => {
+    try {
+      const axwayToken = await getAxwayAccessTokenAPI();
+      await AppSecuredStorage.setItem(
+        AXWAY_TOKEN_STORAGE_KEY,
+        axwayToken?.access_token,
+      );
+
+      NavigationActions.navigateToScreen({
+        screenName: Screens.DefaultDrawer,
+      });
+    } catch (e) {
+      console.log(e, 'error console');
+    }
+  };
+
   return (
     <View style={styles.container}>
+      {isLoadingLogin && (
+        <ActivityIndicator
+          style={{marginTop: Dimensions.get('window').height / 84}}
+          size="large"
+          color="red"
+        />
+      )}
       <Image
         source={require('../images/SalesPace.png')}
         style={styles.logo}></Image>
@@ -143,36 +167,19 @@ export const Login = (): JSX.Element => {
           paddingVertical: 8,
         }}
         onPress={() => validate(email, password)}>
-        <Text style={styles.text} >
-          Sign In
-        </Text>
+        <Text style={styles.text}>Sign In</Text>
       </TouchableOpacity>
-      {/* <View
-        style={{
-          marginHorizontal: Dimensions.get('window').width / 7,
-          alignItems: 'center',
-          justifyContent: 'center',
-          marginTop: Dimensions.get('window').height / 42,
-          backgroundColor: '#00716F',
-          borderRadius: 23,
-          paddingVertical: 8,
-        }}>
-        <Text
-          style={styles.text}
-          onPress={() => this.navigation.navigate('SignIn')}>
-          Sign Up
-        </Text>
-      </View> */}
+
       <Image
         source={require('../images/sg.png')}
         style={styles.tinyLogo}></Image>
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     padding: Dimensions.get('window').height / 15,
-    //marginTop: Dimensions.get('window').height / 17,
     backgroundColor: '#FFF',
     height: '100%',
   },

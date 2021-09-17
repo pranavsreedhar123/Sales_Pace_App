@@ -17,101 +17,16 @@ import {
 import {Helpers} from '../utils/Helpers';
 import {
   checkProjectDetailsURL,
-  getHousingDataAPI,
+  getHousingDataAxwayAPI,
 } from '../services/govtProjectsAPI';
 import {getGovtProjectDetails} from '../services/govtProjectsAPI';
 import {Icon} from 'react-native-elements';
 import Modal from 'react-native-modal';
 import {ScrollView} from 'react-native-gesture-handler';
-import {Spinner} from 'native-base';
-import {color} from 'react-native-elements/dist/helpers';
-import {Alert} from 'react-native';
-// import { CustomModal } from '../components/CustomModal';
+import {AnalyticsHelper} from '../utils/AnalyticsHelper';
+import {NavigationActions} from '../navigation/NavigationActions';
+import {Screens} from '../navigation/Screens';
 
-const housingData = [
-  {
-    tender_id: 44418460,
-    tender_title:
-      'Construction of 144 no 4 storey flats under pmay at pocket-2 in avadh vihar yojna lucknow group-a',
-    tender_amount: 0,
-    closing_date: '2021-06-29T00:00:00',
-    tender_type: 'Uttar Pradesh Housing And Development Board',
-    tender_source: 1,
-  },
-  {
-    tender_id: 44217856,
-    tender_title: 'Construction of driving training institute',
-    tender_amount: 0,
-    closing_date: '2021-06-30T00:00:00',
-    tender_type: 'Uttar Pradesh Housing And Development Board',
-    tender_source: 1,
-  },
-  {
-    tender_id: 44416899,
-    tender_title:
-      'Construction of 144 no 4 storey flats under pmay at pocket-2 in avadh vihar yojna lucknow group-c',
-    tender_amount: 0,
-    closing_date: '2021-06-29T00:00:00',
-    tender_type: 'Uttar Pradesh Housing And Development Board',
-    tender_source: 1,
-  },
-  {
-    tender_id: 44478912,
-    tender_title:
-      'Remaining Construction Work of government industrial training institute & residential Buildings. hindi',
-    tender_amount: 0,
-    closing_date: '2021-07-15T00:00:00',
-    tender_type: 'Uttar Pradesh Housing And Development Board',
-    tender_source: 1,
-  },
-  {
-    tender_id: 44418462,
-    tender_title:
-      'Construction of 144 no 4 storey flats under pmay at pocket-2 in avadh vihar yojna lucknow group-d',
-    tender_amount: 0,
-    closing_date: '2021-06-29T00:00:00',
-    tender_type: 'Uttar Pradesh Housing And Development Board',
-    tender_source: 1,
-  },
-  {
-    tender_id: 44502347,
-    tender_title:
-      'Construction of lab and class room, placement office, toilet room and Parking Shed at campus of female (world bank) i.t.i. aliganj u.p.',
-    tender_amount: 0,
-    closing_date: '2021-06-28T00:00:00',
-    tender_type: 'Uttar Pradesh Housing And Development Board',
-    tender_source: 1,
-  },
-  {
-    tender_id: 44522462,
-    tender_title:
-      'Construction of remaning work of 04 nos. type-iv and 01 nos. type-iii residential houses in police line at distt-',
-    tender_amount: 0,
-    closing_date: '2021-07-05T00:00:00',
-    tender_type: 'Uttar Pradesh Housing And Development Board',
-    tender_source: 1,
-  },
-  {
-    tender_id: 44345750,
-    tender_title:
-      'Designing and construction of flat type high-rise residential Buildings cum commercial units  including on Site Development with  all infrastructure services for economically weaker section.',
-    tender_amount: 399700000,
-    closing_date: '2021-07-22T00:00:00',
-    tender_type: 'Gujarat Housing Board',
-    tender_source: 1,
-  },
-  {
-    tender_id: 44221243,
-    tender_title:
-      'Re-development of integrated group housing facility over 4906.00 sq.mt of 168 ews (72 flood ews+48 ews+24 ews +24 ews) at anandnagar, rajkot, gujarat on ppp basis.',
-    tender_amount: 141500000,
-    closing_date: '2021-07-15T00:00:00',
-    tender_type: 'Gujarat Housing Board',
-    tender_source: 1,
-  },
-];
-
-//GroupedGovtTender is only working
 const GovtProjectScreen = () => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [allGovtTenders, setAllGovtTenders] = useState<any>([]);
@@ -121,34 +36,38 @@ const GovtProjectScreen = () => {
   const [tenderSearchText, setTenderSearchText] = useState('');
   const [sourceID, setSourceID] = useState<any>();
   const [tenderID, setTenderID] = useState<any>();
-  const [tenderDetails, setTenderDetails] = useState<any>({});
-  const [isLoadingTenderDetails, setIsLoadingTenderDetails] = useState(false);
   const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
   const [isGroupBy, setIsGroupBy] = useState(true);
   const [isSortByDateAsc, setIsSortByDateAsc] = useState(true);
   const toggleModal = () => {
-    console.log("toggleMosL");
-    
     setModalVisible(!isModalVisible);
   };
   function setFilterModal() {
     setIsFilterModalVisible(!isFilterModalVisible);
   }
   const passValuesInModal = async (tender: any) => {
-    // toggleModal();
-    await getProjectDetails(tender.tender_source, tender.tender_id);
+    NavigationActions.navigateToScreen({
+      screenName: Screens.GovtProjectScreenDetails,
+      params: {
+        tender_id: tender.tender_id,
+        tender_source: tender.tender_source,
+      },
+    });
+    // // toggleModal();
+    // await getProjectDetails(tender.tender_source, tender.tender_id);
 
-    if (!isModalVisible) {
-      setTenderID(tender.tender_id);
-      setSourceID(tender.tender_source);
-    }
+    // if (!isModalVisible) {
+    //   setTenderID(tender.tender_id);
+    //   setSourceID(tender.tender_source);
+    // }
   };
 
   useEffect(() => {
     const getHousingData = async () => {
       setLoading(true);
       try {
-        let crawledHousingData = await getHousingDataAPI();
+        let crawledHousingData = await getHousingDataAxwayAPI();
+        console.log(typeof crawledHousingData, 'crawledDatahousing');
 
         setAllGovtTenders(JSON.parse(crawledHousingData));
         setFilteredGovtTenders(JSON.parse(crawledHousingData));
@@ -159,59 +78,6 @@ const GovtProjectScreen = () => {
     getHousingData();
   }, []);
 
-  const checkIfURLExist = async (projectDetailsJSON: any) => {
-    setIsLoadingTenderDetails(true);
-    try {
-      // alert("Its here");
-      // let urlDetailsCheckResponse = await checkProjectDetailsURL(
-      //   projectDetailsJSON.tender_url,
-      // );
-     
-      // console.log(urlDetailsCheckResponse, 'check projectDetailsJSON:::::::::');
-
-      // if (urlDetailsCheckResponse.status != 200) {
-      //   projectDetailsJSON.tender_url = Helpers.extractDomain(
-      //     projectDetailsJSON.tender_url,
-      //   );
-      // }
-
-      setTenderDetails(projectDetailsJSON);
-      setModalVisible(true);
-    } catch {
-      (e: Error) => {
-        console.log(e + 'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwww');
-        ToastAndroid.showWithGravity(
-          'Unable to Process the request.\n Something went wrong',
-          ToastAndroid.SHORT,
-          ToastAndroid.CENTER,
-        );
-      };
-    }
-    setIsLoadingTenderDetails(false);
-  };
-
-  const getProjectDetails = async (sourceId: string, tenderId: string) => {
-    try {
-      let projectDetails: string = await getGovtProjectDetails(
-        sourceId,
-        tenderId,
-      );
-
-      let projectDetailsJSON = JSON.parse(projectDetails);
-
-      console.log(projectDetailsJSON, '&&&&&&&&&&&&&&&&&');
-      checkIfURLExist(projectDetailsJSON);
-    } catch (e) {
-      ToastAndroid.showWithGravityAndOffset(
-        'Unable to Process the request.\n Something went wrong',
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-        30,
-        50,
-        // style= {color:'black'}
-      );
-    }
-  };
   useEffect(() => {
     const getGroupedAndFilteredData = () => {
       const tendersGroupedByType = _.groupBy(
@@ -263,7 +129,9 @@ const GovtProjectScreen = () => {
     }
     return retVal;
   };
+
   const filterTenders = () => {
+    AnalyticsHelper.logEventTenderSearch(tenderSearchText);
     let allTenderContainingSearchText = allGovtTenders.filter((tender: any) => {
       return tender.tender_title
         ?.toLowerCase()
@@ -305,11 +173,6 @@ const GovtProjectScreen = () => {
 
   const [isVisible, setVisiblity] = useState(false);
 
-  const openTenderURL = async (tender_url: any) => {
-    await Linking.openURL(tender_url);
-
-    // .catch(()=>{console.log("ERROR")});
-  };
   const groupByTenderType = () => {
     // alert('Hello is it group')
     setIsGroupBy(true);
@@ -483,13 +346,6 @@ const GovtProjectScreen = () => {
           </TouchableOpacity>
         </Modal>
 
-        {(isLoadingTenderDetails || isLoading) && (
-          <ActivityIndicator
-            size={'large'}
-            // {...props}
-            color={'red'}
-          />
-        )}
         <View style={styles.sectionsList}>
           {!isLoading && !groupedGovtTenders?.length && (
             <Text
@@ -538,7 +394,7 @@ const GovtProjectScreen = () => {
           />
         </View>
       </View>
-      <Modal isVisible={isModalVisible} style={{margin: 0}}>
+      {/* <Modal isVisible={isModalVisible} style={{margin: 0}}>
         <View style={styles.modal}>
           <ScrollView style={styles.modal}>
             <Text>
@@ -552,13 +408,15 @@ const GovtProjectScreen = () => {
               </Text>
             </View>
 
-            {tenderDetails?.tender_description && (  <View style={{flexDirection: 'row'}}>
-              <Text style={styles.titles}>Tender Title </Text>
-              <Text style={styles.values}>
-                {' '}
-                {tenderDetails?.tender_description}
-              </Text>
-            </View>)}
+            {tenderDetails?.tender_description && (
+              <View style={{flexDirection: 'row'}}>
+                <Text style={styles.titles}>Tender Title </Text>
+                <Text style={styles.values}>
+                  {' '}
+                  {tenderDetails?.tender_description}
+                </Text>
+              </View>
+            )}
 
             {tenderDetails?.Location && (
               <View style={{flexDirection: 'row'}}>
@@ -568,7 +426,7 @@ const GovtProjectScreen = () => {
                 </Text>
               </View>
             )}
- 
+
             {tenderDetails?.department && (
               <View style={{flexDirection: 'row'}}>
                 <Text style={styles.titles}> Department </Text>
@@ -577,7 +435,7 @@ const GovtProjectScreen = () => {
                 </Text>
               </View>
             )}
- 
+
             {tenderDetails?.tender_category && (
               <View style={{flexDirection: 'row'}}>
                 <Text style={styles.titles}>Tender Category </Text>
@@ -587,7 +445,7 @@ const GovtProjectScreen = () => {
                 </Text>
               </View>
             )}
- 
+
             {tenderDetails?.tender_description && (
               <View style={{flexDirection: 'row'}}>
                 <Text style={styles.titles}> Tender Description </Text>
@@ -603,7 +461,7 @@ const GovtProjectScreen = () => {
                 {getAmountFormatted(tenderDetails?.tender_amount)}
               </Text>
             </View>
- 
+
             {tenderDetails?.closing_date && (
               <View style={{flexDirection: 'row'}}>
                 <Text style={styles.titles}>Closing Date </Text>
@@ -613,7 +471,7 @@ const GovtProjectScreen = () => {
                 </Text>
               </View>
             )}
- 
+
             {tenderDetails?.tender_url && (
               <View style={{flexDirection: 'row'}}>
                 <Text style={styles.titles}>Tender URL </Text>
@@ -649,7 +507,7 @@ const GovtProjectScreen = () => {
             </Text>
           </View>
         </View>
-      </Modal>
+      </Modal> */}
     </View>
   );
 };
@@ -772,16 +630,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     width: 140,
   },
-  values: {
-    paddingBottom: 0,
-    fontWeight: 'bold',
-    fontSize: 16,
-    color: 'black',
-    paddingVertical: 10,
-    marginRight: 145,
-    marginLeft: 10,
-    flexDirection: 'column',
-  },
+
   modal: {
     flex: 1,
     width: '100%',

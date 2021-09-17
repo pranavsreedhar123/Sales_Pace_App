@@ -24,11 +24,10 @@ import {
   getYTChannelsSnippetAPI,
 } from '../services/youTubeAPIs';
 import {useEffect} from 'react';
+import {AnalyticsHelper} from '../utils/AnalyticsHelper';
 
 export const TopVloggerScreen = (): JSX.Element => {
   const [videoSearchText, setVideoSearchText] = useState('Construction Design');
-
-  // const [videoSearchText, setVideoSearchText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [sortedBySubscribersData, setSortedBySubscribersData] = useState<
     YTChannelItem[]
@@ -43,6 +42,8 @@ export const TopVloggerScreen = (): JSX.Element => {
   const [isFilteredByViews, setIsFilteredByViews] = useState(false);
 
   const fetchYTChannels = async () => {
+    AnalyticsHelper.logEventVLoggerSearch(videoSearchText);
+
     Keyboard.dismiss();
     setFilterStatus(false);
     setFilterOptionStatus(false);
