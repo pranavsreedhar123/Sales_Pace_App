@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useEffect} from 'react';
 import _ from 'lodash';
 
 // import { SearchBar } from 'react-native-elements';
@@ -15,11 +15,6 @@ import {
   ToastAndroid,
 } from 'react-native';
 import {Helpers} from '../utils/Helpers';
-import {
-  checkProjectDetailsURL,
-  getHousingDataAPI,
-} from '../services/govtProjectsAPI';
-import {getGovtProjectDetails} from '../services/govtProjectsAPI';
 import {Icon} from 'react-native-elements';
 import Icon1 from 'react-native-vector-icons/FontAwesome';
 import {NavigationActions} from '../navigation/NavigationActions';
@@ -30,411 +25,7 @@ import {
   getTradeFairDataAPI,
   getTradeFairDetailsAPI,
 } from '../services/tradeFairsAPI';
-
-const tradeFairDataJSON = [
-  {
-    row_id: 26,
-    tradefair_name: 'INTERMAT India',
-    city: '',
-    event_date: '27 Apr - 29 Apr 2022',
-    venue_name: 'Bombay Exhibition Centre (BEC)',
-    source_id: 2,
-  },
-  {
-    row_id: 17,
-    tradefair_name: 'ACETECH - BENGALURU 2021',
-    city: 'Bangalore (India)',
-    event_date: 'Oct. 22 - 24, 2021',
-    venue_name: 'Bangalore International Exhibition Centre (BIEC)',
-    source_id: 1,
-  },
-  {
-    row_id: 39,
-    tradefair_name: 'United Build Expo',
-    city: '',
-    event_date: '25 Jun - 27 Jun 2021',
-    venue_name: 'Thamukam Ground',
-    source_id: 2,
-  },
-  {
-    row_id: 15,
-    tradefair_name: 'BUILD INTEC 2022',
-    city: 'Coimbatore (India)',
-    event_date: 'Feb. 18 - 21, 2022',
-    venue_name: 'Codissia Trade Fair Complex',
-    source_id: 1,
-  },
-  {
-    row_id: 4,
-    tradefair_name: 'UNITED BUILD EXPO 2021',
-    city: 'Madurai (India)',
-    event_date: 'June 25 - 27, 2021',
-    venue_name: 'Thamukam Ground',
-    source_id: 1,
-  },
-  {
-    row_id: 7,
-    tradefair_name: 'Excon',
-    city: '',
-    event_date: '07 Dec - 11 Dec 2021',
-    venue_name: 'BIEC Bengaluru International Exhibition Centre',
-    source_id: 2,
-  },
-  {
-    row_id: 10,
-    tradefair_name: 'Intex Expo Ludhiana',
-    city: '',
-    event_date: '19 Nov - 22 Nov 2021',
-    venue_name: 'Punjab Agricultural University',
-    source_id: 2,
-  },
-  {
-    row_id: 3,
-    tradefair_name:
-      'iDAC - Infrastructure Development Architecture Construction',
-    city: '',
-    event_date: '27 Jan - 29 Jan 2022',
-    venue_name: 'Bombay Exhibition Centre (BEC)',
-    source_id: 2,
-  },
-  {
-    row_id: 35,
-    tradefair_name: 'International Elevator & Escalator Expo',
-    city: '',
-    event_date: '16 Feb - 18 Feb 2022',
-    venue_name: 'Bombay Exhibition Centre (BEC)',
-    source_id: 2,
-  },
-  {
-    row_id: 18,
-    tradefair_name: 'World of Concrete India',
-    city: '',
-    event_date: '07 Oct - 09 Oct 2021',
-    venue_name: 'Hitex Exhibition Center',
-    source_id: 2,
-  },
-  {
-    row_id: 16,
-    tradefair_name: 'ACETECH - MUMBAI 2021',
-    city: 'Mumbai (India)',
-    event_date: 'Nov. 18 - 21, 2021',
-    venue_name: 'Bombay Convention & Exhibition Centre (BCEC)',
-    source_id: 1,
-  },
-  {
-    row_id: 21,
-    tradefair_name: 'World of Facades ',
-    city: '',
-    event_date: '10 Jun - 10 Jun 2021',
-    venue_name: 'JW Marriott Mumbai Sahar',
-    source_id: 2,
-  },
-  {
-    row_id: 33,
-    tradefair_name: 'INDEX Fair Delhi',
-    city: '',
-    event_date: '30 Aug - 01 Aug 2021',
-    venue_name: 'Pragati Maidan',
-    source_id: 2,
-  },
-  {
-    row_id: 7,
-    tradefair_name: 'CONSTRO 2022',
-    city: 'Pune (India)',
-    event_date: 'on Jan. 2022 (?)',
-    venue_name: 'College of Agriculture Ground',
-    source_id: 1,
-  },
-  {
-    row_id: 42,
-    tradefair_name: 'The Dream Home Expo',
-    city: '',
-    event_date: '27 Aug - 29 Aug 2021',
-    venue_name: 'Indira Gandhi Pratishthan',
-    source_id: 2,
-  },
-  {
-    row_id: 44,
-    tradefair_name: 'Elevator Escalator Expo ',
-    city: '',
-    event_date: '05 Aug - 07 Aug 2021',
-    venue_name: 'Helipad Grounds',
-    source_id: 2,
-  },
-  {
-    row_id: 17,
-    tradefair_name: 'The Economic Times Acetech Bengaluru ',
-    city: '',
-    event_date: '18 Oct - 20 Oct 2021',
-    venue_name: 'BIEC Bengaluru International Exhibition Centre',
-    source_id: 2,
-  },
-  {
-    row_id: 40,
-    tradefair_name: 'Glasspex India',
-    city: '',
-    event_date: '23 Sep - 25 Sep 2021',
-    venue_name: 'Bombay Exhibition Centre (BEC)',
-    source_id: 2,
-  },
-  {
-    row_id: 16,
-    tradefair_name: 'MUMBAIWOOD ',
-    city: '',
-    event_date: '21 Oct - 23 Oct 2021',
-    venue_name: 'Bombay Exhibition Centre (BEC)',
-    source_id: 2,
-  },
-  {
-    row_id: 27,
-    tradefair_name: 'Floor India Exhibition',
-    city: '',
-    event_date: '21 Apr - 23 Apr 2022',
-    venue_name: 'Bangalore international exhibition centre',
-    source_id: 2,
-  },
-  {
-    row_id: 2,
-    tradefair_name: 'INDEX CONTRACT 2021',
-    city: 'New Delhi (India)',
-    event_date: 'July 30 - Aug. 01, 2021',
-    venue_name: 'Pragati Maidan',
-    source_id: 1,
-  },
-  {
-    row_id: 25,
-    tradefair_name: 'World ConEx',
-    city: '',
-    event_date: '17 May - 19 May 2022',
-    venue_name: 'Satwari Chowk',
-    source_id: 2,
-  },
-  {
-    row_id: 14,
-    tradefair_name: 'International Real Estate Expo',
-    city: '',
-    event_date: '22 Oct - 23 Oct 2021',
-    venue_name: 'The St. Regis Mumbai',
-    source_id: 2,
-  },
-  {
-    row_id: 5,
-    tradefair_name: 'Economic Times ACETECH - New Delhi ',
-    city: '',
-    event_date: '16 Dec - 19 Dec 2021',
-    venue_name: 'Pragati Maidan',
-    source_id: 2,
-  },
-  {
-    row_id: 10,
-    tradefair_name: 'CHINA HOME LIFE INDIA 2021',
-    city: 'Mumbai (India)',
-    event_date: 'Dec. 09 - 11, 2021',
-    venue_name: 'Bombay Convention & Exhibition Centre (BCEC)',
-    source_id: 1,
-  },
-  {
-    row_id: 20,
-    tradefair_name: 'World of Concrete India ',
-    city: '',
-    event_date: '20 May - 22 May 2021',
-    venue_name: 'Bombay Exhibition Centre (BEC)',
-    source_id: 2,
-  },
-  {
-    row_id: 19,
-    tradefair_name: 'ISH India',
-    city: '',
-    event_date: '20 May - 22 May 2021',
-    venue_name: 'Bombay Exhibition Centre (BEC)',
-    source_id: 2,
-  },
-  {
-    row_id: 13,
-    tradefair_name: 'South Indian Real Estate Expo',
-    city: '',
-    event_date: '27 Oct - 29 Oct 2021',
-    venue_name: 'Novotel',
-    source_id: 2,
-  },
-  {
-    row_id: 34,
-    tradefair_name:
-      'Build Intec - International Building & Construction Trade Fair',
-    city: '',
-    event_date: '18 Feb - 21 Feb 2022',
-    venue_name: 'CODISSIA TRADE FAIR COMPLEX',
-    source_id: 2,
-  },
-  {
-    row_id: 8,
-    tradefair_name: 'Zak Doors & Windows Expo',
-    city: '',
-    event_date: '02 Dec - 05 Dec 2021',
-    venue_name: 'Bombay Exhibition Centre (BEC)',
-    source_id: 2,
-  },
-  {
-    row_id: 6,
-    tradefair_name: 'Global Smart Cities',
-    city: '',
-    event_date: '16 Dec - 17 Dec 2021',
-    venue_name: 'India Exposition Mart',
-    source_id: 2,
-  },
-  {
-    row_id: 1,
-    tradefair_name: 'INFRACONEX 2021',
-    city: 'Gandhinagar (India)',
-    event_date: 'Aug. 06 - 08, 2021',
-    venue_name: 'Helipad Grounds, Gandhinagar',
-    source_id: 1,
-  },
-  {
-    row_id: 5,
-    tradefair_name: 'ACREX 2022',
-    city: 'Bangalore (India)',
-    event_date: 'Feb. 17 - 19, 2022',
-    venue_name: 'Bangalore International Exhibition Centre (BIEC)',
-    source_id: 1,
-  },
-  {
-    row_id: 43,
-    tradefair_name: 'Global Residency & Citizenship Expo',
-    city: '',
-    event_date: '05 Aug - 07 Aug 2021',
-    venue_name: 'BIEC Bengaluru International Exhibition Centre',
-    source_id: 2,
-  },
-  {
-    row_id: 8,
-    tradefair_name: 'ACETECH - NEW DELHI 2021',
-    city: 'New Delhi (India)',
-    event_date: 'Dec. 16 - 19, 2021',
-    venue_name: 'Pragati Maidan',
-    source_id: 1,
-  },
-  {
-    row_id: 29,
-    tradefair_name: 'Global Real Estate Expo',
-    city: '',
-    event_date: '07 Mar - 11 Mar 2022',
-    venue_name: 'PHD House',
-    source_id: 2,
-  },
-  {
-    row_id: 22,
-    tradefair_name: 'MSME Innovation & Start-up Summit & Time2Leap Awards',
-    city: '',
-    event_date: '12 Jun - 12 Jun 2021',
-    venue_name: 'Four Seasons Hotel Bengaluru at Embassy ONE',
-    source_id: 2,
-  },
-  {
-    row_id: 28,
-    tradefair_name: 'Smart Cities India Expo ',
-    city: '',
-    event_date: '09 Mar - 11 Mar 2022',
-    venue_name: 'Pragati Maidan',
-    source_id: 2,
-  },
-  {
-    row_id: 36,
-    tradefair_name: 'Mumbai Con-Expo',
-    city: '',
-    event_date: '27 Jan - 29 Jan 2022',
-    venue_name: 'Venue to be announced',
-    source_id: 2,
-  },
-  {
-    row_id: 1,
-    tradefair_name: 'MAPIC India',
-    city: '',
-    event_date: '29 Sep - 30 Sep 2021',
-    venue_name: 'Mumbai Express - Renaissance Hotel',
-    source_id: 2,
-  },
-  {
-    row_id: 37,
-    tradefair_name: 'INFRACONEX',
-    city: '',
-    event_date: '06 Aug - 08 Aug 2021',
-    venue_name: 'The Exhibition Centre',
-    source_id: 2,
-  },
-  {
-    row_id: 12,
-    tradefair_name: 'Global Residency & Citizenship Expo',
-    city: '',
-    event_date: '12 Nov - 14 Nov 2021',
-    venue_name: 'Hitex Exhibition Center',
-    source_id: 2,
-  },
-  {
-    row_id: 13,
-    tradefair_name: 'CERAMICS ASIA 2022',
-    city: 'Ahmedabad (India)',
-    event_date: 'March 03 - 05, 2021',
-    venue_name: 'Gujarat University Convention and Exhibition Centre',
-    source_id: 1,
-  },
-  {
-    row_id: 31,
-    tradefair_name: 'Indian Ceramics Asia ',
-    city: '',
-    event_date: '02 Mar - 04 Mar 2022',
-    venue_name: 'The Exhibition Centre',
-    source_id: 2,
-  },
-  {
-    row_id: 9,
-    tradefair_name: 'CHINA MACHINEX INDIA 2021',
-    city: 'Mumbai (India)',
-    event_date: 'Dec. 09 - 11, 2021',
-    venue_name: 'Bombay Convention & Exhibition Centre (BCEC)',
-    source_id: 1,
-  },
-  {
-    row_id: 9,
-    tradefair_name: 'INDIA STONE MART ',
-    city: '',
-    event_date: '25 Nov - 28 Nov 2021',
-    venue_name: 'Jaipur Exhibition & Convention Centre',
-    source_id: 2,
-  },
-  {
-    row_id: 18,
-    tradefair_name: 'SMM INDIA 2021',
-    city: 'Mumbai (India)',
-    event_date: 'Oct. 11 - 13, 2021',
-    venue_name: 'Bombay Convention & Exhibition Centre (BCEC)',
-    source_id: 1,
-  },
-  {
-    row_id: 15,
-    tradefair_name: 'India Buildtech',
-    city: '',
-    event_date: '07 Apr - 10 Apr 2022',
-    venue_name: 'India International Convention And Expo Center',
-    source_id: 2,
-  },
-  {
-    row_id: 12,
-    tradefair_name: 'INDIAN CERAMICS 2022',
-    city: 'Gandhinagar (India)',
-    event_date: 'March 03 - 05, 2021',
-    venue_name: 'Helipad Grounds, Gandhinagar',
-    source_id: 1,
-  },
-  {
-    row_id: 23,
-    tradefair_name: 'Earthcon Expo',
-    city: '',
-    event_date: '11 Jun - 13 Jun 2021',
-    venue_name: 'Shree Vallabh Sadan Haveli Vaishnav Temple',
-    source_id: 2,
-  },
-];
+import {AnalyticsHelper} from '../utils/AnalyticsHelper';
 
 const TradeFairScreen = () => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -579,6 +170,7 @@ const TradeFairScreen = () => {
     return retVal;
   };
   const filterTenders = () => {
+    AnalyticsHelper.logEventTradeFairSearch(tenderSearchText);
     let allTenderContainingSearchText = allTradeFair.filter((tender: any) => {
       return tender.city
         ?.toLowerCase()
@@ -711,9 +303,6 @@ const TradeFairScreen = () => {
 
             onPress={() => filterTenders()}
           />
-          {/* <Text onPress={() => filterTenders()}>
-            Search
-          </Text> */}
 
           {/* <View style={{alignItems: 'flex-end', paddingLeft: 10,paddingVertical:15}}>
               <Icon
@@ -1047,20 +636,21 @@ const TradeFairScreen = () => {
                     Phone No: {tenderDetails?.organizer_phoneno}
                   </Text>
                 )}
-                {tenderDetails?.organizer_email && (
-                  <>
-                    <Text style={{...styles.values}}>
-                      Contact at :-
-                      <Text
-                        style={{...styles.values, color: 'blue'}}
-                        onPress={() =>
-                          openTradeFairURL(tenderDetails?.organizer_email)
-                        }>
-                        {tenderDetails?.organizer_email.split('mailto:')[1]}
+                {tenderDetails?.organizer_email &&
+                  tenderDetails?.organizer_email != '' && (
+                    <>
+                      <Text style={{...styles.values}}>
+                        Contact at :-
+                        <Text
+                          style={{...styles.values, color: 'blue'}}
+                          onPress={() =>
+                            openTradeFairURL(tenderDetails?.organizer_email)
+                          }>
+                          {tenderDetails?.organizer_email.split('mailto:')[1]}
+                        </Text>
                       </Text>
-                    </Text>
-                  </>
-                )}
+                    </>
+                  )}
                 {tenderDetails?.organizer_website && (
                   <>
                     <Text style={{...styles.values}}>
@@ -1080,28 +670,6 @@ const TradeFairScreen = () => {
             </Text> */}
               </View>
             </View>
-            {/* getExhibitorSpacePrice(tenderDetails?.exhibitor_space_price)[0].isAmt */}
-            {/* <View style={{flexDirection: 'row'}}> */}
-            {/* { getExhibitorSpacePrice(tenderDetails?.exhibitor_space_price)[0].isAmt  && (
-            <><Text style={styles.titles}>Exhibitor Space Price </Text><Text style={styles.values}>
-                  {/* {tenderDetails?.exhibitor_space_price} */}
-            {/* : {getExhibitorSpacePrice(tenderDetails?.exhibitor_space_price)[0].price} */}
-            {/* </Text></>)} */}
-            {/* </View> */}
-
-            {/* <View style={{flexDirection: 'row'}}>
-            <Text style={styles.titles} 
-            >Tender URL </Text>
-            <Text
-              style={{...styles.values, color: 'blue'}}
-              onPress={() => 
-                openTradeFairURL(tenderDetails?.tender_url)}>
-              : {tenderDetails?.tender_url} {'\n'}
-              {'\n'}
-              {'\n'}
-              {'\n'}
-            </Text>
-          </View> */}
 
             <View
             //  style={{flexDirection: 'column'}}
@@ -1143,24 +711,6 @@ const TradeFairScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  // titles: {
-  //   fontSize: 18,
-  //   fontFamily: 'Vintage',
-  //   paddingVertical: 10,
-  //   paddingLeft: 10,
-  //   color: '#005A9C',
-  //   fontWeight: 'bold',
-  // },
-  // values: {
-  //   fontWeight: 'bold',
-  //   fontSize: 15,
-  //   color: 'black',
-  // },
-  // modal: {
-  //   flex: 1,
-  //   width: '100%',
-  //   backgroundColor: '#e6e6e6',
-  // },
   container: {
     paddingLeft: 10,
     paddingRight: 10,

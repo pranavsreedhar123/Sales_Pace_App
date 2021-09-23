@@ -14,7 +14,11 @@ const checkHTTPStatus = (response: Response, method?: string) =>
         /* eslint-disable no-console */
         console.log('Rejected', text);
       }
+      // response.status
 
+      if (response.status != 200) {
+        return resolve(response);
+      }
       reject({
         message: text,
         status: response.status,
@@ -47,7 +51,7 @@ export const apiClient = async (
   requestConfig: RequestInit,
 ): Promise<unknown> => {
   if (__DEV__) {
-    console.log('fetch', url,"=-=--", requestConfig);
+    console.log('fetch', url, '=-=--', requestConfig);
   }
 
   const timeoutValue = 60000;

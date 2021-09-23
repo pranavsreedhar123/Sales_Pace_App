@@ -23,7 +23,7 @@ export const NavigationActions = {
       /* eslint-disable no-console */
       console.log('NavigateToScreen', screenName, params);
     }
-
+    console.log('NavigateToScreen', screenName, params);
     navigationRef.current?.navigate(screenName, params);
   },
   navigateToScreenWithPush: ({

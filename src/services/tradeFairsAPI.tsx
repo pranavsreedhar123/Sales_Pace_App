@@ -1,21 +1,31 @@
 import {apiClient} from './apiClient';
+import {Helpers} from '../utils/Helpers';
+import {Axway_BaseUrl, Axway_ApiUrl} from '../utils/Constant';
+
+const getCommonHeaders = async () => {
+  const commonHeaders = {
+    Authorization: 'Bearer ' + (await Helpers.getStoredAxwayToken()),
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  };
+  return commonHeaders;
+};
 
 export async function getTradeFairDataAPI(
-  page_size:number,
-  page_number:number
+  page_size: number,
+  page_number: number,
 ): Promise<string> {
+  const getTradeFairDataBody = {
+    page_size: page_size,
+    page_number: page_number,
+  };
+
   const apiHousingData = (await apiClient(
-   `http://l01svindeca0101.zl.if.atcsg.net:6565/Api/TradeFair/GetTradeFairList`,
+    Axway_BaseUrl + Axway_ApiUrl + 'TradeFair/GetTradeFairList',
     {
       method: 'POST',
-      body:JSON.stringify(
-        {page_size:page_size,
-        page_number:page_number}),
-        headers: {
-          'Accept':       'application/json',
-          'Content-Type': 'application/json',
-         
-        }
+      body: JSON.stringify(getTradeFairDataBody),
+      headers: await getCommonHeaders(),
     },
   )) as string;
 
@@ -23,25 +33,22 @@ export async function getTradeFairDataAPI(
 }
 
 export async function getTradeFairDetailsAPI(
-  source_id:number,
-  tradefair_id:number
+  source_id: number,
+  tradefair_id: number,
 ): Promise<string> {
-  console.log("-=-=-{{{{{{}}}}}}}}")
+  const getTradeFairDetailsBody = {
+    source_id: source_id,
+    tradefair_id: tradefair_id,
+  };
+
   const apiHousingData = (await apiClient(
-    `http://l01svindeca0101.zl.if.atcsg.net:6565/Api/TradeFair/GetTradefairDetails`,
+    Axway_BaseUrl + Axway_ApiUrl + 'TradeFair/GetTradefairDetails',
     {
       method: 'POST',
-      body: JSON.stringify(
-        {source_id:source_id,
-          tradefair_id:tradefair_id}),
-          headers: {
-            'Accept':       'application/json',
-            'Content-Type': 'application/json',
-           
-          }
+      body: JSON.stringify(getTradeFairDetailsBody),
+      headers: await getCommonHeaders(),
     },
   )) as string;
-  console.log(apiHousingData)
 
   return apiHousingData;
 }

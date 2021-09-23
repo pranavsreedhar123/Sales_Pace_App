@@ -1,3 +1,6 @@
+import {AppSecuredStorage} from './AppSecuredStorage';
+import {AXWAY_TOKEN_STORAGE_KEY} from './Constant';
+
 export namespace Helpers {
   export const getUniqueArray = (
     redundantArray: any,
@@ -16,21 +19,37 @@ export namespace Helpers {
 
   export const sortArrayByKey = (array: any, key: string) => {
     return array.sort((a: any, b: any) => {
-      return a[key] - b[key] ;
+      return a[key] - b[key];
     });
   };
-  export const sortArrayByDate =(array:any,key:string,asc:boolean,key2?:string)=>{
-    return array.sort((a:any,b:any) => {
-      let firstDate= new Date(key2 ?a[key]+'/'+a[key2]:a[key]).getTime();
-      let secondDate= new Date(key2 ?b[key]+'/'+b[key2]:b[key]).getTime();
+  export const sortArrayByDate = (
+    array: any,
+    key: string,
+    asc: boolean,
+    key2?: string,
+  ) => {
+    return array.sort((a: any, b: any) => {
+      let firstDate = new Date(
+        key2 ? a[key] + '/' + a[key2] : a[key],
+      ).getTime();
+      let secondDate = new Date(
+        key2 ? b[key] + '/' + b[key2] : b[key],
+      ).getTime();
 
-      console.log(firstDate,secondDate,"*********Dates **************",new Date('23/Jan/2022'));
-      
-     let sortedDate :any= asc ? firstDate-secondDate : secondDate-firstDate;
+      console.log(
+        firstDate,
+        secondDate,
+        '*********Dates **************',
+        new Date('23/Jan/2022'),
+      );
 
-     return sortedDate
+      let sortedDate: any = asc
+        ? firstDate - secondDate
+        : secondDate - firstDate;
+
+      return sortedDate;
     });
-  }
+  };
 
   export const reverseArray = (array: any) => {
     return array.reverse();
@@ -80,5 +99,13 @@ export namespace Helpers {
       }
     }
     return result;
+  };
+
+  export const getStoredAxwayToken = async () => {
+    const storedAxwayToken = (await AppSecuredStorage.getItem(
+      AXWAY_TOKEN_STORAGE_KEY,
+    )) as string;
+
+    return storedAxwayToken;
   };
 }
