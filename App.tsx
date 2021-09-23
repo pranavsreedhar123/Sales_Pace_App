@@ -4,9 +4,14 @@ import {navigationRef} from './src/navigation/NavigationActions';
 import {MainStackNavigator} from './src/navigation/MainStackNavigator';
 import {AuthContext} from './src/components/auth-context';
 import {AnalyticsHelper} from './src/utils/AnalyticsHelper';
+import RNBootSplash from 'react-native-bootsplash';
 
 const App = (): JSX.Element => {
   const routeNameRef = useRef<string>();
+
+  React.useEffect(() => {
+    RNBootSplash.hide();
+  }, []);
 
   return (
     <NavigationContainer

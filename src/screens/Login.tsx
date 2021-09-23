@@ -21,6 +21,7 @@ import {
 import {getAccessToken} from '../services/ssoLoginAPI';
 import {getAxwayAccessTokenAPI} from '../services/axwayTokenAPI';
 import {AppSecuredStorage} from '../utils/AppSecuredStorage';
+import SalesPaceLogo from '../assets/SalesPaceLogo';
 Icon.loadFont();
 
 export const Login = (): JSX.Element => {
@@ -107,69 +108,77 @@ export const Login = (): JSX.Element => {
           color="red"
         />
       )}
-      <Image
-        source={require('../images/SalesPace.png')}
-        style={styles.logo}></Image>
       <View
         style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          marginHorizontal: 0,
-          borderWidth: 2,
-          marginTop: Dimensions.get('window').height / 14,
-          paddingHorizontal: 15,
-          borderColor: '#00716F',
-          borderRadius: 23,
-          paddingVertical: 2,
+          paddingHorizontal: 120,
+          height: 270,
+          borderWidth: 1,
+          borderRadius: 20,
+          paddingTop: 70,
+          marginTop: -20,
         }}>
-        <Icon name="mail" size={20} color="black" />
-        <TextInput
-          keyboardType="email-address"
-          autoCapitalize="none"
-          placeholder="SGID"
-          placeholderTextColor="black"
-          style={styles.input}
-          returnKeyLabel={'next'}
-          onChangeText={(text: string) => setEmail(text)}
-        />
+        <SalesPaceLogo />
       </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          marginHorizontal: 0,
-          borderWidth: 2,
-          marginTop: Dimensions.get('window').height / 42,
-          paddingHorizontal: 15,
-          borderColor: '#00716F',
-          borderRadius: 23,
-          paddingVertical: 2,
-        }}>
-        <Icon name="lock" size={20} color="black" />
-        <TextInput
-          secureTextEntry
-          autoCapitalize="none"
-          placeholder="Password"
-          placeholderTextColor="black"
-          style={styles.input}
-          returnKeyLabel={'next'}
-          onChangeText={(text: string) => setPassword(text)}
-        />
-      </View>
-      <TouchableOpacity
-        style={{
-          marginHorizontal: Dimensions.get('window').width / 7,
-          alignItems: 'center',
-          justifyContent: 'center',
-          marginTop: Dimensions.get('window').height / 18,
-          backgroundColor: '#00716F',
-          borderRadius: 23,
-          paddingVertical: 8,
-        }}
-        onPress={() => validate(email, password)}>
-        <Text style={styles.text}>Sign In</Text>
-      </TouchableOpacity>
 
+      <View style={{paddingHorizontal: Dimensions.get('window').height / 15}}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginHorizontal: 0,
+            marginTop: Dimensions.get('window').height / 14,
+            paddingHorizontal: 15,
+            borderRadius: 23,
+            paddingVertical: 2,
+            backgroundColor: '#FEF3ED',
+          }}>
+          <Icon name="mail" size={20} color="#F15D22" />
+          <TextInput
+            keyboardType="email-address"
+            autoCapitalize="none"
+            placeholder="SGID"
+            placeholderTextColor="black"
+            style={styles.input}
+            returnKeyLabel={'next'}
+            onChangeText={(text: string) => setEmail(text)}
+          />
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginHorizontal: 0,
+            marginTop: Dimensions.get('window').height / 42,
+            paddingHorizontal: 15,
+            borderRadius: 23,
+            paddingVertical: 2,
+            backgroundColor: '#FEF3ED',
+          }}>
+          <Icon name="lock" size={20} color="#F15D22" />
+          <TextInput
+            secureTextEntry
+            autoCapitalize="none"
+            placeholder="Password"
+            placeholderTextColor="black"
+            style={styles.input}
+            returnKeyLabel={'next'}
+            onChangeText={(text: string) => setPassword(text)}
+          />
+        </View>
+        <TouchableOpacity
+          style={{
+            marginHorizontal: Dimensions.get('window').width / 7,
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: Dimensions.get('window').height / 18,
+            backgroundColor: '#000000',
+            borderRadius: 23,
+            paddingVertical: 8,
+          }}
+          onPress={() => validate(email, password)}>
+          <Text style={styles.text}>Sign In</Text>
+        </TouchableOpacity>
+      </View>
       <Image
         source={require('../images/sg.png')}
         style={styles.tinyLogo}></Image>
@@ -179,7 +188,6 @@ export const Login = (): JSX.Element => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: Dimensions.get('window').height / 15,
     backgroundColor: '#FFF',
     height: '100%',
   },
