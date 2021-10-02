@@ -20,21 +20,17 @@ const openYouTubeURL = async (youtube_url: string) => {
 const VideoCard = (props: any) => {
   const onShare = async () => {
     try {
-      const result = await Share.share({
-        message: 'YouTube URL',
+      const shareResponse = await Share.share({
+        title: "Here's the YouTube URL",
+        message: 'https://www.youtube.com/watch?v=' + props.videoId,
         url: 'https://www.youtube.com/watch?v=' + props.videoId,
       });
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          // shared with activity type of result.activityType
-        } else {
-          // shared
-        }
-      } else if (result.action === Share.dismissedAction) {
-        // dismissed
-      }
     } catch (error) {
-      Alert.alert(error.message);
+      if (error.message === 'User did not share') {
+        console.log(error.message);
+      } else {
+        Alert.alert(error.message);
+      }
     }
   };
   return (
