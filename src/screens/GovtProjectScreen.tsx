@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import _ from 'lodash';
 // import { SearchBar } from 'react-native-elements';
 import {
@@ -20,12 +20,15 @@ import {
   getHousingDataAxwayAPI,
 } from '../services/govtProjectsAPI';
 import {getGovtProjectDetails} from '../services/govtProjectsAPI';
-import {Icon} from 'react-native-elements';
+import {Icon, ThemeContext} from 'react-native-elements';
 import Modal from 'react-native-modal';
 import {ScrollView} from 'react-native-gesture-handler';
 import {AnalyticsHelper} from '../utils/AnalyticsHelper';
 import {NavigationActions} from '../navigation/NavigationActions';
 import {Screens} from '../navigation/Screens';
+import {Theme} from '../styles/Theme';
+import {PrimaryButton} from '../components/buttons/PrimaryButton';
+import {LabelButton} from '../components/buttons/LabelButton';
 
 const GovtProjectScreen = () => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -34,11 +37,12 @@ const GovtProjectScreen = () => {
   const [groupedGovtTenders, setGroupedGovtTenders] = useState<any>([]);
   const [isLoading, setLoading] = useState(true);
   const [tenderSearchText, setTenderSearchText] = useState('');
-  const [sourceID, setSourceID] = useState<any>();
-  const [tenderID, setTenderID] = useState<any>();
   const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
   const [isGroupBy, setIsGroupBy] = useState(true);
+  const [isSortByDate, setIsSortByDate] = useState(false);
   const [isSortByDateAsc, setIsSortByDateAsc] = useState(true);
+  const {theme} = useContext(ThemeContext);
+
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
@@ -51,6 +55,7 @@ const GovtProjectScreen = () => {
       params: {
         tender_id: tender.tender_id,
         tender_source: tender.tender_source,
+        tender_title: tender.tender_title,
       },
     });
     // // toggleModal();
@@ -125,7 +130,7 @@ const GovtProjectScreen = () => {
           ' K';
       }
     } else {
-      retVal = 'Refer Tender Document For Amount';
+      retVal = 'NA';
     }
     return retVal;
   };
@@ -143,9 +148,9 @@ const GovtProjectScreen = () => {
       : setFilteredGovtTenders(allGovtTenders);
   };
 
-  const sortOption = () => {
-    setIsGroupBy(false);
-    setIsSortByDateAsc(!isSortByDateAsc);
+  const sortOption = (isDateAsc: boolean) => {
+    setIsSortByDate(true);
+    setIsSortByDateAsc(isDateAsc);
     setIsFilterModalVisible(!isFilterModalVisible);
 
     // alert('sorted')
@@ -156,7 +161,7 @@ const GovtProjectScreen = () => {
     let allTendersWithSorting = Helpers.sortArrayByDate(
       allGovtTenders,
       'closing_date',
-      isSortByDateAsc,
+      isDateAsc,
     );
 
     let groupedSortedTenders = [
@@ -166,7 +171,7 @@ const GovtProjectScreen = () => {
       },
     ];
 
-    setFilteredGovtTenders(groupedSortedTenders);
+    setFilteredGovtTenders(allTendersWithSorting);
     // setGroupedGovtTenders(groupedSortedTenders);
     // setTenderData(allTendersWithSorting)
   };
@@ -174,34 +179,46 @@ const GovtProjectScreen = () => {
   const [isVisible, setVisiblity] = useState(false);
 
   const groupByTenderType = () => {
-    // alert('Hello is it group')
     setIsGroupBy(true);
     setIsFilterModalVisible(!isFilterModalVisible);
-    // setTenderData(groupedGovtTenders)
   };
 
-  // setTenderData(groupedGovtTenders)
   return (
     <View style={{flex: 1}}>
-      {/* true?<GovtProjectScreenDetail/>:null */}
-
-      <View style={styles.container}>
-        <View style={styles.searchBox}>
+      <View
+        style={{paddingHorizontal: 20, backgroundColor: Theme.colors.lightest}}>
+        <View
+          style={{
+            flexDirection: 'row',
+            borderColor: Theme.colors.borderColor,
+            borderBottomWidth: 1,
+          }}>
           <TextInput
             placeholder="Search Tenders"
-            placeholderTextColor="black"
-            style={styles.input}
+            placeholderTextColor={Theme.colors.primary}
+            style={{
+              width: '70%',
+              borderColor: Theme.colors.borderColor,
+              borderWidth: 2,
+              paddingRight: 5,
+              fontSize: 17,
+              borderRadius: 25,
+              backgroundColor: Theme.colors.lightest,
+              paddingHorizontal: 15,
+              height: 40,
+              marginTop: 10,
+              color: 'black',
+            }}
             value={tenderSearchText}
             onChangeText={text => setTenderSearchText(text)}
           />
 
           <Icon
-            // style={styles.text}
             style={{padding: 0}}
             raised
             size={19}
             name="search"
-            color="#005A9C"
+            color={Theme.colors.primary}
             type="font-awesome"
             onPress={() => filterTenders()}
           />
@@ -217,53 +234,15 @@ const GovtProjectScreen = () => {
                 name="sort-amount-desc"
                 type="font-awesome"
                 size={19}
-                color="#005A9C"
-
-                // onPress={() => sortOption("tender_amount")}
+                color={Theme.colors.primary}
               />
             </TouchableOpacity>
           </View>
-          {/* <Text onPress={() => filterTenders()}>
-            Search
-          </Text> */}
-
-          {/* <View style={{alignItems: 'flex-end', paddingLeft: 10,paddingVertical:15}}>
-              <Icon
-                name="sort-amount-desc"
-                type='font-awesome'
-                size={35}
-                color="#005A9C"
-                
-                
-                onPress={() => sortOption("tender_amount")}
-              />
-            </View> */}
-          {/* {filterOptionStatus && (
-            <View
-              style={{
-                flexDirection: 'row',
-                paddingLeft: 16,
-              }}>
-              <Text
-                style={styles.textButton}
-                onPress={() => filterSubscriber()}>
-                Subscribers
-              </Text>
-              <Text style={styles.textButton} onPress={() => filterView()}>
-                View Count
-              </Text>
-            </View>
-          )} */}
         </View>
 
         <Modal
           isVisible={isFilterModalVisible}
           style={{
-            // isVisible=isFilterModalVisible,
-            // flexDirection:'row',
-            // marginRight:10,
-
-            // marginTop:10,
             margin: 0,
             marginTop: Dimensions.get('screen').height / 6,
             maxHeight: Dimensions.get('screen').height / 4,
@@ -277,7 +256,7 @@ const GovtProjectScreen = () => {
             // padding:10,
             backgroundColor: 'white',
           }}>
-          <Text
+          {/* <Text
             style={{
               // flexDirection:'column',
               fontSize: 18,
@@ -287,9 +266,9 @@ const GovtProjectScreen = () => {
               paddingBottom: 15,
             }}>
             Group By{' '}
-          </Text>
+          </Text> */}
 
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={{flexDirection: 'row', marginLeft: 40}}
             onPress={groupByTenderType}>
             <Icon
@@ -305,27 +284,30 @@ const GovtProjectScreen = () => {
               {' '}
               Tender Type{' '}
             </Text>
-          </TouchableOpacity>
-          <Text style={{borderBottomWidth: 2}}> </Text>
+          </TouchableOpacity> */}
           <Text
             style={{
               // flexDirection:'column',
               fontSize: 18,
               fontWeight: 'bold',
-              marginLeft: 20,
-              paddingVertical: 10,
+              textAlign: 'center',
             }}>
             Sort By{' '}
           </Text>
+          <Text style={{borderBottomWidth: 2}}> </Text>
+
           <TouchableOpacity
-            style={{flexDirection: 'row', marginLeft: 40}}
-            // onPress={()  }
-            onPress={sortOption}>
+            style={{flexDirection: 'row', marginLeft: 40, marginTop: 20}}
+            onPress={() => sortOption(true)}>
             <Icon
               name="circle"
               type="font-awesome"
               size={20}
-              color={isGroupBy ? '#D0D0D0' : '#55DD33'}
+              color={
+                isSortByDate && isSortByDateAsc
+                  ? theme.colors?.primary
+                  : '#D0D0D0'
+              }
             />
             <Text
               style={{
@@ -334,19 +316,35 @@ const GovtProjectScreen = () => {
                 fontWeight: 'bold',
               }}>
               {' '}
-              Closing Date {isSortByDateAsc ? '(ASC)' : '(DESC)'}{' '}
+              Closing Date (ASC)
             </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{flexDirection: 'row', marginLeft: 40, marginTop: 20}}
+            onPress={() => sortOption(false)}>
             <Icon
-              // name="arrow-down"
-              name={isSortByDateAsc ? 'arrow-down' : 'arrow-up'}
+              name="circle"
               type="font-awesome"
               size={20}
-              color={isGroupBy ? '#D0D0D0' : '#55DD33'}
+              color={
+                isSortByDate && !isSortByDateAsc
+                  ? theme.colors?.primary
+                  : '#D0D0D0'
+              }
             />
+            <Text
+              style={{
+                // flexDirection:'column',
+                fontSize: 16,
+                fontWeight: 'bold',
+              }}>
+              {' '}
+              Closing Date (DESC)
+            </Text>
           </TouchableOpacity>
         </Modal>
 
-        <View style={styles.sectionsList}>
+        <View>
           {!isLoading && !groupedGovtTenders?.length && (
             <Text
               style={{
@@ -355,23 +353,110 @@ const GovtProjectScreen = () => {
                 height: 40,
                 paddingLeft: 30,
                 paddingTop: 10,
-                backgroundColor: '#005A9C',
+                backgroundColor: Theme.colors.primary,
               }}>
               No Tender Found
             </Text>
           )}
+          <ScrollView>
+            {filteredGovtTenders?.map((govtTender: any, index: number) => (
+              // <View style={{flexDirection: 'row'}}>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: Theme.colors.cardBackground,
+                  marginTop: 20,
+                  borderTopLeftRadius: 20,
+                  borderTopRightRadius: 20,
+                }}
+                onPress={() => passValuesInModal(govtTender)}
+                key={index}>
+                <View
+                  style={{
+                    backgroundColor: Theme.colors.secondary,
+                    borderTopLeftRadius: 20,
+                    borderTopRightRadius: 20,
+                    paddingVertical: 9,
+                    flexDirection: 'row',
+                    justifyContent: 'space-around',
+                  }}>
+                  <Text
+                    style={{
+                      color: Theme.colors.lightest,
+                      fontSize: Theme.fonts.fontSize.small,
+                    }}>
+                    <Text style={styles.title}>Closing Date: </Text>{' '}
+                    {Helpers.formatDate(govtTender.closing_date)}
+                  </Text>
 
-          <SectionList
+                  <Text
+                    style={{
+                      color: Theme.colors.lightest,
+                      fontSize: Theme.fonts.fontSize.small,
+                    }}>
+                    <Text style={styles.title}>Tender Amount: </Text>{' '}
+                    {getAmountFormatted(govtTender.tender_amount)}/-
+                  </Text>
+                  {/* </>
+                )} */}
+                </View>
+
+                <View
+                  style={{
+                    flexDirection: 'row',
+                  }}>
+                  <View
+                    style={{
+                      flexDirection: 'column',
+                      width: '60%',
+                      paddingLeft: 16,
+                      marginTop: 10,
+                    }}>
+                    <Text style={{fontWeight: 'bold'}}>Tender Title</Text>
+                    <Text
+                      style={{
+                        fontSize: Theme.fonts.fontSize.small,
+                        paddingTop: 5,
+                      }}>
+                      {govtTender.tender_title}{' '}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: 'column',
+                      width: '40%',
+                    }}>
+                    <LabelButton
+                      text="Share"
+                      style={{
+                        backgroundColor: Theme.colors.dark,
+                        marginTop: 10,
+                        borderRadius: 30,
+                        paddingVertical: 3,
+                        alignItems: 'center',
+                      }}
+                    />
+                    <LabelButton
+                      text="View More"
+                      style={{
+                        backgroundColor: Theme.colors.dark,
+                        marginTop: 10,
+                        borderRadius: 30,
+                        paddingVertical: 3,
+                        alignItems: 'center',
+                      }}
+                    />
+                  </View>
+                </View>
+              </TouchableOpacity>
+              // </View>
+            ))}
+            {/* <SectionList
             sections={isGroupBy ? groupedGovtTenders : filteredGovtTenders}
             keyExtractor={(tender, index) => tender + index}
             renderItem={({item}) => (
               <TouchableOpacity
                 style={styles.item}
-                onPress={() => passValuesInModal(item)}
-                // onPress={()=>NavigationActions.navigateToDifferentStackedScreen(
-                //   {screenName:'GovtProjectScreenDetails',params:item}
-                //   )}
-              >
+                onPress={() => passValuesInModal(item)}>
                 <Text style={styles.tenderData}>
                   <Text style={styles.title}>Tender Title: </Text>
                   {item.tender_title}{' '}
@@ -391,146 +476,15 @@ const GovtProjectScreen = () => {
                 {isGroupBy && <Text style={styles.header}>{tender_type}</Text>}
               </>
             )}
-          />
+          /> */}
+          </ScrollView>
         </View>
       </View>
-      {/* <Modal isVisible={isModalVisible} style={{margin: 0}}>
-        <View style={styles.modal}>
-          <ScrollView style={styles.modal}>
-            <Text>
-              {'\n'}
-              {'\n'}
-            </Text>
-            <View style={{flexDirection: 'row'}}>
-              <Text style={styles.titles}>Tender ID </Text>
-              <Text style={styles.values}>
-                {tenderDetails?.tender_id} {'\n'}
-              </Text>
-            </View>
-
-            {tenderDetails?.tender_description && (
-              <View style={{flexDirection: 'row'}}>
-                <Text style={styles.titles}>Tender Title </Text>
-                <Text style={styles.values}>
-                  {' '}
-                  {tenderDetails?.tender_description}
-                </Text>
-              </View>
-            )}
-
-            {tenderDetails?.Location && (
-              <View style={{flexDirection: 'row'}}>
-                <Text style={styles.titles}> Location </Text>
-                <Text style={{...styles.values}}>
-                  {tenderDetails?.Location}
-                </Text>
-              </View>
-            )}
-
-            {tenderDetails?.department && (
-              <View style={{flexDirection: 'row'}}>
-                <Text style={styles.titles}> Department </Text>
-                <Text style={{...styles.values}}>
-                  {tenderDetails?.department}
-                </Text>
-              </View>
-            )}
-
-            {tenderDetails?.tender_category && (
-              <View style={{flexDirection: 'row'}}>
-                <Text style={styles.titles}>Tender Category </Text>
-                <Text style={styles.values}>
-                  {' '}
-                  {tenderDetails?.tender_category}
-                </Text>
-              </View>
-            )}
-
-            {tenderDetails?.tender_description && (
-              <View style={{flexDirection: 'row'}}>
-                <Text style={styles.titles}> Tender Description </Text>
-                <Text style={{...styles.values}}>
-                  {tenderDetails?.tender_description}
-                </Text>
-              </View>
-            )}
-            <View style={{flexDirection: 'row'}}>
-              <Text style={styles.titles}>Tender Amount </Text>
-              <Text style={styles.values}>
-                {' '}
-                {getAmountFormatted(tenderDetails?.tender_amount)}
-              </Text>
-            </View>
-
-            {tenderDetails?.closing_date && (
-              <View style={{flexDirection: 'row'}}>
-                <Text style={styles.titles}>Closing Date </Text>
-                <Text style={{...styles.values, color: 'darkred'}}>
-                  {' '}
-                  {Helpers.formatDate(tenderDetails?.closing_date)} {'\n'}
-                </Text>
-              </View>
-            )}
-
-            {tenderDetails?.tender_url && (
-              <View style={{flexDirection: 'row'}}>
-                <Text style={styles.titles}>Tender URL </Text>
-                <Text
-                  style={{...styles.values, color: 'blue'}}
-                  onPress={() => openTenderURL(tenderDetails?.tender_url)}>
-                  {' '}
-                  {tenderDetails?.tender_url} {'\n'}
-                  {'\n'}
-                  {'\n'}
-                  {'\n'}
-                </Text>
-              </View>
-            )}
-          </ScrollView>
-          <View
-            style={{
-              marginHorizontal: 80,
-              backgroundColor: '#D22B2B',
-              marginBottom: 20,
-            }}>
-            <Text
-              style={{
-                backgroundColor: '#005A9C',
-                color: 'white',
-                textAlign: 'center',
-                fontSize: 20,
-                fontWeight: 'bold',
-                padding: 5,
-              }}
-              onPress={toggleModal}>
-              Back
-            </Text>
-          </View>
-        </View>
-      </Modal> */}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  // titles: {
-  //   fontSize: 18,
-  //   fontFamily: 'Vintage',
-  //   paddingVertical: 10,
-  //   paddingLeft: 10,
-  //   color: '#005A9C',
-  //   fontWeight: 'bold',
-  // },
-  // values: {
-  //   fontWeight: 'bold',
-  //   fontSize: 15,
-  //   color: 'black',
-  // },
-  // modal: {
-  //   flex: 1,
-  //   width: '100%',
-  //   backgroundColor: '#e6e6e6',
-  // },
   container: {
     paddingLeft: 10,
     paddingRight: 10,
@@ -562,17 +516,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     paddingLeft: 5,
     paddingTop: 5,
-    //paddingBottom: 10,
-    //borderRadius: 5,
-    //color: 'white',
-    //backgroundColor: 'blue',
-    // width:200
   },
-  searchBox: {
-    flexDirection: 'row',
-    borderColor: '#cccccc',
-    borderBottomWidth: 1,
-  },
+
   input: {
     width: '70%',
     borderColor: '#c6c8cc',
@@ -586,7 +531,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: 'black',
   },
-  item: {
+  card: {
     backgroundColor: '#f5f5f5',
     padding: 7,
     marginVertical: 6,

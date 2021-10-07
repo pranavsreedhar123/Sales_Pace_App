@@ -7,9 +7,8 @@ import {
   View,
   StyleSheet,
 } from 'react-native';
-
-import {CommonStyles} from '../styles/CommonStyle';
-import {Helpers} from '../utils/Helpers';
+import {Helpers} from '../../utils/Helpers';
+import {CommonStyles} from '../../styles/CommonStyle';
 
 interface Props {
   backgroundColorOnTouch: string;

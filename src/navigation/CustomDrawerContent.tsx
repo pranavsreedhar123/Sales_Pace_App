@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import {CustomDrawerScreen} from '../types/CustomDarwerScreen';
 import {NavigationActions} from './NavigationActions';
-import {CustomButton} from '../components/CustomButton';
 import {Title} from '../components/Title';
 import {List, ListItem} from 'native-base';
 import {Screens} from './Screens';
@@ -20,6 +19,8 @@ import {
   NotLoggedInStackNavigator,
   DefaultDrawerNavigator,
 } from './MainStackNavigator';
+import {CustomButton} from '../components/buttons/CustomButton';
+import {Theme} from '../styles/Theme';
 Icon.loadFont();
 export const CustomDrawerContent = (): JSX.Element => {
   const screens = CustomDrawerScreens();
@@ -66,7 +67,7 @@ export const CustomDrawerContent = (): JSX.Element => {
         <ListItem
           style={{
             justifyContent: 'center',
-            backgroundColor: '#00716F',
+            backgroundColor: Theme.colors.primary,
             borderRadius: 23,
             marginHorizontal: 20,
             paddingHorizontal: 15,

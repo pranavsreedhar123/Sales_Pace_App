@@ -6,6 +6,11 @@ import {ListIcon} from '../assets/ListIcon';
 export const CustomDrawerScreens = (): CustomDrawerScreen[] => {
   return [
     {
+      name: Screens.HomeScreen,
+      displayName: 'Home Screen',
+      icon: <ListIcon style={{width: 24, height: 24}} />,
+    },
+    {
       name: Screens.TopVloggerScreen,
       displayName: 'Top Vloggers',
       icon: <ListIcon style={{width: 24, height: 24}} />,

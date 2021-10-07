@@ -74,14 +74,8 @@ const TradeFairScreen = () => {
       const getTradeFairData = async () => {
         let crawledHousingData: string = await getTradeFairDataAPI(50, 0);
 
-        console.log(
-          await Linking.getInitialURL(),
-          '$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$',
-        );
         setAllTradeFair(JSON.parse(crawledHousingData));
         setFilteredTradeFair(JSON.parse(crawledHousingData));
-        // setAllTradeFair(tradeFairDataJSON);
-        // setFilteredTradeFair(tradeFairDataJSON)
       };
       getTradeFairData();
     } catch (e) {

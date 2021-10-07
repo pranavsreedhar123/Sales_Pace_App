@@ -26,7 +26,7 @@ Icon.loadFont();
 
 export const Login = (): JSX.Element => {
   const [email, setEmail] = useState('R6050468');
-  const [password, setPassword] = useState('Anaisha@1211');
+  const [password, setPassword] = useState('Anaisha@1234');
   const [isLoadingLogin, setIsLoadingLogin] = useState(false);
 
   // useEffect(() => {
@@ -139,6 +139,7 @@ export const Login = (): JSX.Element => {
             placeholder="SGID"
             placeholderTextColor="black"
             style={styles.input}
+            value={email}
             returnKeyLabel={'next'}
             onChangeText={(text: string) => setEmail(text)}
           />
@@ -161,6 +162,7 @@ export const Login = (): JSX.Element => {
             placeholder="Password"
             placeholderTextColor="black"
             style={styles.input}
+            value={password}
             returnKeyLabel={'next'}
             onChangeText={(text: string) => setPassword(text)}
           />

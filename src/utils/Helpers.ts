@@ -63,7 +63,7 @@ export namespace Helpers {
     month = month.length > 1 ? month : '0' + month;
     var day = date.getDate().toString();
     day = day.length > 1 ? day : '0' + day;
-    return day + '/' + month + '/' + year;
+    return day + '/' + month;
   };
 
   export const getColorLuminance = (hex: string, lum: number): string => {

@@ -1,17 +1,18 @@
 import * as React from 'react';
-import {CustomButton} from '../components/CustomButton';
+
 import {toggleNavigationDrawer} from './NavigationActions';
 import {MenuBarIcon} from '../assets/MenuBarIcon';
 import {ArrowBackIcon} from '../assets/ArrowBackIcon';
-// import {Icon} from 'react-native-vector-icons';
+import {CustomButton} from '../components/buttons/CustomButton';
+import {Theme} from '../styles/Theme';
 
 export const setCommonDrawerScreenOptions = () => {
   return {
     headerStyle: {
-      backgroundColor: '#D0D0D0',
+      backgroundColor: '#fff',
     },
     headerTitleStyle: {
-      color: '#005A9C',
+      color: '#F15D22',
       alignItems: 'center',
       fontSize: 22,
     },

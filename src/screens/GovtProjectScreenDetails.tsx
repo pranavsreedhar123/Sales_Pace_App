@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   ScrollView,
   View,
@@ -15,11 +15,15 @@ import {
 } from '../services/govtProjectsAPI';
 import {NavigationActions} from '../navigation/NavigationActions';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {ThemeContext} from '../context/theme/ThemeContext';
+import {Label} from '../components/Label';
+import {LabelButton} from '../components/buttons/LabelButton';
 
 type RouteParams = {
   params: {
     tender_id: string;
     tender_source: string;
+    tender_title: string;
   };
 };
 
@@ -28,9 +32,10 @@ export const GovtProjectScreenDetails = ({
 }: {
   route: RouteParams;
 }): JSX.Element => {
-  const {tender_id, tender_source} = route.params;
+  const {tender_id, tender_source, tender_title} = route.params;
   const [tenderDetails, setTenderDetails] = useState<any>({});
   const [isLoadingTenderDetails, setIsLoadingTenderDetails] = useState(false);
+  const {theme} = useContext(ThemeContext);
 
   const getAmountFormatted = (amt: any) => {
     let value = parseInt(amt);
@@ -55,7 +60,7 @@ export const GovtProjectScreenDetails = ({
           ' K';
       }
     } else {
-      retVal = 'Refer Tender Document For Amount';
+      retVal = 'NA';
     }
     return retVal;
   };
@@ -131,113 +136,449 @@ export const GovtProjectScreenDetails = ({
             color={'red'}
           />
         )}
-        <ScrollView style={styles.modal}>
-          <Text>
-            {'\n'}
-            {'\n'}
-          </Text>
-          <View style={{flexDirection: 'row'}}>
-            <Text style={styles.titles}>Tender ID </Text>
-            <Text style={styles.values}>
-              {tenderDetails?.tender_id} {'\n'}
-            </Text>
-          </View>
 
-          {tenderDetails?.tender_description && (
-            <View style={{flexDirection: 'row'}}>
-              <Text style={styles.titles}>Tender Title </Text>
-              <Text style={styles.values}>
-                {' '}
-                {tenderDetails?.tender_description}
-              </Text>
+        {tenderDetails !== {} && (
+          <>
+            <View
+              style={{
+                backgroundColor: theme.colors.cardBackground,
+                // marginTop: 20,
+                marginHorizontal: 10,
+                borderTopLeftRadius: 20,
+                borderTopRightRadius: 20,
+              }}>
+              <View
+                style={{
+                  backgroundColor: theme.colors.secondary,
+                  borderTopLeftRadius: 20,
+                  borderTopRightRadius: 20,
+                  paddingVertical: 9,
+                  flexDirection: 'row',
+                  justifyContent: 'space-around',
+                }}>
+                <Text
+                  style={{
+                    color: theme.colors.lightest,
+                    fontSize: theme.fonts.fontSize.small,
+                  }}>
+                  <Text>Tender Details</Text>
+                </Text>
+
+                <Text
+                  style={{
+                    color: theme.colors.lightest,
+                    fontSize: theme.fonts.fontSize.small,
+                  }}>
+                  <Text>
+                    Tender Amount: Rs.{' '}
+                    {getAmountFormatted(tenderDetails.tender_amount)}/-
+                  </Text>
+                </Text>
+              </View>
             </View>
-          )}
-
-          {tenderDetails?.Location && (
-            <View style={{flexDirection: 'row'}}>
-              <Text style={styles.titles}> Location </Text>
-              <Text style={{...styles.values}}>{tenderDetails?.Location}</Text>
+            <View
+              style={{
+                marginTop: 20,
+                marginHorizontal: 15,
+                borderBottomWidth: 0.25,
+                alignContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Label small>Tender ID</Label>
+              <Label style={{color: theme.colors.dark, marginBottom: 10}}>
+                {tenderDetails.tender_id}
+              </Label>
             </View>
-          )}
 
-          {tenderDetails?.department && (
-            <View style={{flexDirection: 'row'}}>
-              <Text style={styles.titles}> Department </Text>
-              <Text style={{...styles.values}}>
-                {tenderDetails?.department}
-              </Text>
+            <View
+              style={{
+                marginTop: 20,
+                marginHorizontal: 15,
+                borderBottomWidth: 0.25,
+                flexDirection: 'column',
+              }}>
+              <View
+                style={{
+                  marginTop: 10,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    borderRightWidth: 0.25,
+                    width: '50%',
+                    marginRight: 5,
+                  }}>
+                  <Label small>Tender Category</Label>
+                  <Label
+                    style={{
+                      color: theme.colors.dark,
+                      flex: 1,
+                      flexWrap: 'wrap',
+                      textAlign: 'right',
+                      paddingRight: 5,
+                    }}>
+                    {tenderDetails.tender_category}
+                  </Label>
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    width: '50%',
+                    marginRight: 5,
+                  }}>
+                  <Label small>Closing Date</Label>
+                  <Label style={{color: theme.colors.dark, marginBottom: 10}}>
+                    {Helpers.formatDate(tenderDetails.closing_date)}
+                  </Label>
+                </View>
+              </View>
+              <View
+                style={{
+                  marginTop: 5,
+                  // borderBottomWidth: 0.25,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    borderRightWidth: 0.25,
+                    width: '50%',
+                    marginRight: 5,
+                  }}>
+                  <Label small>Tender Type</Label>
+                  <Label style={{color: theme.colors.dark, marginBottom: 10}}>
+                    {tenderDetails.TenderType || 'N/A '}
+                  </Label>
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    width: '50%',
+                    marginRight: 5,
+                  }}>
+                  <Label small>Tender Fee</Label>
+                  <Label style={{color: theme.colors.dark, marginBottom: 10}}>
+                    {tenderDetails.tender_fee || 'N/A'}
+                  </Label>
+                </View>
+              </View>
             </View>
-          )}
-
-          {tenderDetails?.tender_category && (
-            <View style={{flexDirection: 'row'}}>
-              <Text style={styles.titles}>Tender Category </Text>
-              <Text style={styles.values}>
-                {' '}
-                {tenderDetails?.tender_category}
-              </Text>
+            <View
+              style={{
+                marginVertical: 20,
+                marginHorizontal: 15,
+                borderBottomWidth: 0.25,
+                alignContent: 'center',
+                alignItems: 'center',
+              }}>
+              <View style={{alignContent: 'center', alignItems: 'center'}}>
+                <Label small>Tender Title</Label>
+                <Label
+                  style={{
+                    color: theme.colors.dark,
+                    marginBottom: 10,
+                    alignSelf: 'stretch',
+                    textAlign: 'center',
+                  }}>
+                  {tender_title}
+                </Label>
+              </View>
+              <View
+                style={{
+                  alignContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Label
+                  small
+                  style={{
+                    borderTopWidth: 0.25,
+                    paddingTop: 10,
+                  }}>
+                  Tender Description
+                </Label>
+                <Label
+                  style={{
+                    color: theme.colors.dark,
+                    marginBottom: 10,
+                    alignSelf: 'stretch',
+                    textAlign: 'center',
+                  }}>
+                  {tenderDetails.tender_description}
+                </Label>
+              </View>
+              <LabelButton
+                text="Tender Link Click Here to View"
+                labelStyle={{fontSize: theme.fonts.fontSize.smallest}}
+                style={{
+                  backgroundColor: theme.colors.dark,
+                  marginVertical: 10,
+                  borderRadius: 30,
+                  paddingVertical: 10,
+                  paddingHorizontal: 25,
+                  alignItems: 'center',
+                }}
+                onPress={() => openTenderURL(tenderDetails?.tender_url)}
+              />
             </View>
-          )}
+            <ScrollView>
+              <View
+                style={{
+                  marginTop: 20,
+                  marginHorizontal: 15,
+                  // borderBottomWidth: 0.25,
+                  // flexDirection: 'row',
+                }}>
+                <View
+                  style={{
+                    marginTop: 10,
+                  }}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      marginRight: 5,
+                      marginBottom: 10,
+                    }}>
+                    <Label small>Tender Location</Label>
+                    <Label
+                      style={{
+                        color: theme.colors.dark,
+                        textAlign: 'right',
+                        flex: 1,
+                        flexWrap: 'wrap',
+                      }}>
+                      {tenderDetails.Location || 'N/A'}
+                    </Label>
+                  </View>
+                  <View
+                    style={{
+                      marginRight: 5,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Label small> Department</Label>
+                    <Label
+                      style={{
+                        color: theme.colors.dark,
+                        marginBottom: 10,
+                        textAlign: 'right',
+                        flex: 1,
+                        flexWrap: 'wrap',
+                      }}>
+                      {tenderDetails.department || 'N/A'}
+                    </Label>
+                  </View>
+                  <View
+                    style={{
+                      marginRight: 5,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Label small> ProductCategory</Label>
+                    <Label
+                      style={{
+                        color: theme.colors.dark,
+                        marginBottom: 10,
+                        textAlign: 'right',
+                      }}>
+                      {tenderDetails.ProductCategory || 'N/A'}
+                    </Label>
+                  </View>
+                  <View
+                    style={{
+                      marginRight: 5,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Label small> Status</Label>
+                    <Label
+                      style={{
+                        color: theme.colors.dark,
+                        marginBottom: 10,
+                        textAlign: 'right',
+                      }}>
+                      {tenderDetails.tender_status || 'N/A'}
+                    </Label>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      marginRight: 5,
+                    }}>
+                    <Label small> Bidder Query</Label>
+                    {tenderDetails?.bidder_query && (
+                      <LabelButton
+                        text="Click Here to View"
+                        labelStyle={{fontSize: theme.fonts.fontSize.smallest}}
+                        style={{
+                          backgroundColor: theme.colors.dark,
+                          borderRadius: 30,
+                          paddingVertical: 5,
+                          paddingHorizontal: 15,
+                          alignItems: 'center',
+                        }}
+                        onPress={() =>
+                          openTenderURL(tenderDetails?.bidder_query)
+                        }
+                      />
+                    )}
+                    {!tenderDetails?.bidder_query && (
+                      <Label
+                        style={{
+                          color: theme.colors.dark,
+                          marginBottom: 10,
+                          textAlign: 'right',
+                        }}>
+                        {'N/A'}
+                      </Label>
+                    )}
+                  </View>
+                  <View
+                    style={{
+                      marginRight: 5,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Label small> Opening Date</Label>
+                    <Label
+                      style={{
+                        color: theme.colors.dark,
+                        marginBottom: 10,
+                        textAlign: 'right',
+                      }}>
+                      {tenderDetails.BidOpeningDate || 'N/A'}
+                    </Label>
+                  </View>
+                  <View
+                    style={{
+                      marginRight: 5,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Label small> BidSubStart Date</Label>
+                    <Label
+                      style={{
+                        color: theme.colors.dark,
+                        marginBottom: 10,
+                        textAlign: 'right',
+                      }}>
+                      {tenderDetails.BidSubStartDate || 'N/A'}
+                    </Label>
+                  </View>
 
-          {tenderDetails?.tender_description && (
-            <View style={{flexDirection: 'row'}}>
-              <Text style={styles.titles}> Tender Description </Text>
-              <Text style={{...styles.values}}>
-                {tenderDetails?.tender_description}
-              </Text>
-            </View>
-          )}
-          <View style={{flexDirection: 'row'}}>
-            <Text style={styles.titles}>Tender Amount </Text>
-            <Text style={styles.values}>
-              {' '}
-              {getAmountFormatted(tenderDetails?.tender_amount)}
-            </Text>
-          </View>
+                  <View
+                    style={{
+                      marginRight: 5,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Label small>DocDownl StartDate</Label>
+                    <Label
+                      style={{
+                        color: theme.colors.dark,
+                        marginBottom: 10,
+                        textAlign: 'right',
+                      }}>
+                      {tenderDetails.DocDownlStartDate || 'N/A'}
+                    </Label>
+                  </View>
 
-          {tenderDetails?.closing_date && (
-            <View style={{flexDirection: 'row'}}>
-              <Text style={styles.titles}>Closing Date </Text>
-              <Text style={{...styles.values, color: 'darkred'}}>
-                {' '}
-                {Helpers.formatDate(tenderDetails?.closing_date)} {'\n'}
-              </Text>
-            </View>
-          )}
+                  <View
+                    style={{
+                      marginRight: 5,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Label small> DocDownl EndDate</Label>
+                    <Label
+                      style={{
+                        color: theme.colors.dark,
+                        marginBottom: 10,
+                        textAlign: 'right',
+                      }}>
+                      {tenderDetails.DocDownlEndDate || 'N/A'}
+                    </Label>
+                  </View>
 
-          {tenderDetails?.tender_url && (
-            <View style={{flexDirection: 'row'}}>
-              <Text style={styles.titles}>Tender URL </Text>
-              <Text
-                style={{...styles.values, color: 'blue'}}
-                onPress={() => openTenderURL(tenderDetails?.tender_url)}>
-                {' '}
-                {tenderDetails?.tender_url} {'\n'}
-                {'\n'}
-                {'\n'}
-                {'\n'}
-              </Text>
-            </View>
-          )}
-        </ScrollView>
-
+                  <View
+                    style={{
+                      marginRight: 5,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Label small> Organisation Name</Label>
+                    <Label
+                      style={{
+                        color: theme.colors.dark,
+                        marginBottom: 10,
+                        textAlign: 'right',
+                      }}>
+                      {tenderDetails.OrganisationName || 'N/A'}
+                    </Label>
+                  </View>
+                  <View
+                    style={{
+                      marginRight: 5,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Label small> Organisation Type</Label>
+                    <Label
+                      style={{
+                        color: theme.colors.dark,
+                        marginBottom: 10,
+                        textAlign: 'right',
+                      }}>
+                      {tenderDetails.OrganisationType || 'N/A'}
+                    </Label>
+                  </View>
+                  <View
+                    style={{
+                      marginRight: 5,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Label small> ePublish Date</Label>
+                    <Label
+                      style={{
+                        color: theme.colors.dark,
+                        marginBottom: 10,
+                        textAlign: 'right',
+                      }}>
+                      {tenderDetails.ePublishDate || 'N/A'}
+                    </Label>
+                  </View>
+                </View>
+              </View>
+            </ScrollView>
+          </>
+        )}
         <TouchableOpacity
           style={{
             marginHorizontal: 80,
-            backgroundColor: '#D22B2B',
-            marginBottom: 20,
+            backgroundColor: '#F9F9F9',
+            marginVertical: 10,
           }}
           onPress={() => {
             NavigationActions.navigateBack();
           }}>
           <Text
             style={{
-              backgroundColor: '#005A9C',
+              backgroundColor: theme.colors.secondary,
               color: 'white',
               textAlign: 'center',
               fontSize: 20,
               fontWeight: 'bold',
               padding: 5,
+              borderRadius: 10,
             }}>
             Back
           </Text>
