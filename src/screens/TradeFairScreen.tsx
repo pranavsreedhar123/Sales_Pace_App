@@ -16,21 +16,28 @@ import {
 } from 'react-native';
 import {Helpers} from '../utils/Helpers';
 import {Icon} from 'react-native-elements';
+import {Theme} from '../styles/Theme';
 import Icon1 from 'react-native-vector-icons/FontAwesome';
 import {NavigationActions} from '../navigation/NavigationActions';
 import Modal from 'react-native-modal';
-import {Alert} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
-import {
-  getTradeFairDataAPI,
-  getTradeFairDetailsAPI,
-} from '../services/tradeFairsAPI';
+import {getTradeFairDetailsAPI} from '../services/tradeFairsAPI';
 import {AnalyticsHelper} from '../utils/AnalyticsHelper';
+import {LabelButton} from '../components/buttons/LabelButton';
+import {Screens} from '../navigation/Screens';
 
-const TradeFairScreen = () => {
+type RouteParams = {
+  params: {
+    tradeFairsList: any;
+  };
+};
+
+const TradeFairScreen = ({route}: {route: RouteParams}) => {
+  const {tradeFairsList} = route.params;
   const [isModalVisible, setModalVisible] = useState(false);
-  const [allTradeFair, setAllTradeFair] = useState<any>([]);
-  const [filteredTradeFair, setFilteredTradeFair] = useState<any>([]);
+  const [allTradeFair, setAllTradeFair] = useState<any>(tradeFairsList);
+  const [filteredTradeFair, setFilteredTradeFair] =
+    useState<any>(tradeFairsList);
   const [groupedTradeFair, setGroupedTradeFair] = useState<any>([]);
   const [isLoading, setLoading] = useState(true);
   const [tenderSearchText, setTenderSearchText] = useState('');
@@ -51,38 +58,16 @@ const TradeFairScreen = () => {
     console.log('', isFilterModalVisible);
   }
 
-  const passValuesInModal = (tender: any) => {
-    toggleModal();
-    console.log(isModalVisible, 'Modal Value');
-    console.log(isModalVisible);
-    if (!isModalVisible) {
-      console.log(JSON.stringify(tender));
-      // checkIfURLExist();
-      console.log(tender.source_id + '----' + tender.row_id + 'sourceID');
-      setTenderID(tender.row_id);
-      setSourceID(tender.source_id);
-    }
+  const passValuesInModal = async (tradeFair: any) => {
+    NavigationActions.navigateToScreen({
+      screenName: Screens.TradeFairScreenDetails,
+      params: {
+        tenderID: tradeFair.row_id,
+        sourceID: tradeFair.source_id,
+        tradeFairName: tradeFair.tradefair_name,
+      },
+    });
   };
-
-  useEffect(() => {
-    setLoading(true);
-    try {
-      Linking.addEventListener('url', () => {
-        console.log('Hello World');
-      });
-
-      const getTradeFairData = async () => {
-        let crawledHousingData: string = await getTradeFairDataAPI(50, 0);
-
-        setAllTradeFair(JSON.parse(crawledHousingData));
-        setFilteredTradeFair(JSON.parse(crawledHousingData));
-      };
-      getTradeFairData();
-    } catch (e) {
-      // console.log(e);
-      setLoading(false);
-    }
-  }, []);
   const checkIfURLExist = async (projectDetailsJSON: any) => {
     try {
       // await checkProjectDetailsURL('https://etender.up.nic.in/nicgep/app?page=FrontEndTenderDetailsExternal&amp;service=page&amp;tnid=915548%20');
@@ -119,28 +104,6 @@ const TradeFairScreen = () => {
       // consol
     }
   }, [sourceID, tenderID]);
-
-  useEffect(() => {
-    const getGroupedAndFilteredData = () => {
-      // alert(12)
-      const tendersGroupedByType = _.groupBy(filteredTradeFair, 'city');
-      setLoading(true);
-
-      const mappedCrawledTenders = _.map(
-        tendersGroupedByType,
-        (value: any, key: any) => {
-          return {
-            city: key,
-            data: value,
-          };
-        },
-      );
-      console.log(mappedCrawledTenders, 'jewfniewfiewfoiewf');
-      setGroupedTradeFair(mappedCrawledTenders);
-    };
-    filteredTradeFair && getGroupedAndFilteredData();
-  }, [filteredTradeFair]);
-  // console.log(filteredGovtTenders+"-====")
 
   const getAmountFormatted = (amt: any) => {
     let value = parseInt(amt);
@@ -186,8 +149,6 @@ const TradeFairScreen = () => {
   //   // setGroupedGovtTenders(allTendersWithSorting)
   //   console.log(allTendersWithSorting, 'Sortedddddddddddd');
   // };
-  const [isVisible, setVisiblity] = useState(false);
-
   // a openTradeFairURL(tender_url:any)
   const openTradeFairURL = async (tender_url: any) => {
     try {
@@ -201,14 +162,12 @@ const TradeFairScreen = () => {
         ToastAndroid.CENTER,
       );
     }
-    // .catch(()=>{console.log("ERROR")});
   };
 
   const getExhibitorSpacePrice = (expSpacePrice: any) => {
     if (expSpacePrice != '{}') {
       let price = expSpacePrice.substring(1).split(' ,');
       let indPriceString = price[0].split(',INR ');
-      // let intPriceString=price[1].split(",USD ");
       const rsFormatter = new Intl.NumberFormat('en-IN', {
         style: 'currency',
         currency: 'INR',
@@ -231,34 +190,18 @@ const TradeFairScreen = () => {
       return [{price: '', isAmt: false}];
     }
   };
-  const groupByTenderType = () => {
-    // alert('Hello is it group')
-    setIsGroupBy(true);
 
-    setIsFilterModalVisible(!isFilterModalVisible);
-    setFilteredTradeFair(allTradeFair);
-    console.log(filteredTradeFair, '<--', isGroupBy, '-->', groupedTradeFair);
-    // setTenderData(groupedGovtTenders)
-  };
   const sortOption = () => {
     setIsGroupBy(false);
     setIsSortByDateAsc(!isSortByDateAsc);
     setIsFilterModalVisible(!isFilterModalVisible);
 
-    // alert('sorted')
-    // let allTendersWithSorting = Helpers.sortArrayByKey(
-    //   allGovtTenders,
-    //   sortBy,
-    // );
     let allTendersWithSorting = Helpers.sortArrayByDate(
       allTradeFair,
       'end_date',
       isSortByDateAsc,
     );
-    // sortArrayByDate(allGovtTenders);
-    // setGroupedGovtTenders(mappedCrawledTenders);
 
-    console.log(groupedTradeFair, '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
     let groupedSortedTenders = [
       {
         city: 'sorted_data',
@@ -266,248 +209,97 @@ const TradeFairScreen = () => {
       },
     ];
 
-    console.log(groupedSortedTenders, '******************');
-
     setFilteredTradeFair(groupedSortedTenders);
     // setGroupedGovtTenders(groupedSortedTenders);
     // setTenderData(allTendersWithSorting)
   };
 
+  console.log(filteredTradeFair[0]['tradefair_name'], '******************');
+
   return (
     <View style={{flex: 1}}>
-      {/* true?<GovtProjectScreenDetail/>:null */}
-
       <View style={styles.container}>
-        <View style={styles.searchBox}>
-          <TextInput
-            placeholder="Search City"
-            style={styles.input}
-            value={tenderSearchText}
-            onChangeText={text => setTenderSearchText(text)}
-          />
-
-          <Icon
-            // style={styles.text}
-            raised
-            name="search"
-            type="font-awesome"
-            size={19}
-            color="#005A9C"
-            // backgroundColor: '#D0D0D0'
-
-            onPress={() => filterTenders()}
-          />
-
-          {/* <View style={{alignItems: 'flex-end', paddingLeft: 10,paddingVertical:15}}>
-              <Icon
-                name="sort-amount-desc"
-                type='font-awesome'
-                size={35}
-                color="#005A9C"
-                
-                
-                onPress={() => sortOption("tender_amount")}
-              />
-            </View> */}
-          {/* {filterOptionStatus && (
-            <View
-              style={{
-                flexDirection: 'row',
-                paddingLeft: 16,
-              }}>
-              <Text
-                style={styles.textButton}
-                onPress={() => filterSubscriber()}>
-                Subscribers
-              </Text>
-              <Text style={styles.textButton} onPress={() => filterView()}>
-                View Count
-              </Text>
-            </View>
-          )} */}
-          <View
-            style={{
-              flexDirection: 'row',
-              // marginRight:300,
-
-              // marginLeft:10,
-              alignSelf: 'flex-start',
-              // padding:10 ,
-              borderRadius: 50,
-              // backgroundColor:'white'
-            }}>
-            <TouchableOpacity onPress={() => setFilterModal()}>
-              <Icon
-                //  style={styles.text}
-                raised
-                name="sort-amount-desc"
-                type="font-awesome"
-                size={19}
-                color="#005A9C"
-
-                // onPress={() => sortOption("tender_amount")}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={styles.sectionsList}>
-          {!groupedTradeFair?.length && (
-            <Text
-              style={{
-                ...styles.text,
-                marginVertical: 300,
-                height: 40,
-                paddingHorizontal: 20,
-                paddingTop: 10,
-                backgroundColor: '#005A9C',
-              }}>
-              No Trade Fair Found
-            </Text>
-          )}
-          <Modal
-            isVisible={isFilterModalVisible}
-            style={{
-              // isVisible=isFilterModalVisible,
-              // flexDirection:'row',
-              // marginRight:10,
-
-              // marginTop:10,
-              margin: 0,
-              marginTop: Dimensions.get('screen').height / 6,
-              maxHeight: Dimensions.get('screen').height / 4,
-              // height:/
-              borderRadius: 40,
-              width: Dimensions.get('screen').width,
-
-              // height:800,
-              // margin:300,
-              alignSelf: 'flex-end',
-              // padding:10,
-              backgroundColor: 'white',
-            }}>
-            <Text
-              style={{
-                // flexDirection:'column',
-                fontSize: 18,
-                fontWeight: 'bold',
-                marginTop: 0,
-                marginLeft: 20,
-                paddingBottom: 15,
-              }}>
-              Group By{' '}
-            </Text>
-
+        <ScrollView>
+          {filteredTradeFair?.map((tradeFair: any, index: number) => (
             <TouchableOpacity
-              style={{flexDirection: 'row', marginLeft: 40}}
-              onPress={groupByTenderType}>
-              <Icon
-                name="circle"
-                type="font-awesome"
-                size={19}
-                // color="#55DD33"
-                color={isGroupBy ? '#55DD33' : '#D0D0D0'}
-                style={{flexDirection: 'column'}}
-              />
-              <Text
+              style={{
+                backgroundColor: Theme.colors.cardBackground,
+                marginTop: 20,
+                borderTopLeftRadius: 20,
+                borderTopRightRadius: 20,
+              }}
+              onPress={() => passValuesInModal(tradeFair)}
+              key={index}>
+              <View
+                style={{
+                  backgroundColor: Theme.colors.secondary,
+                  borderTopLeftRadius: 20,
+                  borderTopRightRadius: 20,
+                  paddingVertical: 9,
+                  flexDirection: 'row',
+                  justifyContent: 'space-around',
+                }}>
+                <Text
+                  style={{
+                    color: Theme.colors.lightest,
+                    fontSize: Theme.fonts.fontSize.small,
+                  }}>
+                  <Text style={styles.title}>Closing Date: </Text>{' '}
+                  {tradeFair.end_date}
+                </Text>
+              </View>
+
+              <View
                 style={{
                   flexDirection: 'row',
-                  fontSize: 16,
-                  fontWeight: 'bold',
                 }}>
-                {' '}
-                City{' '}
-              </Text>
-            </TouchableOpacity>
-            <Text style={{borderBottomWidth: 2}}> </Text>
-            <Text
-              style={{
-                // flexDirection:'column',
-                fontSize: 18,
-                fontWeight: 'bold',
-                marginLeft: 20,
-                paddingVertical: 10,
-              }}>
-              Sort By{' '}
-            </Text>
-            <TouchableOpacity
-              style={{flexDirection: 'row', marginLeft: 40}}
-              // onPress={()  }
-              onPress={sortOption}>
-              <Icon
-                name="circle"
-                type="font-awesome"
-                size={20}
-                color={isGroupBy ? '#D0D0D0' : '#55DD33'}
-              />
-              <Text
-                style={{
-                  // flexDirection:'column',
-                  fontSize: 16,
-                  fontWeight: 'bold',
-                }}>
-                {' '}
-                Closing Date {isSortByDateAsc ? '(ASC)' : '(DESC)'}{' '}
-              </Text>
-              <Icon
-                // name="arrow-down"
-                name={isSortByDateAsc ? 'arrow-down' : 'arrow-up'}
-                type="font-awesome"
-                size={20}
-                color={isGroupBy ? '#D0D0D0' : '#55DD33'}
-              />
-            </TouchableOpacity>
-          </Modal>
-          <SectionList
-            sections={isGroupBy ? groupedTradeFair : filteredTradeFair}
-            keyExtractor={(tender, index) => tender + index}
-            renderItem={({item}) => (
-              <TouchableOpacity
-                style={styles.item}
-                onPress={() => passValuesInModal(item)}
-                // onPress={()=>NavigationActions.navigateToDifferentStackedScreen(
-                //   {screenName:'GovtProjectScreenDetails',params:item}
-                //   )}
-              >
-                <Text style={styles.tenderData}>
-                  <Text style={styles.title}>Trade Fair Name </Text>
-                  {item.tradefair_name}{' '}
-                </Text>
-
-                {item.city?.length > 0 && (
-                  <Text style={styles.tenderData}>
-                    <Text style={styles.title}>City: </Text> {item.city}{' '}
+                <View
+                  style={{
+                    flexDirection: 'column',
+                    width: '60%',
+                    paddingLeft: 16,
+                    marginTop: 10,
+                  }}>
+                  <Text style={{fontWeight: 'bold'}}>TradeFair Name</Text>
+                  <Text
+                    style={{
+                      fontSize: Theme.fonts.fontSize.small,
+                      paddingTop: 5,
+                    }}>
+                    {tradeFair.tradefair_name}{' '}
                   </Text>
-                )}
-
-                <Text style={styles.tenderData}>
-                  <Text style={styles.title}>Venue Name: </Text>{' '}
-                  {
-                    // getAmountFormatted(item.tender_amount)
-                    item.venue_name
-                  }
-                </Text>
-                <Text style={styles.tenderData}>
-                  <Text style={styles.title}>Event Date: </Text>{' '}
-                  {
-                    // Helpers.formatDate(item.event_date)
-                    item.start_date
-                  }
-                  {' - '}
-                  {item.end_date} {item.event_year}
-                </Text>
-              </TouchableOpacity>
-            )}
-            // // renderItem={({tender}) => <Item tenderDetails={tender} />}
-            // renderSectionHeader={({section: {city}}) => (
-            //   <Text style={styles.header}>{city}</Text>
-            // )}
-
-            renderSectionHeader={({section: {city}}) => (
-              <>{isGroupBy && <Text style={styles.header}>{city}</Text>}</>
-            )}
-          />
-        </View>
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'column',
+                    width: '40%',
+                  }}>
+                  <LabelButton
+                    text="Share"
+                    style={{
+                      backgroundColor: Theme.colors.dark,
+                      marginTop: 10,
+                      borderRadius: 30,
+                      paddingVertical: 3,
+                      alignItems: 'center',
+                    }}
+                  />
+                  <LabelButton
+                    text="View More"
+                    style={{
+                      backgroundColor: Theme.colors.dark,
+                      marginTop: 10,
+                      borderRadius: 30,
+                      paddingVertical: 3,
+                      alignItems: 'center',
+                    }}
+                  />
+                </View>
+              </View>
+            </TouchableOpacity>
+            // </View>
+          ))}
+        </ScrollView>
       </View>
 
       <Modal

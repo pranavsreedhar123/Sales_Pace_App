@@ -9,37 +9,36 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {Helpers} from '../utils/Helpers';
-import {
-  checkProjectDetailsURL,
-  getGovtProjectDetails,
-} from '../services/govtProjectsAPI';
+import {checkProjectDetailsURL} from '../services/govtProjectsAPI';
 import {NavigationActions} from '../navigation/NavigationActions';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {ThemeContext} from '../context/theme/ThemeContext';
 import {Label} from '../components/Label';
 import {LabelButton} from '../components/buttons/LabelButton';
+import {getTradeFairDetailsAPI} from '../services/tradeFairsAPI';
 import {useFocusEffect} from '@react-navigation/native';
-import {StackNavigationProp} from '@react-navigation/stack';
 import {setHeaderLeft} from '../navigation/ScreenOptions';
+import {StackNavigationProp} from '@react-navigation/stack';
 
 type RouteParams = {
   params: {
-    tender_id: string;
-    tender_source: string;
-    tender_title: string;
+    sourceID: number;
+    tenderID: number;
+    tradeFairName: string;
   };
 };
 
-export const GovtProjectScreenDetails = ({
+export const TradeFairScreenDetails = ({
   route,
   navigation,
 }: {
   route: RouteParams;
   navigation: StackNavigationProp<Record<string, undefined>, string>;
 }): JSX.Element => {
-  const {tender_id, tender_source, tender_title} = route.params;
-  const [tenderDetails, setTenderDetails] = useState<any>({});
-  const [isLoadingTenderDetails, setIsLoadingTenderDetails] = useState(false);
+  const {sourceID, tenderID, tradeFairName} = route.params;
+  const [tradeFairDetails, setTradeFairDetails] = useState<any>({});
+  const [isLoadingTradeFairDetails, setIsLoadingTradeFairDetails] =
+    useState(false);
   const {theme} = useContext(ThemeContext);
 
   const getAmountFormatted = (amt: any) => {
@@ -74,32 +73,34 @@ export const GovtProjectScreenDetails = ({
     await Linking.openURL(tender_url);
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      setHeaderLeft(navigation, '', '', () => {
-        NavigationActions.navigateBack();
-      });
-    }, [navigation]),
-  );
+  useEffect(() => {
+    getTradeFairDetails(sourceID, tenderID);
+  }, [sourceID, tenderID]);
 
   useEffect(() => {
-    getProjectDetails(tender_source, tender_id);
-  }, [tender_source, tender_id]);
+    try {
+      // alert(sourceID + tenderID);
+    } catch (e) {
+      // consol
+    }
+  }, [sourceID, tenderID]);
 
   const checkIfURLExist = async (projectDetailsJSON: any) => {
-    setIsLoadingTenderDetails(true);
+    setIsLoadingTradeFairDetails(true);
     try {
       let urlDetailsCheckResponse = await checkProjectDetailsURL(
-        projectDetailsJSON.tender_url,
+        projectDetailsJSON.venue_website,
       );
 
+      console.log(urlDetailsCheckResponse, 'check projectDetailsJSON:::::::::');
+
       if (urlDetailsCheckResponse.status != 200) {
-        projectDetailsJSON.tender_url = Helpers.extractDomain(
-          projectDetailsJSON.tender_url,
+        projectDetailsJSON.venue_website = Helpers.extractDomain(
+          projectDetailsJSON.venue_website,
         );
       }
 
-      setTenderDetails(projectDetailsJSON);
+      setTradeFairDetails(projectDetailsJSON);
     } catch {
       (e: Error) => {
         console.log(e + 'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwww');
@@ -110,21 +111,35 @@ export const GovtProjectScreenDetails = ({
         );
       };
     }
-    setIsLoadingTenderDetails(false);
+    setIsLoadingTradeFairDetails(false);
   };
 
-  const getProjectDetails = async (sourceId: string, tenderId: string) => {
+  useFocusEffect(
+    React.useCallback(() => {
+      setHeaderLeft(navigation, '', '', () => {
+        NavigationActions.navigateBack();
+      });
+    }, [navigation]),
+  );
+
+  const getTradeFairDetails = async (sourceId: number, tenderId: number) => {
     try {
-      setTenderDetails({});
-      let projectDetails: string = await getGovtProjectDetails(
-        sourceId,
-        tenderId,
+      setTradeFairDetails({});
+      const getTradeFairDetails = async () => {
+        console.log('--------------=================');
+        let projectDetails: string = await getTradeFairDetailsAPI(
+          sourceId,
+          tenderId,
+        );
+        console.log(projectDetails, '0000000000');
+        let projectDetailsJSON = JSON.parse(projectDetails);
+
+        checkIfURLExist(projectDetailsJSON);
+      };
+      console.log(
+        sourceID && tenderID && getTradeFairDetails() + 'GET project details',
       );
-
-      let projectDetailsJSON = JSON.parse(projectDetails);
-
-      console.log(projectDetailsJSON, '&&&&&&&&&&&&&&&&&');
-      checkIfURLExist(projectDetailsJSON);
+      sourceID && tenderID && getTradeFairDetails();
     } catch (e) {
       ToastAndroid.showWithGravityAndOffset(
         'Unable to Process the request.\n Something went wrong',
@@ -140,7 +155,7 @@ export const GovtProjectScreenDetails = ({
   return (
     <>
       <View style={styles.modal}>
-        {isLoadingTenderDetails && (
+        {isLoadingTradeFairDetails && (
           <ActivityIndicator
             size={'large'}
             // {...props}
@@ -148,7 +163,7 @@ export const GovtProjectScreenDetails = ({
           />
         )}
 
-        {tenderDetails !== {} && (
+        {tradeFairDetails !== {} && (
           <>
             <View
               style={{
@@ -179,12 +194,7 @@ export const GovtProjectScreenDetails = ({
                   style={{
                     color: theme.colors.lightest,
                     fontSize: theme.fonts.fontSize.small,
-                  }}>
-                  <Text>
-                    Tender Amount: Rs.{' '}
-                    {getAmountFormatted(tenderDetails.tender_amount)}/-
-                  </Text>
-                </Text>
+                  }}></Text>
               </View>
             </View>
             <View
@@ -197,7 +207,7 @@ export const GovtProjectScreenDetails = ({
               }}>
               <Label small>Tender ID</Label>
               <Label style={{color: theme.colors.dark, marginBottom: 10}}>
-                {tenderDetails.tender_id}
+                {tenderID}
               </Label>
             </View>
 
@@ -218,39 +228,18 @@ export const GovtProjectScreenDetails = ({
                   style={{
                     flexDirection: 'row',
                     justifyContent: 'space-between',
-                    borderRightWidth: 0.25,
                     width: '50%',
                     marginRight: 5,
                   }}>
-                  <Label small>Tender Category</Label>
-                  <Label
-                    style={{
-                      color: theme.colors.dark,
-                      flex: 1,
-                      flexWrap: 'wrap',
-                      textAlign: 'right',
-                      paddingRight: 5,
-                    }}>
-                    {tenderDetails.tender_category}
-                  </Label>
-                </View>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    width: '50%',
-                    marginRight: 5,
-                  }}>
-                  <Label small>Closing Date</Label>
+                  <Label small>End Date</Label>
                   <Label style={{color: theme.colors.dark, marginBottom: 10}}>
-                    {Helpers.formatDate(tenderDetails.closing_date)}
+                    {Helpers.formatDate(tradeFairDetails.end_date)}
                   </Label>
                 </View>
               </View>
-              <View
+              {/* <View
                 style={{
                   marginTop: 5,
-                  // borderBottomWidth: 0.25,
                   flexDirection: 'row',
                   justifyContent: 'space-between',
                 }}>
@@ -264,7 +253,7 @@ export const GovtProjectScreenDetails = ({
                   }}>
                   <Label small>Tender Type</Label>
                   <Label style={{color: theme.colors.dark, marginBottom: 10}}>
-                    {tenderDetails.TenderType || 'N/A '}
+                    {tradeFairDetails.TenderType || 'N/A '}
                   </Label>
                 </View>
                 <View
@@ -276,10 +265,10 @@ export const GovtProjectScreenDetails = ({
                   }}>
                   <Label small>Tender Fee</Label>
                   <Label style={{color: theme.colors.dark, marginBottom: 10}}>
-                    {tenderDetails.tender_fee || 'N/A'}
+                    {tradeFairDetails.tender_fee || 'N/A'}
                   </Label>
                 </View>
-              </View>
+              </View> */}
             </View>
             <View
               style={{
@@ -290,7 +279,7 @@ export const GovtProjectScreenDetails = ({
                 alignItems: 'center',
               }}>
               <View style={{alignContent: 'center', alignItems: 'center'}}>
-                <Label small>Tender Title</Label>
+                <Label small>Trade Fair Name </Label>
                 <Label
                   style={{
                     color: theme.colors.dark,
@@ -298,7 +287,7 @@ export const GovtProjectScreenDetails = ({
                     alignSelf: 'stretch',
                     textAlign: 'center',
                   }}>
-                  {tender_title}
+                  {tradeFairName}
                 </Label>
               </View>
               <View
@@ -312,7 +301,7 @@ export const GovtProjectScreenDetails = ({
                     borderTopWidth: 0.25,
                     paddingTop: 10,
                   }}>
-                  Tender Description
+                  Trade Fair Description
                 </Label>
                 <Label
                   style={{
@@ -321,7 +310,7 @@ export const GovtProjectScreenDetails = ({
                     alignSelf: 'stretch',
                     textAlign: 'center',
                   }}>
-                  {tenderDetails.tender_description}
+                  {tradeFairDetails.event_description}
                 </Label>
               </View>
               <LabelButton
@@ -335,7 +324,7 @@ export const GovtProjectScreenDetails = ({
                   paddingHorizontal: 25,
                   alignItems: 'center',
                 }}
-                onPress={() => openTenderURL(tenderDetails?.tender_url)}
+                onPress={() => openTenderURL(tradeFairDetails?.venue_website)}
               />
             </View>
             <ScrollView>
@@ -357,7 +346,7 @@ export const GovtProjectScreenDetails = ({
                       marginRight: 5,
                       marginBottom: 10,
                     }}>
-                    <Label small>Tender Location</Label>
+                    <Label small>TradeFair Address</Label>
                     <Label
                       style={{
                         color: theme.colors.dark,
@@ -365,7 +354,7 @@ export const GovtProjectScreenDetails = ({
                         flex: 1,
                         flexWrap: 'wrap',
                       }}>
-                      {tenderDetails.Location || 'N/A'}
+                      {tradeFairDetails.venue_address || 'N/A'}
                     </Label>
                   </View>
                   <View
@@ -374,7 +363,7 @@ export const GovtProjectScreenDetails = ({
                       flexDirection: 'row',
                       justifyContent: 'space-between',
                     }}>
-                    <Label small> Department</Label>
+                    <Label small> Email</Label>
                     <Label
                       style={{
                         color: theme.colors.dark,
@@ -383,7 +372,7 @@ export const GovtProjectScreenDetails = ({
                         flex: 1,
                         flexWrap: 'wrap',
                       }}>
-                      {tenderDetails.department || 'N/A'}
+                      {tradeFairDetails.email || 'N/A'}
                     </Label>
                   </View>
                   <View
@@ -392,14 +381,14 @@ export const GovtProjectScreenDetails = ({
                       flexDirection: 'row',
                       justifyContent: 'space-between',
                     }}>
-                    <Label small> ProductCategory</Label>
+                    <Label small> Fax</Label>
                     <Label
                       style={{
                         color: theme.colors.dark,
                         marginBottom: 10,
                         textAlign: 'right',
                       }}>
-                      {tenderDetails.ProductCategory || 'N/A'}
+                      {tradeFairDetails.fax || 'N/A'}
                     </Label>
                   </View>
                   <View
@@ -408,14 +397,14 @@ export const GovtProjectScreenDetails = ({
                       flexDirection: 'row',
                       justifyContent: 'space-between',
                     }}>
-                    <Label small> Status</Label>
+                    <Label small> Organizer Name</Label>
                     <Label
                       style={{
                         color: theme.colors.dark,
                         marginBottom: 10,
                         textAlign: 'right',
                       }}>
-                      {tenderDetails.tender_status || 'N/A'}
+                      {tradeFairDetails.organizer_name || 'N/A'}
                     </Label>
                   </View>
                   <View
@@ -424,8 +413,8 @@ export const GovtProjectScreenDetails = ({
                       justifyContent: 'space-between',
                       marginRight: 5,
                     }}>
-                    <Label small> Bidder Query</Label>
-                    {tenderDetails?.bidder_query && (
+                    <Label small> Organizer Email</Label>
+                    {tradeFairDetails?.organizer_name && (
                       <LabelButton
                         text="Click Here to View"
                         labelStyle={{fontSize: theme.fonts.fontSize.smallest}}
@@ -437,11 +426,11 @@ export const GovtProjectScreenDetails = ({
                           alignItems: 'center',
                         }}
                         onPress={() =>
-                          openTenderURL(tenderDetails?.bidder_query)
+                          openTenderURL(tradeFairDetails?.organizer_email)
                         }
                       />
                     )}
-                    {!tenderDetails?.bidder_query && (
+                    {!tradeFairDetails?.organizer_phoneno && (
                       <Label
                         style={{
                           color: theme.colors.dark,
@@ -458,14 +447,14 @@ export const GovtProjectScreenDetails = ({
                       flexDirection: 'row',
                       justifyContent: 'space-between',
                     }}>
-                    <Label small> Opening Date</Label>
+                    <Label small> Org. Phone No</Label>
                     <Label
                       style={{
                         color: theme.colors.dark,
                         marginBottom: 10,
                         textAlign: 'right',
                       }}>
-                      {tenderDetails.BidOpeningDate || 'N/A'}
+                      {tradeFairDetails.organizer_phoneno || 'N/A'}
                     </Label>
                   </View>
                   <View
@@ -474,97 +463,14 @@ export const GovtProjectScreenDetails = ({
                       flexDirection: 'row',
                       justifyContent: 'space-between',
                     }}>
-                    <Label small> BidSubStart Date</Label>
+                    <Label small> Exhibitor Profile</Label>
                     <Label
                       style={{
                         color: theme.colors.dark,
                         marginBottom: 10,
                         textAlign: 'right',
                       }}>
-                      {tenderDetails.BidSubStartDate || 'N/A'}
-                    </Label>
-                  </View>
-
-                  <View
-                    style={{
-                      marginRight: 5,
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                    }}>
-                    <Label small>DocDownl StartDate</Label>
-                    <Label
-                      style={{
-                        color: theme.colors.dark,
-                        marginBottom: 10,
-                        textAlign: 'right',
-                      }}>
-                      {tenderDetails.DocDownlStartDate || 'N/A'}
-                    </Label>
-                  </View>
-
-                  <View
-                    style={{
-                      marginRight: 5,
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                    }}>
-                    <Label small> DocDownl EndDate</Label>
-                    <Label
-                      style={{
-                        color: theme.colors.dark,
-                        marginBottom: 10,
-                        textAlign: 'right',
-                      }}>
-                      {tenderDetails.DocDownlEndDate || 'N/A'}
-                    </Label>
-                  </View>
-
-                  <View
-                    style={{
-                      marginRight: 5,
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                    }}>
-                    <Label small> Organisation Name</Label>
-                    <Label
-                      style={{
-                        color: theme.colors.dark,
-                        marginBottom: 10,
-                        textAlign: 'right',
-                      }}>
-                      {tenderDetails.OrganisationName || 'N/A'}
-                    </Label>
-                  </View>
-                  <View
-                    style={{
-                      marginRight: 5,
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                    }}>
-                    <Label small> Organisation Type</Label>
-                    <Label
-                      style={{
-                        color: theme.colors.dark,
-                        marginBottom: 10,
-                        textAlign: 'right',
-                      }}>
-                      {tenderDetails.OrganisationType || 'N/A'}
-                    </Label>
-                  </View>
-                  <View
-                    style={{
-                      marginRight: 5,
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                    }}>
-                    <Label small> ePublish Date</Label>
-                    <Label
-                      style={{
-                        color: theme.colors.dark,
-                        marginBottom: 10,
-                        textAlign: 'right',
-                      }}>
-                      {tenderDetails.ePublishDate || 'N/A'}
+                      {tradeFairDetails.exhibitor_profile || 'N/A'}
                     </Label>
                   </View>
                 </View>

@@ -5,6 +5,10 @@ import {MenuBarIcon} from '../assets/MenuBarIcon';
 import {ArrowBackIcon} from '../assets/ArrowBackIcon';
 import {CustomButton} from '../components/buttons/CustomButton';
 import {Theme} from '../styles/Theme';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {LabelButton} from '../components/buttons/LabelButton';
+import {CommonStyles} from '../styles/CommonStyle';
+import ArrowIcon, {ArrowDirectionEnum} from '../assets/ArrowIcon';
 
 export const setCommonDrawerScreenOptions = () => {
   return {
@@ -43,6 +47,35 @@ export const setDrawerMenuInHeader = () => {
       </CustomButton>
     ),
   };
+};
+
+export const setHeaderLeft = (
+  navigation: StackNavigationProp<Record<string, undefined>, string>,
+  text: string,
+  color: string,
+  onPress: () => void,
+): void => {
+  navigation.setOptions({
+    headerLeft: () => (
+      <LabelButton
+        style={[
+          CommonStyles.marginHorizontal,
+          {flexDirection: 'row', alignItems: 'center'},
+        ]}
+        text={text}
+        color={color}
+        icon={
+          <ArrowIcon
+            style={{marginRight: 5}}
+            direction={ArrowDirectionEnum.LEFT}
+            color={color}
+            width={20}
+          />
+        }
+        onPress={onPress}
+      />
+    ),
+  });
 };
 
 export const setHeaderTitle = (title: string | undefined): string => `${title}`;

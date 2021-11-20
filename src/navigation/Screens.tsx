@@ -6,6 +6,9 @@ export const Screens = {
   GovtProjectScreen: 'GovtProjectScreen',
   GovtProjectScreenDetails: 'GovtProjectScreenDetails',
   TradeFairScreen: 'TradeFairScreen',
+  TradeFairScreenDetails: 'TradeFairScreenDetails',
   VideoScreen: 'VideoScreen',
   VideoCard: 'VideoCard',
+  TenderGroups: 'TenderGroups',
+  TradeFairGroups: 'TradeFairGroups',
 };

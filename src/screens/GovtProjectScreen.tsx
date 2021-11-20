@@ -29,11 +29,20 @@ import {Screens} from '../navigation/Screens';
 import {Theme} from '../styles/Theme';
 import {PrimaryButton} from '../components/buttons/PrimaryButton';
 import {LabelButton} from '../components/buttons/LabelButton';
+import {TopSearchBar} from '../components/TopSearchBar';
 
-const GovtProjectScreen = () => {
+type RouteParams = {
+  params: {
+    tendersList: any;
+  };
+};
+
+const GovtProjectScreen = ({route}: {route: RouteParams}) => {
+  const {tendersList} = route.params;
   const [isModalVisible, setModalVisible] = useState(false);
-  const [allGovtTenders, setAllGovtTenders] = useState<any>([]);
-  const [filteredGovtTenders, setFilteredGovtTenders] = useState<any>([]);
+  const [allGovtTenders, setAllGovtTenders] = useState<any>(tendersList);
+  const [filteredGovtTenders, setFilteredGovtTenders] =
+    useState<any>(tendersList);
   const [groupedGovtTenders, setGroupedGovtTenders] = useState<any>([]);
   const [isLoading, setLoading] = useState(true);
   const [tenderSearchText, setTenderSearchText] = useState('');
@@ -43,9 +52,6 @@ const GovtProjectScreen = () => {
   const [isSortByDateAsc, setIsSortByDateAsc] = useState(true);
   const {theme} = useContext(ThemeContext);
 
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
   function setFilterModal() {
     setIsFilterModalVisible(!isFilterModalVisible);
   }
@@ -72,16 +78,14 @@ const GovtProjectScreen = () => {
       setLoading(true);
       try {
         let crawledHousingData = await getHousingDataAxwayAPI();
-        console.log(typeof crawledHousingData, 'crawledDatahousing');
 
         setAllGovtTenders(JSON.parse(crawledHousingData));
         setFilteredGovtTenders(JSON.parse(crawledHousingData));
       } catch (e) {}
       setLoading(false);
     };
-
-    getHousingData();
-  }, []);
+    !tendersList && getHousingData();
+  }, [tendersList]);
 
   useEffect(() => {
     const getGroupedAndFilteredData = () => {
@@ -135,7 +139,7 @@ const GovtProjectScreen = () => {
     return retVal;
   };
 
-  const filterTenders = () => {
+  const filterTenders = (tenderSearchText: string) => {
     AnalyticsHelper.logEventTenderSearch(tenderSearchText);
     let allTenderContainingSearchText = allGovtTenders.filter((tender: any) => {
       return tender.tender_title
@@ -187,59 +191,10 @@ const GovtProjectScreen = () => {
     <View style={{flex: 1}}>
       <View
         style={{paddingHorizontal: 20, backgroundColor: Theme.colors.lightest}}>
-        <View
-          style={{
-            flexDirection: 'row',
-            borderColor: Theme.colors.borderColor,
-            borderBottomWidth: 1,
-          }}>
-          <TextInput
-            placeholder="Search Tenders"
-            placeholderTextColor={Theme.colors.primary}
-            style={{
-              width: '70%',
-              borderColor: Theme.colors.borderColor,
-              borderWidth: 2,
-              paddingRight: 5,
-              fontSize: 17,
-              borderRadius: 25,
-              backgroundColor: Theme.colors.lightest,
-              paddingHorizontal: 15,
-              height: 40,
-              marginTop: 10,
-              color: 'black',
-            }}
-            value={tenderSearchText}
-            onChangeText={text => setTenderSearchText(text)}
-          />
-
-          <Icon
-            style={{padding: 0}}
-            raised
-            size={19}
-            name="search"
-            color={Theme.colors.primary}
-            type="font-awesome"
-            onPress={() => filterTenders()}
-          />
-          <View
-            style={{
-              flexDirection: 'row',
-              alignSelf: 'flex-start',
-              borderRadius: 50,
-            }}>
-            <TouchableOpacity onPress={() => setFilterModal()}>
-              <Icon
-                raised
-                name="sort-amount-desc"
-                type="font-awesome"
-                size={19}
-                color={Theme.colors.primary}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-
+        <TopSearchBar
+          filterResult={filterTenders}
+          setFilterModal={setFilterModal}
+        />
         <Modal
           isVisible={isFilterModalVisible}
           style={{

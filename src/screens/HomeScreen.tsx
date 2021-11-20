@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Image,
   StyleSheet,
@@ -6,12 +6,10 @@ import {
   View,
   SafeAreaView,
   ScrollView,
-  useWindowDimensions,
+  Touchable,
 } from 'react-native';
 import _ from 'lodash';
 import {getHousingDataAxwayAPI} from '../services/govtProjectsAPI';
-
-import {ThemeContext} from 'react-native-elements';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {NavigationActions} from '../navigation/NavigationActions';
 import {Screens} from '../navigation/Screens';
@@ -65,7 +63,6 @@ const HomeScreen = () => {
           };
         },
       );
-      console.log(mappedCrawledTenders, '*********************');
 
       setGroupedGovtTenders(mappedCrawledTenders);
       // setTenderData(mappedCrawledTenders)
@@ -92,80 +89,113 @@ const HomeScreen = () => {
     filteredTradeFair && getGroupedAndFilteredData();
   }, [filteredTradeFair]);
 
+  const navigateToTenderGroups = React.useCallback(() => {
+    NavigationActions.navigateToScreen({
+      screenName: Screens.TenderGroups,
+      params: {
+        govtTendersList: groupedGovtTenders,
+      },
+    });
+  }, [groupedGovtTenders]);
+
+  const navigateToTradeFairGroups = React.useCallback(() => {
+    NavigationActions.navigateToScreen({
+      screenName: Screens.TradeFairGroups,
+      params: {
+        tradeFairList: groupedTradeFair,
+      },
+    });
+  }, [groupedTradeFair]);
+
+  const navigateToTendersListPage = React.useCallback((tenderCategory: any) => {
+    NavigationActions.navigateToScreen({
+      screenName: Screens.GovtProjectScreen,
+      params: {
+        tendersList: tenderCategory.data,
+      },
+    });
+  }, []);
+
+  const navigateToTradeFairsListPage = React.useCallback((tradeFair: any) => {
+    console.log(tradeFair, '!!!!!!!!!!!!!!!!!!!!!!!');
+
+    NavigationActions.navigateToScreen({
+      screenName: Screens.TradeFairScreen,
+      params: {
+        tradeFairsList: tradeFair.data,
+      },
+    });
+  }, []);
   return (
     <SafeAreaView style={styles.container}>
       {/* <Image style={styles.splogo} source={require('../SPImages/SPLogo.png')} /> */}
       <View style={styles.myBar}>
-        <TouchableOpacity
-          onPress={() => {
-            NavigationActions.navigateToScreen({
-              screenName: Screens.GovtProjectScreen,
-            });
-          }}>
-          <>
-            <Text style={styles.myBarTitle}>ALL TENDERS</Text>
-            <View style={styles.myBarHandler}>
-              <ScrollView horizontal={true}>
-                {groupedGovtTenders.map((govtTenders: any, index: number) => (
-                  <View key={index}>
-                    <View style={styles.myBarData}>
-                      <Text
-                        style={{
-                          color: 'darkblue',
-                          flex: 1,
-                          flexWrap: 'wrap',
-                          justifyContent: 'center',
-                          alignContent: 'center',
-                          textAlignVertical: 'center',
-                          paddingHorizontal: 5,
-                          fontWeight: 'bold',
-                        }}>
-                        {govtTenders.tender_type}
-                      </Text>
-                    </View>
+        {/* <TouchableOpacity> */}
+        <>
+          <Text onPress={navigateToTenderGroups} style={styles.myBarTitle}>
+            ALL TENDERS
+          </Text>
+          <View style={styles.myBarHandler}>
+            <ScrollView horizontal={true}>
+              {groupedGovtTenders.map((govtTenders: any, index: number) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => navigateToTendersListPage(govtTenders)}>
+                  <View style={styles.myBarData}>
+                    <Text
+                      style={{
+                        color: 'darkblue',
+                        flex: 1,
+                        flexWrap: 'wrap',
+                        justifyContent: 'center',
+                        alignContent: 'center',
+                        textAlignVertical: 'center',
+                        paddingHorizontal: 5,
+                        fontWeight: 'bold',
+                      }}>
+                      {govtTenders.tender_type}
+                    </Text>
                   </View>
-                ))}
-              </ScrollView>
-            </View>
-          </>
-        </TouchableOpacity>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </>
+        {/* </TouchableOpacity> */}
       </View>
 
       <View style={styles.myBar}>
-        <TouchableOpacity
-          onPress={() => {
-            NavigationActions.navigateToScreen({
-              screenName: Screens.TradeFairScreen,
-            });
-          }}>
-          <>
-            <Text style={styles.myBarTitle}>ALL TRADE FAIRS</Text>
+        <>
+          <Text style={styles.myBarTitle} onPress={navigateToTradeFairGroups}>
+            ALL TRADE FAIRS
+          </Text>
 
-            <View style={styles.myBarHandler}>
-              <ScrollView horizontal={true}>
-                {groupedTradeFair.map((tradeFair: any, index: number) => (
-                  <View key={index}>
-                    <View style={styles.myBarData}>
-                      <Text
-                        style={{
-                          color: 'darkblue',
-                          flex: 1,
-                          flexWrap: 'wrap',
-                          justifyContent: 'center',
-                          alignContent: 'center',
-                          textAlignVertical: 'center',
-                          paddingHorizontal: 5,
-                          fontWeight: 'bold',
-                        }}>
-                        {tradeFair.city}
-                      </Text>
-                    </View>
+          <View style={styles.myBarHandler}>
+            <ScrollView horizontal={true}>
+              {groupedTradeFair.map((tradeFair: any, index: number) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => navigateToTradeFairsListPage(tradeFair)}>
+                  <View style={styles.myBarData}>
+                    <Text
+                      style={{
+                        color: 'darkblue',
+                        flex: 1,
+                        flexWrap: 'wrap',
+                        justifyContent: 'center',
+                        alignContent: 'center',
+                        textAlignVertical: 'center',
+                        paddingHorizontal: 5,
+                        fontWeight: 'bold',
+                      }}>
+                      {tradeFair.city}
+                    </Text>
                   </View>
-                ))}
-              </ScrollView>
-            </View>
-          </>
-        </TouchableOpacity>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </>
       </View>
 
       <View

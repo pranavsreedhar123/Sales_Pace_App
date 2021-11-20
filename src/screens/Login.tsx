@@ -25,8 +25,8 @@ import SalesPaceLogo from '../assets/SalesPaceLogo';
 Icon.loadFont();
 
 export const Login = (): JSX.Element => {
-  const [email, setEmail] = useState('R6050468');
-  const [password, setPassword] = useState('Anaisha@1234');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isLoadingLogin, setIsLoadingLogin] = useState(false);
 
   // useEffect(() => {
@@ -60,6 +60,7 @@ export const Login = (): JSX.Element => {
             ToastAndroid.LONG,
             ToastAndroid.CENTER,
           );
+          setIsLoadingLogin(false);
         }
       } catch {
         (e: Error) => {
@@ -71,11 +72,13 @@ export const Login = (): JSX.Element => {
             ToastAndroid.SHORT,
             ToastAndroid.CENTER,
           );
+
+          setIsLoadingLogin(false);
         };
       }
 
       OAuthAuthentication(email, password);
-      setIsLoadingLogin(false);
+
       // Alert.alert('Incorrect Email or Password');
     }
   };

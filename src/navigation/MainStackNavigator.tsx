@@ -17,6 +17,8 @@ import TradeFairScreen from '../screens/TradeFairScreen';
 import {Login} from '../screens/Login';
 import {GovtProjectScreenDetails} from '../screens/GovtProjectScreenDetails';
 import HomeScreen from '../screens/HomeScreen';
+import TenderGroups from '../screens/TenderGroups';
+import TradeFairGroups from '../screens/TradeFairGroups';
 
 const Stack = createStackNavigator();
 const DefaultDrawer = createDrawerNavigator();
@@ -72,6 +74,20 @@ export const DefaultDrawerNavigator = (): JSX.Element => {
           ...commonDrawerScreenOptions,
           ...drawerMenuInHeader,
           headerTitle: setHeaderTitle('Home'),
+        }}
+      />
+      <DefaultDrawer.Screen
+        name={Screens.TenderGroups}
+        component={TenderGroups}
+        options={{
+          ...commonDrawerScreenOptions,
+        }}
+      />
+      <DefaultDrawer.Screen
+        name={Screens.TradeFairGroups}
+        component={TradeFairGroups}
+        options={{
+          ...commonDrawerScreenOptions,
         }}
       />
       <DefaultDrawer.Screen
