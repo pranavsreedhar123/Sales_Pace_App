@@ -180,3 +180,32 @@ export const YT_CHANNEL_DATA: YTChannel = {
     },
   ],
 };
+
+export const YT_API_KEY = 'AIzaSyDTPLXAczbj-2wYN30awanRnpbQpDSWvmM';
+
+export const SSO_OAuth_Get_ACCESS_TOKEN = {
+  clientId: 'POC_SalesPaceApp',
+  clientSecret: 'O7muMvtM9b0Qamm3PwPS',
+  scope: 'stGoSGI',
+  realm: 'AccessManagement',
+  grant_type: 'password',
+};
+
+export const Axway_BaseUrl = 'https://test.api.saint-gobain.com/';
+
+export const Tender_OAuth_ACCESS_TOKEN = {
+  grant_type: 'client_credentials',
+  client_id: '09f0466d-5326-429a-9a0f-ce721bf6e92d',
+  client_secret: '1e4eac04-182f-4882-b829-451b8ea7b0a8',
+  scope: 'openid',
+};
+
+export const Axway_ApiUrl = 'indec/test/salespace/api/';
+
+export const AXWAY_TOKEN_STORAGE_KEY = 'AXWAY_TOKEN_STORAGE_KEY';
+export const SIGN_IN = 'sign_in';
+export const ERROR_SIGN_IN = 'error_sign_in';
+export const TENDER_SEARCH = 'tender_search';
+export const TRADE_FAIR_SEARCH = 'trade_fair_search';
+export const VIDEO_SEARCH = 'video_search';
+export const VLOGGER_SEARCH = 'vlogger_search';

@@ -8,9 +8,12 @@ import {
   FlatList,
   StyleSheet,
   Alert,
+  Image,
+  Keyboard,
+  TouchableOpacity,
+  Linking,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/AntDesign';
-import Icon1 from 'react-native-vector-icons/FontAwesome';
+import {Icon} from 'react-native-elements';
 import MiniCard from './MiniCard';
 import {Helpers} from '../utils/Helpers';
 import {YT_CHANNEL_DATA} from '../utils/Constant';
@@ -20,11 +23,11 @@ import {
   getYouTubeChannelsAPI,
   getYTChannelsSnippetAPI,
 } from '../services/youTubeAPIs';
-Icon.loadFont();
-Icon1.loadFont();
+import {useEffect} from 'react';
+import {AnalyticsHelper} from '../utils/AnalyticsHelper';
 
 export const TopVloggerScreen = (): JSX.Element => {
-  const [videoSearchText, setVideoSearchText] = useState('');
+  const [videoSearchText, setVideoSearchText] = useState('Construction Design');
   const [isLoading, setIsLoading] = useState(false);
   const [sortedBySubscribersData, setSortedBySubscribersData] = useState<
     YTChannelItem[]
@@ -35,8 +38,13 @@ export const TopVloggerScreen = (): JSX.Element => {
   const [miniCardData, setMiniCardData] = useState<YTChannelItem[]>([]);
   const [filterStatus, setFilterStatus] = useState(false);
   const [filterOptionStatus, setFilterOptionStatus] = useState(false);
+  const [isFilteredBySubscribers, setIsFilteredBySubscribers] = useState(false);
+  const [isFilteredByViews, setIsFilteredByViews] = useState(false);
 
   const fetchYTChannels = async () => {
+    AnalyticsHelper.logEventVLoggerSearch(videoSearchText);
+
+    Keyboard.dismiss();
     setFilterStatus(false);
     setFilterOptionStatus(false);
     setIsLoading(true);
@@ -63,12 +71,23 @@ export const TopVloggerScreen = (): JSX.Element => {
     setFilterStatus(true);
   };
 
+  useEffect(() => {
+    fetchYTChannels();
+  }, []);
+
+  const openYouTubeURL = async (youtube_url: string) => {
+    await Linking.openURL(youtube_url);
+
+    // .catch(()=>{console.log("ERROR")});
+  };
+
   const filterYTChannels = React.useCallback(
     async (tempDataArray: YTChannelItem[]) => {
       /* FILTER METHOD: MAKES SURE NO DUPLICATE CHANNELS EXIST + FINDS SUBSCRIBERS + TOTAL VIEWS */
       let uniqueYTChannels = Helpers.getUniqueArray(tempDataArray, 'channelId');
 
       let YTChannelDatawithCounts: YTChannelItem[] = [];
+
       await Promise.all(
         uniqueYTChannels?.map(async (channel: any) => {
           let channelStat = await getChannelStatistics(
@@ -83,6 +102,7 @@ export const TopVloggerScreen = (): JSX.Element => {
               subscribers: Number(channelStat.subscriberCount),
               views: Number(channelStat.viewCount),
               thumbnailC: channelSnippet.thumbnails.medium.url,
+              hiddenSubscriber: channelStat.hiddenSubscriberCount,
             };
             YTChannelDatawithCounts.push(YTchannelDetails);
           }
@@ -124,18 +144,28 @@ export const TopVloggerScreen = (): JSX.Element => {
   );
 
   const filterOption = () => {
-    //setFilterOptionStatus(true);
+    setFilterOptionStatus(!filterOptionStatus);
     //setFilterStatus(false);
-    Alert.alert('Filter Channels', 'Select an option', [
-      {
-        text: 'Subscriber',
-        onPress: () => filterSubscriber(),
-      },
-      {text: 'View Count', onPress: () => filterView()},
-    ]);
+    // Alert.alert('Filter Channels', 'Select an option', [
+    // {
+    //   text: 'Subscriber',
+    //   onPress: () => filterSubscriber(),
+    // },
+    // {text: 'View Count', onPress: () => filterView()},
+    // ]);
   };
   const filterSubscriber = React.useCallback(() => {
+    //  setIsFilteredByViews(false);
+    setIsFilteredBySubscribers(true);
+    for (const item of miniCardData) {
+      console.log(item, '))))))))))))))))))))))))))))))))))))))))))000');
+      if (item.hiddenSubscriber == false) {
+        filterView();
+        break;
+      }
+    }
     setSortedByViewsData([]);
+    // if (isFilteredBySubscribers) {
     let sortedYTChannelBySubscribers = Helpers.sortArrayByKey(
       miniCardData,
       'subscribers',
@@ -145,97 +175,102 @@ export const TopVloggerScreen = (): JSX.Element => {
     );
     setMiniCardData(reverseSortedYTChannelBySubscribers);
     setSortedBySubscribersData(reverseSortedYTChannelBySubscribers);
+    // }
   }, [miniCardData]);
 
   const filterView = () => {
+    //  setIsFilteredBySubscribers(false);
+    setIsFilteredByViews(true);
     setSortedBySubscribersData([]);
+    // if (isFilteredByViews) {
     let sortedYTChannelByViews = Helpers.sortArrayByKey(miniCardData, 'views');
     let reverseSortedYTChannelByViews = Helpers.reverseArray(
       sortedYTChannelByViews,
     );
     setMiniCardData(reverseSortedYTChannelByViews);
     setSortedByViewsData(reverseSortedYTChannelByViews);
+    // }
   };
+  useEffect(() => {
+    !!isFilteredBySubscribers && setIsFilteredByViews(!isFilteredBySubscribers);
+  }, [isFilteredBySubscribers]);
+
+  useEffect(() => {
+    !!isFilteredByViews && setIsFilteredBySubscribers(!isFilteredByViews);
+  }, [isFilteredByViews]);
 
   return (
     <>
       <View style={{flex: 1}}>
         <View style={styles.container}>
-          <TextInput
-            placeholder="Search Channel"
-            style={styles.input}
-            value={videoSearchText}
-            onChangeText={text => setVideoSearchText(text)}
-          />
-          <Icon
-            name="search1"
-            size={30}
-            color="#900"
-            onPress={() => fetchYTChannels()}
-          />
-          {filterStatus && (
-            <View style={{alignItems: 'flex-start', paddingLeft: 10}}>
-              <Icon1
-                name="sort-amount-desc"
-                size={25}
-                color="#900"
-                onPress={() => filterOption()}
-              />
-            </View>
-            // <Text
-            //   style={{
-            //     paddingRight: 10,
-            //     paddingLeft: 18,
-            //     fontSize: 14,
-            //     fontWeight: 'bold',
-            //     color: 'blue',
-            //   }}
-            //   onPress={() => filterOption()}>
-            //   Click here for filter options:
-            // </Text>
-          )}
-          {/* <Text style={styles.text} onPress={() => fetchYTChannels()}>
-            Search
-          </Text> */}
-        </View>
-        <View
-          style={{
-            flexDirection: 'column',
-          }}>
-          {filterOptionStatus && (
-            <View
-              style={{
-                flexDirection: 'row',
-                paddingLeft: 16,
-              }}>
-              <Text
-                style={styles.textButton}
-                onPress={() => filterSubscriber()}>
-                Subscribers
-              </Text>
-              <Text style={styles.textButton} onPress={() => filterView()}>
-                View Count
-              </Text>
-            </View>
-          )}
-          {/* <Text
+          <View style={styles.searchBox}>
+            <TextInput
+              placeholder="Search Channel"
+              placeholderTextColor="black"
+              style={styles.input}
+              value={videoSearchText}
+              onChangeText={text => setVideoSearchText(text)}
+            />
+            <Icon
+              raised
+              style={{padding: 0}}
+              size={19}
+              name="search"
+              color="#005A9C"
+              type="font-awesome"
+              onPress={() => fetchYTChannels()}
+            />
+            {filterStatus && (
+              <View
+                style={{
+                  alignItems: 'flex-start',
+                  paddingLeft: 0,
+                }}>
+                <Icon
+                  raised
+                  style={{padding: 0}}
+                  size={19}
+                  name="sort-amount-desc"
+                  color="#005A9C"
+                  type="font-awesome"
+                  onPress={() => filterOption()}
+                />
+              </View>
+            )}
+          </View>
+          <View
             style={{
-              paddingRight: 10,
-              paddingLeft: 18,
-              fontSize: 14,
-              fontWeight: 'bold',
-              color: 'blue',
-            }}
-            onPress={() => filterOption()}>
-            Click here for filter options:
-          </Text> */}
-          {/* <Text style={styles.textButton} onPress={() => filterSubscriber()}>
-            Subscribers
-          </Text>
-          <Text style={styles.textButton} onPress={() => filterView()}>
-            View Count
-          </Text> */}
+              flexDirection: 'row',
+            }}>
+            {filterOptionStatus && (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  padding: 10,
+                }}>
+                <Text
+                  style={
+                    isFilteredBySubscribers
+                      ? styles.textButtonEnabled
+                      : styles.textButtonDisabled
+                  }
+                  onPress={() => filterSubscriber()}>
+                  Sort By Max Subscriber
+                </Text>
+                <Text
+                  style={
+                    isFilteredByViews
+                      ? styles.textButtonEnabled
+                      : styles.textButtonDisabled
+                  }
+                  onPress={() => filterView()}>
+                  Sort By Max View Count
+                </Text>
+              </View>
+            )}
+          </View>
         </View>
+
         {isLoading && (
           <ActivityIndicator
             style={{marginTop: Dimensions.get('window').height / 84}}
@@ -253,36 +288,56 @@ export const TopVloggerScreen = (): JSX.Element => {
           }}
           renderItem={({item}) => {
             return (
-              <MiniCard
-                channel={item.snippet.channelTitle} //Channel name
-                title={item.snippet.title} //Video related to the query
-                thumbnail={item.thumbnailC} //Thumbnail of the channel
-                viewCount={item.views} //ViewCount
-                subscriberCount={item.subscribers} //Subscriber
-              />
+              <TouchableOpacity
+                onPress={() =>
+                  openYouTubeURL(
+                    'https://www.youtube.com/channel/' + item.snippet.channelId,
+                  )
+                }>
+                <MiniCard
+                  channel={item.snippet.channelTitle} //Channel name
+                  title={item.snippet.title} //Video related to the query
+                  thumbnail={item.thumbnailC} //Thumbnail of the channel
+                  viewCount={item.views} //ViewCount
+                  subscriberCount={item.subscribers}
+                  isFilteredBySubscribers={isFilteredBySubscribers}
+                  isFilteredByViews={isFilteredByViews}
+                  //Subscriber
+                />
+              </TouchableOpacity>
             );
           }}
         />
+        {/* <Image
+          source={require('../images/sg.png')}
+          style={styles.tinyLogo}></Image> */}
       </View>
     </>
   );
 };
 
 const styles = StyleSheet.create({
+  // container: {
+  //   padding: 50,
+  //   paddingHorizontal: 15,
+  //   paddingRight: 0,
+  //   paddingBottom: 10,
+  //   flexDirection: 'row',
+  //   marginTop: Dimensions.get('window').height / 17,
+  //   width: Dimensions.get('window').width,
+  //   backgroundColor: '#FFF',
+  //   height: '11%',
+  // },
   container: {
-    padding: 50,
-    paddingHorizontal: 15,
-    paddingRight: 0,
-    paddingBottom: 10,
-    flexDirection: 'row',
-    marginTop: Dimensions.get('window').height / 17,
-    width: Dimensions.get('window').width,
-    backgroundColor: '#FFF',
-    height: '11%',
+    paddingLeft: 10,
+    paddingRight: 10,
+    alignSelf: 'stretch',
+    padding: 5,
+    backgroundColor: '#D0D0D0',
   },
   tinyLogo: {
-    width: Dimensions.get('window').width / 3,
-    height: Dimensions.get('window').height / 8,
+    width: Dimensions.get('window').width / 5,
+    height: Dimensions.get('window').height / 10,
     resizeMode: 'contain',
     alignSelf: 'center',
   },
@@ -306,15 +361,30 @@ const styles = StyleSheet.create({
     backgroundColor: 'blue',
     width: Dimensions.get('window').width * 0.2,
   },
-  textButton: {
+  textButtonEnabled: {
     fontSize: 14,
-    padding: 5,
+    padding: 10,
+    paddingTop: 10,
     fontWeight: 'bold',
-    paddingTop: 0,
     marginLeft: Dimensions.get('window').width / 100,
     color: 'white',
-    backgroundColor: 'red',
-    width: Dimensions.get('window').width * 0.24,
+    backgroundColor: '#005A9C',
+
+    //backgroundColor: 'rgb(0, 0, 255)',
+    width: Dimensions.get('window').width * 0.45,
+    borderRadius: 5,
+  },
+  textButtonDisabled: {
+    fontSize: 14,
+    padding: 10,
+    paddingTop: 10,
+    fontWeight: 'bold',
+    marginLeft: Dimensions.get('window').width / 100,
+    color: 'white',
+    backgroundColor: 'grey',
+    //backgroundColor: 'rgb(0, 0, 255)',
+    width: Dimensions.get('window').width * 0.45,
+    borderRadius: 5,
   },
   input: {
     width: '70%',
@@ -322,12 +392,19 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 25,
     padding: 5,
-    marginRight: 20,
+    marginRight: 8,
     backgroundColor: '#e6e6e6',
     paddingHorizontal: 10,
+    height: 40,
+    marginTop: 10,
   },
   error: {
     borderWidth: 2,
     borderColor: 'red',
+  },
+  searchBox: {
+    flexDirection: 'row',
+    borderColor: '#cccccc',
+    borderBottomWidth: 1,
   },
 });
