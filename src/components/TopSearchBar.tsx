@@ -1,9 +1,9 @@
-import {View, Icon} from 'native-base';
+import {View} from 'native-base';
 import {TextInput, TouchableOpacity, TextProps} from 'react-native';
 import {useState, ReactNode, useContext} from 'react';
 import {Theme} from '../styles/Theme';
 import React from 'react';
-import {ThemeContext} from 'react-native-elements';
+import {Icon, ThemeContext} from 'react-native-elements';
 
 interface Props {
   filterResult: (searchText: string) => void;
@@ -43,14 +43,22 @@ export const TopSearchBar = (props: Props): JSX.Element => {
         value={tenderSearchText}
         onChangeText={text => setTenderSearchText(text)}
       />
-      <Icon
-        name="search"
-        type="FontAwesome"
-        style={{padding: 10}}
-        fontSize={10}
-        color={'red'}
-        onPress={filterResultFn}
-      />
+      <View
+        style={{
+          flexDirection: 'row',
+          alignSelf: 'flex-start',
+          borderRadius: 50,
+        }}>
+        <Icon
+          raised
+          style={{padding: 0}}
+          size={19}
+          name="search"
+          color={Theme.colors.primary}
+          type="font-awesome"
+          onPress={filterResultFn}
+        />
+      </View>
 
       {setFilterModal && (
         <View
@@ -61,11 +69,12 @@ export const TopSearchBar = (props: Props): JSX.Element => {
           }}>
           <TouchableOpacity onPress={setFilterModal}>
             <Icon
+              raised
+              style={{padding: 0}}
+              size={19}
               name="sort-amount-desc"
-              type="FontAwesome"
-              style={{padding: 10}}
-              fontSize={10}
               color={Theme.colors.primary}
+              type="font-awesome"
             />
           </TouchableOpacity>
         </View>

@@ -33,7 +33,7 @@ import {TopSearchBar} from '../components/TopSearchBar';
 
 type RouteParams = {
   params: {
-    tendersList: any;
+    tendersList?: any;
   };
 };
 
@@ -84,7 +84,8 @@ const GovtProjectScreen = ({route}: {route: RouteParams}) => {
       } catch (e) {}
       setLoading(false);
     };
-    !tendersList && getHousingData();
+    setTenderSearchText('');
+    !tendersList?.length ? getHousingData() : setAllGovtTenders(tendersList);
   }, [tendersList]);
 
   useEffect(() => {
@@ -146,6 +147,7 @@ const GovtProjectScreen = ({route}: {route: RouteParams}) => {
         ?.toLowerCase()
         ?.includes(tenderSearchText.toLowerCase());
     });
+    console.log(allTenderContainingSearchText, '@@@@@');
 
     tenderSearchText
       ? setFilteredGovtTenders(allTenderContainingSearchText)

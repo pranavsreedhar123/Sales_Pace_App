@@ -38,7 +38,7 @@ export const TradeFairScreenDetails = ({
   const {sourceID, tenderID, tradeFairName} = route.params;
   const [tradeFairDetails, setTradeFairDetails] = useState<any>({});
   const [isLoadingTradeFairDetails, setIsLoadingTradeFairDetails] =
-    useState(false);
+    useState(true);
   const {theme} = useContext(ThemeContext);
 
   const getAmountFormatted = (amt: any) => {
@@ -86,18 +86,21 @@ export const TradeFairScreenDetails = ({
   }, [sourceID, tenderID]);
 
   const checkIfURLExist = async (projectDetailsJSON: any) => {
-    setIsLoadingTradeFairDetails(true);
     try {
-      let urlDetailsCheckResponse = await checkProjectDetailsURL(
-        projectDetailsJSON.venue_website,
-      );
-
-      console.log(urlDetailsCheckResponse, 'check projectDetailsJSON:::::::::');
-
-      if (urlDetailsCheckResponse.status != 200) {
-        projectDetailsJSON.venue_website = Helpers.extractDomain(
+      if (projectDetailsJSON.venue_website) {
+        let urlDetailsCheckResponse = await checkProjectDetailsURL(
           projectDetailsJSON.venue_website,
         );
+        console.log(
+          urlDetailsCheckResponse,
+          'check projectDetailsJSON:::::::::',
+        );
+
+        if (urlDetailsCheckResponse.status != 200) {
+          projectDetailsJSON.venue_website = Helpers.extractDomain(
+            projectDetailsJSON.venue_website,
+          );
+        }
       }
 
       setTradeFairDetails(projectDetailsJSON);
@@ -187,7 +190,7 @@ export const TradeFairScreenDetails = ({
                     color: theme.colors.lightest,
                     fontSize: theme.fonts.fontSize.small,
                   }}>
-                  <Text>Tender Details</Text>
+                  <Text>Trade Fair Details</Text>
                 </Text>
 
                 <Text
@@ -205,7 +208,7 @@ export const TradeFairScreenDetails = ({
                 alignContent: 'center',
                 alignItems: 'center',
               }}>
-              <Label small>Tender ID</Label>
+              <Label small>TradeFair ID</Label>
               <Label style={{color: theme.colors.dark, marginBottom: 10}}>
                 {tenderID}
               </Label>
@@ -226,49 +229,20 @@ export const TradeFairScreenDetails = ({
                 }}>
                 <View
                   style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    width: '50%',
+                    flexDirection: 'column',
+                    // justifyContent: 'center',
+                    width: '100%',
                     marginRight: 5,
+                    borderBottomWidth: 0.25,
+                    alignContent: 'center',
+                    alignItems: 'center',
                   }}>
                   <Label small>End Date</Label>
                   <Label style={{color: theme.colors.dark, marginBottom: 10}}>
-                    {Helpers.formatDate(tradeFairDetails.end_date)}
+                    {tradeFairDetails.end_date || tradeFairDetails.event_date}
                   </Label>
                 </View>
               </View>
-              {/* <View
-                style={{
-                  marginTop: 5,
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    borderRightWidth: 0.25,
-                    width: '50%',
-                    marginRight: 5,
-                  }}>
-                  <Label small>Tender Type</Label>
-                  <Label style={{color: theme.colors.dark, marginBottom: 10}}>
-                    {tradeFairDetails.TenderType || 'N/A '}
-                  </Label>
-                </View>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    width: '50%',
-                    marginRight: 5,
-                  }}>
-                  <Label small>Tender Fee</Label>
-                  <Label style={{color: theme.colors.dark, marginBottom: 10}}>
-                    {tradeFairDetails.tender_fee || 'N/A'}
-                  </Label>
-                </View>
-              </View> */}
             </View>
             <View
               style={{
@@ -397,12 +371,45 @@ export const TradeFairScreenDetails = ({
                       flexDirection: 'row',
                       justifyContent: 'space-between',
                     }}>
-                    <Label small> Organizer Name</Label>
+                    <Label small> City</Label>
                     <Label
                       style={{
                         color: theme.colors.dark,
                         marginBottom: 10,
                         textAlign: 'right',
+                      }}>
+                      {tradeFairDetails.city || 'N/A'}
+                    </Label>
+                  </View>
+                  <View
+                    style={{
+                      marginRight: 5,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Label small> Audience</Label>
+                    <Label
+                      style={{
+                        color: theme.colors.dark,
+                        marginBottom: 10,
+                        textAlign: 'right',
+                      }}>
+                      {tradeFairDetails.audience_type || 'N/A'}
+                    </Label>
+                  </View>
+                  <View
+                    style={{
+                      marginRight: 5,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Label small> Organizer Name</Label>
+                    <Label
+                      style={{
+                        color: theme.colors.dark,
+                        textAlign: 'right',
+                        flex: 1,
+                        flexWrap: 'wrap',
                       }}>
                       {tradeFairDetails.organizer_name || 'N/A'}
                     </Label>
@@ -415,21 +422,20 @@ export const TradeFairScreenDetails = ({
                     }}>
                     <Label small> Organizer Email</Label>
                     {tradeFairDetails?.organizer_name && (
-                      <LabelButton
-                        text="Click Here to View"
-                        labelStyle={{fontSize: theme.fonts.fontSize.smallest}}
+                      <Label
                         style={{
-                          backgroundColor: theme.colors.dark,
-                          borderRadius: 30,
-                          paddingVertical: 5,
-                          paddingHorizontal: 15,
-                          alignItems: 'center',
-                        }}
-                        onPress={() =>
-                          openTenderURL(tradeFairDetails?.organizer_email)
-                        }
-                      />
+                          color: theme.colors.dark,
+                          textAlign: 'right',
+                          flex: 1,
+                          flexWrap: 'wrap',
+                        }}>
+                        {tradeFairDetails?.organizer_email?.replace(
+                          'mailto',
+                          '',
+                        ) || 'N/A'}
+                      </Label>
                     )}
+
                     {!tradeFairDetails?.organizer_phoneno && (
                       <Label
                         style={{
@@ -441,6 +447,150 @@ export const TradeFairScreenDetails = ({
                       </Label>
                     )}
                   </View>
+                  <View
+                    style={{
+                      marginRight: 5,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Label small> Event Cycle </Label>
+                    <Label
+                      style={{
+                        color: theme.colors.dark,
+                        marginBottom: 10,
+                        textAlign: 'right',
+                      }}>
+                      {tradeFairDetails.event_cycle || 'N/A'}
+                    </Label>
+                  </View>
+                  <View
+                    style={{
+                      marginRight: 5,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Label small> Related Industries </Label>
+                    <Label
+                      style={{
+                        color: theme.colors.dark,
+                        marginBottom: 10,
+                        textAlign: 'right',
+                      }}>
+                      {tradeFairDetails.related_industries || 'N/A'}
+                    </Label>
+                  </View>
+                  <View
+                    style={{
+                      marginRight: 5,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Label small> Timings </Label>
+                    <Label
+                      style={{
+                        color: theme.colors.dark,
+                        marginBottom: 10,
+                        textAlign: 'right',
+                      }}>
+                      {tradeFairDetails.Timings || 'N/A'}
+                    </Label>
+                  </View>
+                  <View
+                    style={{
+                      marginRight: 5,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Label small> Ticket Type </Label>
+                    <Label
+                      style={{
+                        color: theme.colors.dark,
+                        marginBottom: 10,
+                        textAlign: 'right',
+                      }}>
+                      {tradeFairDetails.TicketType || 'N/A'}
+                    </Label>
+                  </View>
+                  <View
+                    style={{
+                      marginRight: 5,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Label small> Entry Fees </Label>
+                    <Label
+                      style={{
+                        color: theme.colors.dark,
+                        marginBottom: 10,
+                        textAlign: 'right',
+                      }}>
+                      {tradeFairDetails.EntryFee || 'N/A'}
+                    </Label>
+                  </View>
+                  <View
+                    style={{
+                      marginRight: 5,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Label small> Total Visitors </Label>
+                    <Label
+                      style={{
+                        color: theme.colors.dark,
+                        marginBottom: 10,
+                        textAlign: 'right',
+                      }}>
+                      {tradeFairDetails.total_visitors || 'N/A'}
+                    </Label>
+                  </View>
+                  <View
+                    style={{
+                      marginRight: 5,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Label small> Ticket Price </Label>
+                    <Label
+                      style={{
+                        color: theme.colors.dark,
+                        marginBottom: 10,
+                        textAlign: 'right',
+                      }}>
+                      {tradeFairDetails.ticket_price || 'N/A'}
+                    </Label>
+                  </View>
+                  {tradeFairDetails?.visitors_list && (
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                      }}>
+                      <Label small> Visitors List </Label>
+                      {/* <Label
+                        style={{
+                          color: theme.colors.dark,
+                          marginBottom: 10,
+                          textAlign: 'right',
+                        }}> */}
+                      <LabelButton
+                        text="Click Here to View"
+                        labelStyle={{fontSize: theme.fonts.fontSize.smallest}}
+                        style={{
+                          backgroundColor: theme.colors.dark,
+                          marginVertical: 10,
+                          borderRadius: 30,
+                          paddingVertical: 10,
+                          paddingHorizontal: 25,
+                          alignItems: 'center',
+                        }}
+                        onPress={() =>
+                          openTenderURL(tradeFairDetails?.visitors_list)
+                        }
+                      />
+                      {/* </Label> */}
+                    </View>
+                  )}
+
                   <View
                     style={{
                       marginRight: 5,

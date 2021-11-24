@@ -21,10 +21,14 @@ import Icon1 from 'react-native-vector-icons/FontAwesome';
 import {NavigationActions} from '../navigation/NavigationActions';
 import Modal from 'react-native-modal';
 import {ScrollView} from 'react-native-gesture-handler';
-import {getTradeFairDetailsAPI} from '../services/tradeFairsAPI';
+import {
+  getTradeFairDetailsAPI,
+  getTradeFairDataAPI,
+} from '../services/tradeFairsAPI';
 import {AnalyticsHelper} from '../utils/AnalyticsHelper';
 import {LabelButton} from '../components/buttons/LabelButton';
 import {Screens} from '../navigation/Screens';
+import {TopSearchBar} from '../components/TopSearchBar';
 
 type RouteParams = {
   params: {
@@ -83,27 +87,19 @@ const TradeFairScreen = ({route}: {route: RouteParams}) => {
   };
 
   useEffect(() => {
-    try {
-      // alert(sourceID + tenderID);
-      const getprojectDetails = async () => {
-        console.log('--------------=================');
-        let projectDetails: string = await getTradeFairDetailsAPI(
-          sourceID,
-          tenderID,
-        );
-        console.log(projectDetails, '0000000000');
-        let projectDetailsJSON = JSON.parse(projectDetails);
+    const getHousingData = async () => {
+      setLoading(true);
+      try {
+        let crawledHousingData = await getTradeFairDataAPI(50, 0);
 
-        checkIfURLExist(projectDetailsJSON);
-      };
-      console.log(
-        sourceID && tenderID && getprojectDetails() + 'GET project details',
-      );
-      sourceID && tenderID && getprojectDetails();
-    } catch (e) {
-      // consol
-    }
-  }, [sourceID, tenderID]);
+        setAllTradeFair(JSON.parse(crawledHousingData));
+        setFilteredTradeFair(JSON.parse(crawledHousingData));
+      } catch (e) {}
+      setLoading(false);
+    };
+
+    !tradeFairsList?.length && getHousingData();
+  }, [tradeFairsList]);
 
   const getAmountFormatted = (amt: any) => {
     let value = parseInt(amt);
@@ -126,14 +122,16 @@ const TradeFairScreen = ({route}: {route: RouteParams}) => {
     }
     return retVal;
   };
-  const filterTenders = () => {
+  const filterTenders = (tenderSearchText: string) => {
     AnalyticsHelper.logEventTradeFairSearch(tenderSearchText);
-    let allTenderContainingSearchText = allTradeFair.filter((tender: any) => {
-      return tender.city
-        ?.toLowerCase()
-        ?.includes(tenderSearchText.toLowerCase());
-    });
-    // console.log(allTenderContainingSearchText.length)includes(tenderSearchText);
+    let allTenderContainingSearchText = allTradeFair.filter(
+      (tradeFair: any) => {
+        return tradeFair.tradefair_name
+          ?.toLowerCase()
+          ?.includes(tenderSearchText.toLowerCase());
+      },
+    );
+
     tenderSearchText
       ? setFilteredTradeFair(allTenderContainingSearchText)
       : setFilteredTradeFair(allTradeFair);
@@ -214,11 +212,13 @@ const TradeFairScreen = ({route}: {route: RouteParams}) => {
     // setTenderData(allTendersWithSorting)
   };
 
-  console.log(filteredTradeFair[0]['tradefair_name'], '******************');
-
   return (
     <View style={{flex: 1}}>
       <View style={styles.container}>
+        <TopSearchBar
+          filterResult={filterTenders}
+          setFilterModal={setFilterModal}
+        />
         <ScrollView>
           {filteredTradeFair?.map((tradeFair: any, index: number) => (
             <TouchableOpacity
@@ -252,6 +252,7 @@ const TradeFairScreen = ({route}: {route: RouteParams}) => {
               <View
                 style={{
                   flexDirection: 'row',
+                  marginBottom: 10,
                 }}>
                 <View
                   style={{

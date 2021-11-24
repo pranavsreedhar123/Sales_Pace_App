@@ -89,14 +89,16 @@ export const GovtProjectScreenDetails = ({
   const checkIfURLExist = async (projectDetailsJSON: any) => {
     setIsLoadingTenderDetails(true);
     try {
-      let urlDetailsCheckResponse = await checkProjectDetailsURL(
-        projectDetailsJSON.tender_url,
-      );
-
-      if (urlDetailsCheckResponse.status != 200) {
-        projectDetailsJSON.tender_url = Helpers.extractDomain(
+      if (projectDetailsJSON.tender_url) {
+        let urlDetailsCheckResponse = await checkProjectDetailsURL(
           projectDetailsJSON.tender_url,
         );
+
+        if (urlDetailsCheckResponse.status != 200) {
+          projectDetailsJSON.tender_url = Helpers.extractDomain(
+            projectDetailsJSON.tender_url,
+          );
+        }
       }
 
       setTenderDetails(projectDetailsJSON);
