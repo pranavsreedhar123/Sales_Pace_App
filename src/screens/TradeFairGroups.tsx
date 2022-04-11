@@ -25,6 +25,7 @@ const TradeFairGroups = ({route}: {route: RouteParams}) => {
 
   const [filteredTradeFairCategoriesList, setFilteredTradeFairCategoriesList] =
     useState(tradeFairList);
+
   const filterTenderCategories = React.useCallback(
     (searchText: string) => {
       const allTradeFairCategoryContainingSearchText = tradeFairList.filter(
@@ -44,7 +45,6 @@ const TradeFairGroups = ({route}: {route: RouteParams}) => {
     [tradeFairList],
   );
 
-  const setFilterModal = React.useCallback(() => {}, []);
   const navigateToListPage = React.useCallback((tradeFairCategory: any) => {
     NavigationActions.navigateToScreen({
       screenName: Screens.TradeFairScreen,
@@ -56,7 +56,6 @@ const TradeFairGroups = ({route}: {route: RouteParams}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <TopSearchBar filterResult={filterTenderCategories} />
       <View style={styles.myAllData}>
         {filteredTradeFairCategoriesList?.map((tradeFair: any) => {
           return (

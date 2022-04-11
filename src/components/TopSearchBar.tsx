@@ -6,18 +6,20 @@ import React from 'react';
 import {Icon, ThemeContext} from 'react-native-elements';
 
 interface Props {
+  placeholderText: string;
   filterResult: (searchText: string) => void;
   setFilterModal?: () => void;
 }
 
 export const TopSearchBar = (props: Props): JSX.Element => {
-  const {filterResult, setFilterModal} = props;
+  const {placeholderText, filterResult, setFilterModal} = props;
   const [tenderSearchText, setTenderSearchText] = useState('');
   const {theme} = useContext(ThemeContext);
 
-  const filterResultFn = React.useCallback(() => {
+  const filterResultFn = () => {
+
     tenderSearchText && filterResult(tenderSearchText);
-  }, [filterResult]);
+  };
 
   return (
     <View
@@ -25,7 +27,7 @@ export const TopSearchBar = (props: Props): JSX.Element => {
         flexDirection: 'row',
       }}>
       <TextInput
-        placeholder="Search Tenders"
+        placeholder={placeholderText}
         placeholderTextColor={Theme.colors.primary}
         style={{
           width: '70%',

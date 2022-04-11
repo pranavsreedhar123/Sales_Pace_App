@@ -27,7 +27,6 @@ const TenderGroups = ({route}: {route: RouteParams}) => {
     useState(govtTendersList);
   const filterTenderCategories = React.useCallback(
     (searchText: string) => {
-      alert(1);
       const allTenderCategoryContainingSearchText = govtTendersList.filter(
         (tenderCategory: any) => {
           return tenderCategory.tender_type
@@ -59,7 +58,7 @@ const TenderGroups = ({route}: {route: RouteParams}) => {
       <View style={styles.myBar}>
         <Text style={styles.myBarTitle}>ALL TENDERS</Text>
       </View>
-      <TopSearchBar filterResult={filterTenderCategories} />
+
       <View style={styles.myAllData}>
         {filteredTenderCategoriesList.map((govtTender: any) => {
           return (

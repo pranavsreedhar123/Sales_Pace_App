@@ -140,7 +140,7 @@ const GovtProjectScreen = ({route}: {route: RouteParams}) => {
     return retVal;
   };
 
-  const filterTenders = (tenderSearchText: string) => {
+  const filterTenders = () => {
     AnalyticsHelper.logEventTenderSearch(tenderSearchText);
     let allTenderContainingSearchText = allGovtTenders.filter((tender: any) => {
       return tender.tender_title
@@ -193,10 +193,71 @@ const GovtProjectScreen = ({route}: {route: RouteParams}) => {
     <View style={{flex: 1}}>
       <View
         style={{paddingHorizontal: 20, backgroundColor: Theme.colors.lightest}}>
-        <TopSearchBar
+        {/* <TopSearchBar
+          placeholderText={''}
           filterResult={filterTenders}
           setFilterModal={setFilterModal}
-        />
+        /> */}
+        <View
+          style={{
+            flexDirection: 'row',
+          }}>
+          <TextInput
+            placeholder={'Search Tenders'}
+            placeholderTextColor={Theme.colors.primary}
+            style={{
+              width: '70%',
+              borderColor: Theme.colors.borderColor,
+              borderWidth: 2,
+              paddingRight: 5,
+              fontSize: 17,
+              borderRadius: 25,
+              backgroundColor: Theme.colors.lightest,
+              paddingHorizontal: 15,
+              height: 40,
+              marginTop: 10,
+              color: 'black',
+            }}
+            value={tenderSearchText}
+            onChangeText={text => setTenderSearchText(text)}
+          />
+          <View
+            style={{
+              flexDirection: 'row',
+              alignSelf: 'flex-start',
+              borderRadius: 50,
+            }}>
+            <Icon
+              raised
+              style={{padding: 0}}
+              size={19}
+              name="search"
+              color={Theme.colors.primary}
+              type="font-awesome"
+              onPress={filterTenders}
+            />
+          </View>
+
+          {setFilterModal && (
+            <View
+              style={{
+                flexDirection: 'row',
+                alignSelf: 'flex-start',
+                borderRadius: 50,
+              }}>
+              <TouchableOpacity onPress={setFilterModal}>
+                <Icon
+                  raised
+                  style={{padding: 0}}
+                  size={19}
+                  name="sort-amount-desc"
+                  color={Theme.colors.primary}
+                  type="font-awesome"
+                />
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
         <Modal
           isVisible={isFilterModalVisible}
           style={{
@@ -382,16 +443,6 @@ const GovtProjectScreen = ({route}: {route: RouteParams}) => {
                       flexDirection: 'column',
                       width: '40%',
                     }}>
-                    <LabelButton
-                      text="Share"
-                      style={{
-                        backgroundColor: Theme.colors.dark,
-                        marginTop: 10,
-                        borderRadius: 30,
-                        paddingVertical: 3,
-                        alignItems: 'center',
-                      }}
-                    />
                     <LabelButton
                       text="View More"
                       style={{
